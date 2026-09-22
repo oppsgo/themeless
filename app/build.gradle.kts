@@ -7,8 +7,8 @@ android {
 
     defaultConfig {
         applicationId = "io.github.oppsgo.themeless"
-        // versionName 跟库版本；versionCode 仅给 Demo APK，与 Maven 坐标无关。
-        versionCode = 101
+        // versionName 跟库 VERSION_NAME；versionCode 仅 Demo 安装用，与 JitPack 无关。
+        versionCode = 1
         versionName = rootProject.version.toString()
     }
 }

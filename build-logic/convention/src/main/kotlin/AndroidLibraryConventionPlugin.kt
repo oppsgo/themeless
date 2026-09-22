@@ -3,12 +3,15 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
@@ -16,6 +19,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "com.android.library")
             apply(plugin = "convention.android.lint")
+            apply(plugin = "maven-publish")
 
             extensions.configure<LibraryExtension> {
                 compileSdk = 36
@@ -28,6 +32,11 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     targetCompatibility = JavaVersion.VERSION_1_8
                 }
                 testOptions.animationsDisabled = true
+                publishing {
+                    singleVariant("release") {
+                        withSourcesJar()
+                    }
+                }
             }
 
             // JDK 17+ javac warns that -source/-target 8 are obsolete; keep Java 8 bytecode.
@@ -35,9 +44,20 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 options.compilerArgs.add("-Xlint:-options")
             }
 
+            // JitPack：publishToMavenLocal 需要 publication。group/version 继承根工程。
+            afterEvaluate {
+                extensions.configure<PublishingExtension> {
+                    publications {
+                        register<MavenPublication>("release") {
+                            from(components["release"])
+                        }
+                    }
+                }
+            }
+
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
-                add("implementation",libs.findLibrary("androidx-annotation").get())
+                add("implementation", libs.findLibrary("androidx-annotation").get())
                 "testImplementation"(platform(libs.findLibrary("junit-bom").get()))
                 "testImplementation"(libs.findLibrary("junit-jupiter").get())
                 "testRuntimeOnly"(libs.findLibrary("junit-platform-launcher").get())

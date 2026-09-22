@@ -5,27 +5,42 @@ Android 运行时换肤库：在 **不重建 Activity** 的前提下，按资源
 
 文档暂时只提供中文。
 
-## 版本
+## 版本与 JitPack
 
-根 `build.gradle.kts` 里定死一套坐标，子模块继承（同 [json-kit](https://github.com/oppsgo/json-kit)）：
+版本写在根目录 `gradle.properties`（单一来源，同常见 Android 库做法）：
 
-```kotlin
-group = "io.github.oppsgo"
-version = "0.1.1-SNAPSHOT"
+```properties
+GROUP=com.github.oppsgo
+VERSION_NAME=0.1.1-SNAPSHOT
 ```
 
-当前：**`0.1.1-SNAPSHOT`**
+根 `build.gradle.kts` 读入后赋给所有子模块；库模块已配 `maven-publish`（JitPack 构建用），并有 `jitpack.yml`（JDK 17）。
 
-| 规则 | 说明 |
-|------|------|
-| 格式 | `MAJOR.MINOR.PATCH`，遵循 [SemVer](https://semver.org/) |
-| 开发中 | 后缀 **`-SNAPSHOT`（必须大写）**，不要写成 `-snapshot` |
-| 正式版 | 去掉后缀，例如 `0.1.1` |
-| 比较顺序（Maven / Gradle） | `0.1.0` &lt; `0.1.1-SNAPSHOT` &lt; `0.1.1` &lt; `0.1.2-SNAPSHOT` &lt; `0.1.2` |
-| Demo APK | `versionName` = 上式；`versionCode` 在 `gradle.properties` 的 `VERSION_CODE`，与库坐标分开 |
+**重要：JitPack 给别人用的依赖版本 ≠ 仓库里的 `VERSION_NAME`。**
 
-升级时只改根 `version`（以及需要上架 Demo 时再加 `VERSION_CODE`）。  
-不要用 `0.1.1.1`、`0.1.1-snapshot`、日期串当主版本号，否则依赖解析和「谁更新」会乱。
+| 用途 | 用什么 |
+|------|--------|
+| 写入 POM / 本地工程版本 | `VERSION_NAME`（SemVer，预发布用大写 `-SNAPSHOT`） |
+| 别人 `implementation` 的版本 | **Git 标签**（如 `0.1.1`）、**`main-SNAPSHOT`**、或 commit |
+| JitPack 徽章列表 | 来自 GitHub **Release / tag**，不是自动扫 `VERSION_NAME` |
+
+发布正式版流程：
+
+1. 把 `VERSION_NAME` 改成 `0.1.1`（去掉 `-SNAPSHOT`）
+2. 打同名 git tag：`git tag 0.1.1 && git push --tags`
+3. 依赖示例：
+
+```kotlin
+maven { url = uri("https://jitpack.io") }
+
+implementation("com.github.oppsgo.Themeless:core:0.1.1")
+implementation("com.github.oppsgo.Themeless:androidx:0.1.1")
+// 或 Support：com.github.oppsgo.Themeless:appcompat:0.1.1
+```
+
+开发期未打 tag 时用分支快照，例如 `main-SNAPSHOT`，**不要**指望别人写 `0.1.1-SNAPSHOT` 就能从 JitPack 拉到（除非你真的打了叫 `0.1.1-SNAPSHOT` 的 tag）。
+
+比较顺序（Maven）：`0.1.1-SNAPSHOT` &lt; `0.1.1` &lt; `0.1.2-SNAPSHOT`。
 
 ## 模块
 
