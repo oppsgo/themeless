@@ -10,6 +10,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
@@ -50,6 +51,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     publications {
                         register<MavenPublication>("release") {
                             from(components["release"])
+                            groupId = project.group.toString()
+                            artifactId = project.name
+                            version = project.version.toString()
                         }
                     }
                 }

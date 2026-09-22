@@ -1,5 +1,7 @@
 # Themeless
 
+[![](https://jitpack.io/v/oppsgo/themeless.svg)](https://jitpack.io/#oppsgo/themeless)
+
 Android 运行时换肤库：在 **不重建 Activity** 的前提下，按资源 id 绑定并刷新 View。  
 支持普通 `Activity` / `FragmentActivity`，以及 AndroidX / Support 的 AppCompat。
 
