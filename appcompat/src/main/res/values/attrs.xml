@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 与 AppCompat 同名，AAPT 按名字合成同一个 attr。只声明本模块会读的。 -->
+    <attr name="srcCompat" format="reference" />
+    <attr name="tint" format="color|reference" />
+    <attr name="backgroundTint" format="color|reference" />
+    <attr name="drawableTint" format="color|reference" tools:ignore="PrivateResource" />
+</resources>

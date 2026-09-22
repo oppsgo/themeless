@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Themeless</string>
+    <string name="main_list_title">Themeless</string>
+    <string name="main_list_subtitle">先设全局日夜，再进 Demo 看进页颜色</string>
+    <string name="main_night_mode_title">AppCompat 全局日夜（DefaultNightMode）</string>
+    <string name="main_night_follow">跟随系统</string>
+    <string name="main_night_light">强制亮色</string>
+    <string name="main_night_dark">强制暗色</string>
+    <string name="main_night_hint_follow">当前：跟随系统。Demo 进页 apply(followSystem) 与系统一致。</string>
+    <string name="main_night_hint_light">当前：强制亮色。系统若是暗色：AppCompat Demo 的 Activity 资源偏亮；但 followSystem 读的是 Application uiMode（常仍是系统暗），skin_* 可能仍是暗色。FragmentActivity Demo 不受 DefaultNightMode 影响，进页跟系统暗。</string>
+    <string name="main_night_hint_dark">当前：强制暗色。AppCompat Activity 偏暗；followSystem 若 Application 仍跟系统，系统亮时 skin_* 可能仍亮。</string>
+    <string name="main_demo_section">进入 Demo</string>
+    <string name="main_entry_theme_title">主题（FragmentActivity）</string>
+    <string name="main_entry_theme_subtitle">不传 Factory2，走默认的系统 View 创建</string>
+    <string name="main_entry_theme_appcompat_title">主题（AppCompatActivity）</string>
+    <string name="main_entry_theme_appcompat_subtitle">install 时传入 AppCompatDelegate；含 RecyclerView 与浮层跟肤</string>
+    <string name="theme_demo_title">主题演示</string>
+    <string name="theme_demo_subtitle">本页不是 AppCompat。左侧 ScrollView 放操作，右侧 RecyclerView 列表；先弹浮层再切主题，浮层应一起变。</string>
+    <string name="theme_demo_appcompat_subtitle">install 时传入 AppCompatDelegate。左侧操作、右侧列表；先弹浮层再切主题，浮层应一起变。</string>
+    <string name="theme_demo_original">原始尺寸</string>
+    <string name="theme_demo_resized">DrawableRef 放大</string>
+    <string name="theme_demo_managed_sample">布局里的文字</string>
+    <string name="theme_demo_dynamic">动态改色</string>
+    <string name="theme_demo_unmanaged">未管理文字</string>
+    <string name="theme_demo_unmanaged_line">new 出来的文字，不跟随日夜</string>
+    <string name="theme_demo_dialog">对话框</string>
+    <string name="theme_demo_popup">浮层</string>
+    <string name="theme_demo_dialog_message">这一层会随亮色 / 暗色变</string>
+    <string name="theme_demo_dialog_nested_message">按钮再弹出的这一层，也会变</string>
+    <string name="theme_demo_dialog_again">再弹一层</string>
+    <string name="theme_demo_popup_message">浮层里的文字，会随亮色 / 暗色变</string>
+    <string name="theme_demo_light">亮色</string>
+    <string name="theme_demo_dark">暗色</string>
+    <string name="theme_demo_custom">晴空蓝</string>
+    <string name="theme_demo_custom_hint">自定义主题：MappedResourceResolver 重映射颜色；标题栏沉浸式吃 statusBars</string>
+    <string name="theme_demo_list_hint">右侧列表 · 点条目可追加 · 复用项跟肤</string>
+    <string name="theme_demo_list_title_format">项 %1$d</string>
+    <string name="theme_demo_list_subtitle">主色 / 次要色 / 卡片底会跟肤</string>
+</resources>

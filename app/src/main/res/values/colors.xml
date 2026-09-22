@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="skin_page_bg">#FFF5F0E8</color>
+    <color name="skin_panel_bg">#FFFFFFFF</color>
+    <color name="skin_card_bg">#FFFFFBF5</color>
+    <color name="skin_text_primary">#FF1C1917</color>
+    <color name="skin_text_secondary">#FF78716C</color>
+    <color name="skin_accent">#FFEA580C</color>
+    <color name="skin_divider">#FFE7E5E4</color>
+    <color name="skin_button_bg">#FFEA580C</color>
+    <color name="skin_button_text">#FFFFFFFF</color>
+
+    <!-- 自定义「晴空蓝」主题覆盖色 -->
+    <color name="skin_page_bg_blue">#FFE0F2FE</color>
+    <color name="skin_panel_bg_blue">#FFBAE6FD</color>
+    <color name="skin_card_bg_blue">#FFF0F9FF</color>
+    <color name="skin_text_primary_blue">#FF0C4A6E</color>
+    <color name="skin_text_secondary_blue">#FF0369A1</color>
+    <color name="skin_accent_blue">#FF0284C7</color>
+    <color name="skin_divider_blue">#FF7DD3FC</color>
+    <color name="skin_button_bg_blue">#FF0284C7</color>
+    <color name="skin_button_text_blue">#FFFFFFFF</color>
+</resources>
