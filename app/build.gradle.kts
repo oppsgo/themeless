@@ -7,8 +7,9 @@ android {
 
     defaultConfig {
         applicationId = "io.github.oppsgo.themeless"
-        versionCode = 1
-        versionName = "0.1.0"
+        // versionName 跟库版本；versionCode 仅给 Demo APK，与 Maven 坐标无关。
+        versionCode = 101
+        versionName = rootProject.version.toString()
     }
 }
 

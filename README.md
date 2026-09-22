@@ -5,6 +5,28 @@ Android 运行时换肤库：在 **不重建 Activity** 的前提下，按资源
 
 文档暂时只提供中文。
 
+## 版本
+
+根 `build.gradle.kts` 里定死一套坐标，子模块继承（同 [json-kit](https://github.com/oppsgo/json-kit)）：
+
+```kotlin
+group = "io.github.oppsgo"
+version = "0.1.1-SNAPSHOT"
+```
+
+当前：**`0.1.1-SNAPSHOT`**
+
+| 规则 | 说明 |
+|------|------|
+| 格式 | `MAJOR.MINOR.PATCH`，遵循 [SemVer](https://semver.org/) |
+| 开发中 | 后缀 **`-SNAPSHOT`（必须大写）**，不要写成 `-snapshot` |
+| 正式版 | 去掉后缀，例如 `0.1.1` |
+| 比较顺序（Maven / Gradle） | `0.1.0` &lt; `0.1.1-SNAPSHOT` &lt; `0.1.1` &lt; `0.1.2-SNAPSHOT` &lt; `0.1.2` |
+| Demo APK | `versionName` = 上式；`versionCode` 在 `gradle.properties` 的 `VERSION_CODE`，与库坐标分开 |
+
+升级时只改根 `version`（以及需要上架 Demo 时再加 `VERSION_CODE`）。  
+不要用 `0.1.1.1`、`0.1.1-snapshot`、日期串当主版本号，否则依赖解析和「谁更新」会乱。
+
 ## 模块
 
 | 模块 | 说明 |
