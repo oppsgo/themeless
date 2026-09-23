@@ -9,6 +9,8 @@ pluginManagement {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
                 includeGroupByRegex("androidx.*")
+                // Support Library 传递依赖（:appcompat → appcompat-v7 → android.arch.lifecycle）
+                includeGroupByRegex("android\\.arch.*")
             }
         }
         mavenCentral()
@@ -30,6 +32,8 @@ dependencyResolutionManagement {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
                 includeGroupByRegex("androidx.*")
+                // Support Library 传递依赖（:appcompat → appcompat-v7 → android.arch.lifecycle）
+                includeGroupByRegex("android\\.arch.*")
             }
         }
         mavenCentral()

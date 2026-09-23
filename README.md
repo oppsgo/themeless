@@ -16,7 +16,7 @@ GROUP=com.github.oppsgo
 VERSION_NAME=0.1.1-SNAPSHOT
 ```
 
-根 `build.gradle.kts` 读入后赋给所有子模块；库模块已配 `maven-publish`（JitPack 构建用），并有 `jitpack.yml`（JDK 17）。
+根 `build.gradle.kts` 优先用 JitPack 传入的 `-Pgroup` / `-Pversion`，否则读上述属性；库模块已配 `maven-publish`，并有 `jitpack.yml`（JDK 17）。
 
 **重要：JitPack 给别人用的依赖版本 ≠ 仓库里的 `VERSION_NAME`。**
 
@@ -26,18 +26,21 @@ VERSION_NAME=0.1.1-SNAPSHOT
 | 别人 `implementation` 的版本 | **Git 标签**（如 `0.1.1`）、**`main-SNAPSHOT`**、或 commit |
 | JitPack 徽章列表 | 来自 GitHub **Release / tag**，不是自动扫 `VERSION_NAME` |
 
+仓库若没有 Git tag，JitPack 只会按 commit 构建，版本会变成类似 `-8381f653c8-1`，徽章也认不出正式版。
+
 发布正式版流程：
 
 1. 把 `VERSION_NAME` 改成 `0.1.1`（去掉 `-SNAPSHOT`）
 2. 打同名 git tag：`git tag 0.1.1 && git push --tags`
-3. 依赖示例：
+3. 在 [JitPack](https://jitpack.io/#oppsgo/themeless) 选该 tag 触发构建
+4. 依赖示例：
 
 ```kotlin
 maven { url = uri("https://jitpack.io") }
 
-implementation("com.github.oppsgo.Themeless:core:0.1.1")
-implementation("com.github.oppsgo.Themeless:androidx:0.1.1")
-// 或 Support：com.github.oppsgo.Themeless:appcompat:0.1.1
+implementation("com.github.oppsgo.themeless:core:0.1.1")
+implementation("com.github.oppsgo.themeless:androidx:0.1.1")
+// 或 Support：com.github.oppsgo.themeless:appcompat:0.1.1
 ```
 
 开发期未打 tag 时用分支快照，例如 `main-SNAPSHOT`，**不要**指望别人写 `0.1.1-SNAPSHOT` 就能从 JitPack 拉到（除非你真的打了叫 `0.1.1-SNAPSHOT` 的 tag）。
