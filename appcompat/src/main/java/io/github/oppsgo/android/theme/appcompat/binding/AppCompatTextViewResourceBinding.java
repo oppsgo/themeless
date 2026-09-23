@@ -2,7 +2,6 @@ package io.github.oppsgo.android.theme.appcompat.binding;
 
 import android.content.res.ColorStateList;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.AppCompatTextView;
 
 import androidx.annotation.AttrRes;
@@ -55,10 +54,5 @@ public class AppCompatTextViewResourceBinding extends TextViewResourceBinding {
     @Override
     protected void applyBackgroundTint(@Nullable ColorStateList tint) {
         ViewCompat.setBackgroundTintList(view, tint);
-    }
-
-    @Override
-    protected void applyCompoundDrawableTint(@Nullable ColorStateList tint) {
-        TextViewCompat.setCompoundDrawableTintList(view, tint);
     }
 }
