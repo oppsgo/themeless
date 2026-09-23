@@ -119,9 +119,21 @@ ThemeManager.get().apply(this, DayNightResourceResolver.night(this))
 - 强制暗色 → 读 `values-night/`
 - 不会改写 Activity 自身的 `Configuration`
 
-自定义固定色板（如 Demo「晴空蓝」）应使用 `ContextResourceResolver`（或 AppCompat 版）+ id 重映射，**不要**再包一层 DayNight，也不要为自定义主题单独建 `values-night`。
+自定义固定色板（如 Demo「晴空蓝」）应使用亮色底座 Resolver + id 重映射（Demo 里是 `DayNightResourceResolver.light` + `MappedResourceResolver`），**不要**为自定义主题单独建 `values-night`。
 
-AppCompat Demo 里切换亮/暗时会同步 `AppCompatDelegate.localNightMode`，让未托管的主题属性也一致；这与 `skin_*` 跟肤是两条线。
+### 系统夜间下的浅色肤（重要）
+
+系统开着深色时，若把 Activity 切成 Light / `MODE_NIGHT_NO`，Android 10+ 的 **Force Dark**（部分厂商还会加一层）会在**送显前**把浅色像素反相成黑。表现是：日志里 View 颜色已是浅蓝，屏幕仍是黑——**用户什么都不用懂，也不用去关系统设置**。
+
+接入方正确做法：
+
+1. 主题里加 `android:forceDarkAllowed=false`
+2. **展示浅色 / 自定义肤时，Activity 保持夜间宿主**，例如：
+   - AppCompat：仅当 `localNightMode == MODE_NIGHT_NO` 时改成 `MODE_NIGHT_YES`（再 recreate）；已是 FOLLOW/YES 则直接 `apply`
+   - 肤色只通过 `ThemeManager.apply(…, DayNightResourceResolver.light / Mapped…)` 画上去
+3. **不要**为了「看起来像亮色页」去切 `MODE_NIGHT_NO` / `Theme.*.Light`
+
+Demo 的亮色 / 晴空蓝已按上述方式处理（见 `ThemeDemoPage.syncActivityNightMode`）。
 
 ## 常用 API
 

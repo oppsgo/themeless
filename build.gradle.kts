@@ -5,9 +5,8 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
-// 单一版本源在 gradle.properties（GROUP / VERSION_NAME），方便 JitPack 与脚本读取。
-group = providers.gradleProperty("GROUP").get()
-version = providers.gradleProperty("VERSION_NAME").get()
+group = "com.github.oppsgo"
+version = "0.1.2-SNAPSHOT"
 
 subprojects {
     group = rootProject.group

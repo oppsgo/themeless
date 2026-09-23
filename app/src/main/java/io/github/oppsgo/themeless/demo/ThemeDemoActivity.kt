@@ -11,6 +11,10 @@ import io.github.oppsgo.themeless.R
  */
 class ThemeDemoActivity : FragmentActivity() {
 
+    init {
+        ThemeDemoPage.init()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.get().install(this)
         super.onCreate(savedInstanceState)
@@ -19,6 +23,8 @@ class ThemeDemoActivity : FragmentActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        reapplyDemoThemeIfFollowingSystem()
+        if (ThemeDemoPage.demoThemeMode == DemoThemeMode.FOLLOW_SYSTEM) {
+            restoreDemoTheme()
+        }
     }
 }

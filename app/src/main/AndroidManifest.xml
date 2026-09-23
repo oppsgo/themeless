@@ -7,6 +7,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Themeless">
+        <!-- 仅对 vivo 有效：拒绝 vivo 强制夜色。魅族「强制暗色」名单不读这两项。 -->
+        <meta-data
+            android:name="android.vivo_nightmode_support"
+            android:value="false" />
+        <meta-data
+            android:name="android.vivo_invert_splash"
+            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode"
@@ -18,12 +25,12 @@
         </activity>
         <activity
             android:name=".demo.ThemeDemoActivity"
-            android:configChanges="uiMode"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize|uiMode"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".demo.ThemeAppCompatDemoActivity"
-            android:configChanges="uiMode"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize|uiMode"
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.Themeless" />

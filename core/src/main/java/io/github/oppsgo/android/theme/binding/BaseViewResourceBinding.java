@@ -194,6 +194,53 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
         }
     }
 
+    /** 手动指定 background 资源，写入 Binding 供后续 apply 使用。 */
+    @NonNull
+    public BaseViewResourceBinding<VIEW> setBackground(@AnyRes int background) {
+        if (background == ID_NULL) {
+            unbind(ATTR_BACKGROUND);
+            return this;
+        }
+        if (isPureColor(background)) {
+            return setBackground(ColorRef.of(background));
+        }
+        return setBackground(DrawableRef.of(background));
+    }
+
+    @NonNull
+    public BaseViewResourceBinding<VIEW> setBackground(@NonNull ColorRef background) {
+        putAndUpdate(ATTR_BACKGROUND, background);
+        return this;
+    }
+
+    @NonNull
+    public BaseViewResourceBinding<VIEW> setBackground(@NonNull DrawableRef background) {
+        putAndUpdate(ATTR_BACKGROUND, background);
+        return this;
+    }
+
+    @NonNull
+    public BaseViewResourceBinding<VIEW> setBackgroundTint(@ColorRes int tint) {
+        if (tint == ID_NULL) {
+            unbind(ATTR_BACKGROUND_TINT);
+            return this;
+        }
+        putAndUpdate(ATTR_BACKGROUND_TINT, createColorResource(tint));
+        return this;
+    }
+
+    @NonNull
+    public BaseViewResourceBinding<VIEW> setBackgroundTint(@NonNull ColorRef tint) {
+        putAndUpdate(ATTR_BACKGROUND_TINT, tint);
+        return this;
+    }
+
+    @NonNull
+    public BaseViewResourceBinding<VIEW> setBackgroundTint(@NonNull ColorStateListRef tint) {
+        putAndUpdate(ATTR_BACKGROUND_TINT, tint);
+        return this;
+    }
+
     /**
      * 已 {@link ThemeManager#apply(Context, ResourceResolver)} 时用安装好的 Resolver。
      * {@code of()} 造出来、没挂到 View 上的临时绑定，没有安装好的 Resolver 时退回 View 自己的 Context。

@@ -13,6 +13,11 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        // 仅作兜底：官方源没有或拉不到时再试腾讯云镜像。
+        maven {
+            name = "TencentMavenPublic"
+            url = uri("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
+        }
     }
 }
 
@@ -28,6 +33,11 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        // 仅作兜底：官方源没有或拉不到时再试（:appcompat 的 support 包也走这里）。
+        maven {
+            name = "TencentMavenPublic"
+            url = uri("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
+        }
     }
 }
 

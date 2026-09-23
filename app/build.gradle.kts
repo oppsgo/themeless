@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId = "io.github.oppsgo.themeless"
         // versionName 跟库 VERSION_NAME；versionCode 仅 Demo 安装用，与 JitPack 无关。
-        versionCode = 1
+        versionCode = 14
         versionName = rootProject.version.toString()
     }
 }

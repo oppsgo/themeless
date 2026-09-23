@@ -46,21 +46,31 @@
         android:background="@color/skin_page_bg"
         android:orientation="horizontal">
 
-        <ScrollView
-            android:id="@+id/themeControlsScroll"
+        <LinearLayout
+            android:id="@+id/themeControlsPane"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/skin_page_bg"
-            android:fillViewport="true"
-            android:overScrollMode="never"
-            android:scrollbars="vertical">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <!-- 底色画在外层 LinearLayout：ScrollView 在部分机型上会被 Force Dark 单独压暗 -->
+            <ScrollView
+                android:id="@+id/themeControlsScroll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:fillViewport="true"
+                android:overScrollMode="never"
+                android:scrollbars="vertical">
+
+                <LinearLayout
+                    android:id="@+id/themeControlsContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -221,8 +231,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
-            </LinearLayout>
-        </ScrollView>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
 
         <View
             android:layout_width="1dp"

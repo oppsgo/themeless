@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Themeless" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Light 主题 + 系统夜间会开 Force Dark，把浅色肤反相；保持可关 -->
+        <item name="android:forceDarkAllowed">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <!-- 避免夜间 windowBackground 透出一片黑；真正颜色仍由 ThemeManager 刷新 -->
         <item name="android:windowBackground">@color/skin_page_bg</item>
         <item name="android:buttonStyle">@style/Widget.Themeless.Button</item>
         <item name="buttonStyle">@style/Widget.Themeless.Button</item>

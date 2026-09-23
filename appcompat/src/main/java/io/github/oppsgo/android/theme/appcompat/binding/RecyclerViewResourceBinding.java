@@ -1,13 +1,10 @@
 package io.github.oppsgo.android.theme.appcompat.binding;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import io.github.oppsgo.android.theme.ResourceBinding;
-import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
 
@@ -35,19 +32,7 @@ public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding<Re
 
     @Override
     public void onChildViewAttachedToWindow(@NonNull View child) {
-        ResourceBinding binding = ThemeManager.get().getResourceBinding(child);
-        if (binding == null || !binding.isEnable()) return;
-        Context context = view.getContext();
-        int modCount = ThemeManager.get().getModCount(context);
-        ResourceResolver resolver = ThemeManager.get().getResolver(context);
-        if (modCount == ThemeManager.MOD_COUNT_NONE) {
-            Context childContext = child.getContext();
-            modCount = ThemeManager.get().getModCount(childContext);
-            resolver = ThemeManager.get().getResolver(childContext);
-        }
-        if (resolver == null) return;
-        if (modCount != ThemeManager.MOD_COUNT_NONE && modCount <= binding.getModCount()) return;
-        binding.apply(resolver);
+        ThemeManager.get().refresh(child);
     }
 
     @Override

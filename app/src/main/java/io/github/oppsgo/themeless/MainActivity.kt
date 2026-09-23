@@ -10,8 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver
+import io.github.oppsgo.themeless.demo.DemoThemeMode
 import io.github.oppsgo.themeless.demo.ThemeAppCompatDemoActivity
 import io.github.oppsgo.themeless.demo.ThemeDemoActivity
+import io.github.oppsgo.themeless.demo.ThemeDemoPage
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +44,7 @@ class MainActivity : AppCompatActivity() {
                 title = getString(R.string.main_entry_theme_title),
                 subtitle = getString(R.string.main_entry_theme_subtitle),
                 onClick = {
+                    ThemeDemoPage.setDemoThemeMode(DemoThemeMode.FOLLOW_SYSTEM)
                     startActivity(Intent(this, ThemeDemoActivity::class.java))
                 },
             ),
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() {
                 title = getString(R.string.main_entry_theme_appcompat_title),
                 subtitle = getString(R.string.main_entry_theme_appcompat_subtitle),
                 onClick = {
+                    ThemeDemoPage.setDemoThemeMode(DemoThemeMode.FOLLOW_SYSTEM)
                     startActivity(Intent(this, ThemeAppCompatDemoActivity::class.java))
                 },
             ),
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setGlobalNightMode(mode: Int) {
+        ThemeDemoPage.setDefaultNightMode(mode)
         if (AppCompatDelegate.getDefaultNightMode() == mode) return
         AppCompatDelegate.setDefaultNightMode(mode)
         // setDefaultNightMode 可能 recreate；若没重建也刷新说明。

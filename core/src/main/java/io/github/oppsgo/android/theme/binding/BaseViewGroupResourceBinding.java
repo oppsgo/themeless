@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
-import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ResourceBinding;
+import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
 
 /**
