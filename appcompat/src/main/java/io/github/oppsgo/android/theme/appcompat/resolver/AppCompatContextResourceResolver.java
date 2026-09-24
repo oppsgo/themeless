@@ -10,6 +10,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import io.github.oppsgo.android.theme.ThemeViewCompat;
 import io.github.oppsgo.android.theme.resolver.ContextResourceResolver;
 
 /**
@@ -18,7 +19,11 @@ import io.github.oppsgo.android.theme.resolver.ContextResourceResolver;
 public class AppCompatContextResourceResolver extends ContextResourceResolver {
 
     public AppCompatContextResourceResolver(@NonNull Context context) {
-        super(context);
+        this(context, new ThemeViewCompatImpl());
+    }
+
+    public AppCompatContextResourceResolver(@NonNull Context context, @NonNull ThemeViewCompat viewCompat) {
+        super(context, viewCompat);
     }
 
     @Nullable

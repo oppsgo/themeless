@@ -1,12 +1,9 @@
 package io.github.oppsgo.android.theme.appcompat.binding;
 
-import android.content.res.ColorStateList;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatTextView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
@@ -15,6 +12,7 @@ import io.github.oppsgo.theme.appcompat.R;
 
 /**
  * Support Library（appcompat-v7）版：读 {@code app:backgroundTint} / {@code app:drawableTint}。
+ * tint 写入由 {@link io.github.oppsgo.android.theme.ResourceResolver#getViewCompat()} 提供。
  */
 public class AppCompatTextViewResourceBinding extends TextViewResourceBinding {
 
@@ -49,10 +47,5 @@ public class AppCompatTextViewResourceBinding extends TextViewResourceBinding {
         if (attr == ATTR_BACKGROUND_TINT_COMPAT) return BaseViewResourceBinding.ATTR_BACKGROUND_TINT;
         if (attr == ATTR_DRAWABLE_TINT_COMPAT) return TextViewResourceBinding.ATTR_DRAWABLE_TINT;
         return super.normalizeAttr(attr);
-    }
-
-    @Override
-    protected void applyBackgroundTint(@Nullable ColorStateList tint) {
-        ViewCompat.setBackgroundTintList(view, tint);
     }
 }

@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -194,7 +193,9 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
         }
     }
 
-    /** 手动指定 background 资源，写入 Binding 供后续 apply 使用。 */
+    /**
+     * 手动指定 background 资源，写入 Binding 供后续 apply 使用。
+     */
     @NonNull
     public BaseViewResourceBinding<VIEW> setBackground(@AnyRes int background) {
         if (background == ID_NULL) {
@@ -307,7 +308,8 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
             return;
         }
         if (attr == ATTR_BACKGROUND_TINT) {
-            applyBackgroundTint(resolveTint(resolver, value));
+            ColorStateList tint = resolveTint(resolver, value);
+            resolver.getViewCompat().setBackgroundTintList(view, tint);
         }
     }
 
@@ -321,11 +323,6 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
             return ((ColorStateListRef) value).resolve(resolver);
         }
         return null;
-    }
-
-    protected void applyBackgroundTint(@Nullable ColorStateList tint) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        view.setBackgroundTintList(tint);
     }
 
     @Nullable

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
+import io.github.oppsgo.android.theme.ThemeViewCompat;
 
 /**
  * 默认实现：直接读构造时传入的 Context。
@@ -23,9 +24,15 @@ import io.github.oppsgo.android.theme.ResourceResolver;
 public class ContextResourceResolver implements ResourceResolver {
 
     private final Context context;
+    private final ThemeViewCompat viewCompat;
 
     public ContextResourceResolver(@NonNull Context context) {
+        this(context, new ThemeViewCompatImpl());
+    }
+
+    public ContextResourceResolver(@NonNull Context context, @NonNull ThemeViewCompat viewCompat) {
         this.context = context;
+        this.viewCompat = viewCompat;
     }
 
     @NonNull
@@ -84,5 +91,11 @@ public class ContextResourceResolver implements ResourceResolver {
     @Override
     public Resources getResources() {
         return context.getResources();
+    }
+
+    @NonNull
+    @Override
+    public ThemeViewCompat getViewCompat() {
+        return viewCompat;
     }
 }

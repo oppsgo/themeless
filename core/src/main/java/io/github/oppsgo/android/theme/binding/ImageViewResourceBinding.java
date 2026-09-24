@@ -3,7 +3,6 @@ package io.github.oppsgo.android.theme.binding;
 import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -103,15 +102,11 @@ public class ImageViewResourceBinding extends BaseViewResourceBinding<ImageView>
             return;
         }
         if (attr == ATTR_TINT) {
-            applyImageTint(resolveTint(resolver, value));
+            ColorStateList tint = resolveTint(resolver, value);
+            resolver.getViewCompat().setImageTintList(view, tint);
             return;
         }
         super.updateAttribute(resolver, attr, value);
-    }
-
-    protected void applyImageTint(@Nullable ColorStateList tint) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        view.setImageTintList(tint);
     }
 
     /**

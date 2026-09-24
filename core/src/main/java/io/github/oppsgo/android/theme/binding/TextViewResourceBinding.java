@@ -3,7 +3,6 @@ package io.github.oppsgo.android.theme.binding;
 import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.TypedValue;
 import android.widget.TextView;
 
@@ -309,7 +308,8 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
             return;
         }
         if (attr == ATTR_DRAWABLE_TINT) {
-            applyCompoundDrawableTint(resolveTint(resolver, value));
+            ColorStateList tint = resolveTint(resolver, value);
+            resolver.getViewCompat().setCompoundDrawableTintList(view, tint);
             return;
         }
         super.updateAttribute(resolver, attr, value);
@@ -326,11 +326,6 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
         if (px != null) {
             view.setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
         }
-    }
-
-    protected void applyCompoundDrawableTint(@Nullable ColorStateList tint) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        view.setCompoundDrawableTintList(tint);
     }
 
     private void applyTextColor(boolean hint, @NonNull ResourceRef<?> value, @NonNull ResourceResolver resolver) {

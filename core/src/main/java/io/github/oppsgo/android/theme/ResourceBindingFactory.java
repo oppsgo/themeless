@@ -42,6 +42,21 @@ public final class ResourceBindingFactory {
         registry.put(viewType, creator);
     }
 
+    /** 是否为该 View 类型登记过 Creator（不含沿继承链向上解析）。 */
+    public boolean isRegistered(@NonNull Class<? extends View> viewType) {
+        return registry.containsKey(viewType);
+    }
+
+    /**
+     * 返回该类型上直接注册的 Creator；未注册则 {@code null}。
+     * 需要沿继承链匹配时用 {@link #resolve(Class)}。
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public <V extends View> Creator<V> getCreator(@NonNull Class<V> viewType) {
+        return (Creator<V>) registry.get(viewType);
+    }
+
     @NonNull
     @SuppressWarnings("unchecked")
     public ResourceBinding create(@NonNull View view) {
@@ -71,7 +86,7 @@ public final class ResourceBindingFactory {
 
     /** 从具体类往父类找。{@link View} 的注册不能摘掉，否则没有匹配时无法兜底。 */
     @NonNull
-    Creator<?> resolve(@NonNull Class<? extends View> viewClass) {
+    public Creator<?> resolve(@NonNull Class<? extends View> viewClass) {
         for (Class<?> current = viewClass; current != null; current = current.getSuperclass()) {
             Creator<?> creator = registry.get(current);
             if (creator != null) {

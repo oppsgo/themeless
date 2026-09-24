@@ -7,6 +7,7 @@ import androidx.annotation.AnyRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import io.github.oppsgo.android.theme.ResourceResolver
+import io.github.oppsgo.android.theme.ThemeViewCompat
 import io.github.oppsgo.themeless.R
 
 /**
@@ -40,6 +41,8 @@ class MappedResourceResolver(
     override fun getDimensionPixelSize(@DimenRes id: Int): Int = delegate.getDimensionPixelSize(id)
 
     override fun getResources(): Resources = delegate.getResources()
+
+    override fun getViewCompat(): ThemeViewCompat = delegate.viewCompat
 
     companion object {
         /** 晴空蓝：把常规 skin 色映射到 _blue 变体。 */

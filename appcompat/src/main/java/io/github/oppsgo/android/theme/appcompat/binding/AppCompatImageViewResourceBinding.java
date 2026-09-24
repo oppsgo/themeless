@@ -1,13 +1,9 @@
 package io.github.oppsgo.android.theme.appcompat.binding;
 
-import android.content.res.ColorStateList;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.AppCompatImageView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
@@ -16,6 +12,7 @@ import io.github.oppsgo.theme.appcompat.R;
 
 /**
  * Support Library（appcompat-v7）版：读 {@code app:srcCompat} / {@code app:tint} / {@code app:backgroundTint}。
+ * tint 写入由 {@link io.github.oppsgo.android.theme.ResourceResolver#getViewCompat()} 提供。
  */
 public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding {
 
@@ -51,15 +48,5 @@ public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding 
         if (attr == ATTR_TINT_COMPAT) return ImageViewResourceBinding.ATTR_TINT;
         if (attr == ATTR_BACKGROUND_TINT_COMPAT) return BaseViewResourceBinding.ATTR_BACKGROUND_TINT;
         return super.normalizeAttr(attr);
-    }
-
-    @Override
-    protected void applyBackgroundTint(@Nullable ColorStateList tint) {
-        ViewCompat.setBackgroundTintList(view, tint);
-    }
-
-    @Override
-    protected void applyImageTint(@Nullable ColorStateList tint) {
-        ImageViewCompat.setImageTintList(view, tint);
     }
 }

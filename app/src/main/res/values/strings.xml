@@ -7,9 +7,9 @@
     <string name="main_night_follow">跟随系统</string>
     <string name="main_night_light">强制亮色</string>
     <string name="main_night_dark">强制暗色</string>
-    <string name="main_night_hint_follow">当前：跟随系统。Demo 进页 apply(followSystem) 读 Application uiMode，与系统一致。</string>
-    <string name="main_night_hint_light">当前：强制亮色。AppCompat Demo 的 Activity chrome 偏亮；进页 followSystem 仍读 Application（系统暗则 skin_* 仍暗）。点「亮色」可强制亮色皮肤。FragmentActivity Demo 不受 DefaultNightMode 影响。</string>
-    <string name="main_night_hint_dark">当前：强制暗色。AppCompat Activity chrome 偏暗；进页 followSystem 仍读 Application。点「暗色」可强制暗色皮肤。</string>
+    <string name="main_night_hint_follow">当前：跟随系统。Demo 进页「跟随」按系统 Application uiMode 选 skin_*。</string>
+    <string name="main_night_hint_light">当前：强制亮色。AppCompat Demo 的 chrome 偏亮；进页「跟随」会按强制亮色选 skin_*（不再只看系统）。</string>
+    <string name="main_night_hint_dark">当前：强制暗色。AppCompat Demo 的 chrome 偏暗；进页「跟随」会按强制暗色选 skin_*。普通 FragmentActivity Demo 不 recreate 宿主 uiMode，只靠隔离 Resolver 上色。</string>
     <string name="main_demo_section">进入 Demo</string>
     <string name="main_entry_theme_title">主题（FragmentActivity）</string>
     <string name="main_entry_theme_subtitle">不传 Factory2，走默认的系统 View 创建</string>

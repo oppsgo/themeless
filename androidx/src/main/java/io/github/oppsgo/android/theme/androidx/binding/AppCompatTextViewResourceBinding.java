@@ -1,13 +1,8 @@
 package io.github.oppsgo.android.theme.androidx.binding;
 
-import android.content.res.ColorStateList;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.view.ViewCompat;
-import androidx.core.widget.TextViewCompat;
 
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
@@ -17,6 +12,7 @@ import io.github.oppsgo.theme.androidx.R;
 /**
  * 读 {@code app:backgroundTint} / {@code app:drawableTint}，
  * 收成 {@link TextViewResourceBinding} 的平台 attr。
+ * tint 写入由 {@link io.github.oppsgo.android.theme.ResourceResolver#getViewCompat()} 提供。
  */
 public class AppCompatTextViewResourceBinding extends TextViewResourceBinding {
 
@@ -57,15 +53,5 @@ public class AppCompatTextViewResourceBinding extends TextViewResourceBinding {
         if (attr == ATTR_BACKGROUND_TINT_COMPAT) return BaseViewResourceBinding.ATTR_BACKGROUND_TINT;
         if (attr == ATTR_DRAWABLE_TINT_COMPAT) return TextViewResourceBinding.ATTR_DRAWABLE_TINT;
         return super.normalizeAttr(attr);
-    }
-
-    @Override
-    protected void applyBackgroundTint(@Nullable ColorStateList tint) {
-        ViewCompat.setBackgroundTintList(view, tint);
-    }
-
-    @Override
-    protected void applyCompoundDrawableTint(@Nullable ColorStateList tint) {
-        TextViewCompat.setCompoundDrawableTintList(view, tint);
     }
 }

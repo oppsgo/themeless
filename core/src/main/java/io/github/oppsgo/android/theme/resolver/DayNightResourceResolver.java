@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 
 import androidx.annotation.NonNull;
 
+import io.github.oppsgo.android.theme.ThemeViewCompat;
+
 /**
  * 在 {@link ContextResourceResolver} 上只多做一件事：按亮 / 暗 / 跟随系统造一套 Configuration。
  * <p>
@@ -35,7 +37,15 @@ public class DayNightResourceResolver extends ContextResourceResolver {
 
     @NonNull
     public static DayNightResourceResolver of(@NonNull Context context, boolean night) {
-        return new DayNightResourceResolver(wrapContext(context, nightConfig(context, night)));
+        return new DayNightResourceResolver(isolated(context, night));
+    }
+
+    /**
+     * 按亮/暗造隔离 Context（Application + uiMode），供平台 / AppCompat Resolver 共用。
+     */
+    @NonNull
+    public static Context isolated(@NonNull Context context, boolean night) {
+        return wrapContext(context, nightConfig(context, night));
     }
 
     /**
@@ -70,7 +80,11 @@ public class DayNightResourceResolver extends ContextResourceResolver {
         return context.getApplicationContext().createConfigurationContext(config);
     }
 
-    protected DayNightResourceResolver(@NonNull Context context) {
+    public DayNightResourceResolver(@NonNull Context context) {
         super(context);
+    }
+
+    public DayNightResourceResolver(@NonNull Context context, @NonNull ThemeViewCompat viewCompat) {
+        super(context, viewCompat);
     }
 }

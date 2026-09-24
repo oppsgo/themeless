@@ -14,8 +14,14 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * 清掉 Resources 里缓存的 Drawable。换主题后旧图可能还留在缓存里。
- * Android 9 起系统自己处理缓存，这里不再做任何事。
+ * 清掉 {@link Resources} 里缓存的 Drawable（反射，对齐 AppCompat 同名工具）。
+ * <p>
+ * AppCompat 只在对<strong>同一份</strong>宿主 Resources 调用 {@code updateConfiguration}
+ * 切换日夜之后、且 API &lt; 26 时 flush，用来修框架缓存未失效的 bug；API 28+ 本类直接 no-op。
+ * <p>
+ * Themeless 日夜默认走 {@code createConfigurationContext}，每次是新的 Resources，
+ * <strong>不会</strong>在 {@link ThemeManager#apply} 里自动 flush。若某处自己改了
+ * Configuration / 复用同一 Resources 实例再换肤，再对该实例显式调用 {@link #flush}。
  */
 @SuppressLint("PrivateApi")
 public class ResourcesFlusher {

@@ -12,7 +12,7 @@ import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
  * RecyclerView 复用时，离屏缓存的条目不会出现在当前子 View 里。
  * 重新贴上窗口时整棵子树补刷。
  * <p>
- * 可选能力：接入方有 RecyclerView 时再调用 {@link #register()}。
+ * 接入方有 RecyclerView 时，在 inflate 前调用 {@link #register()}。
  */
 public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding<RecyclerView>
         implements RecyclerView.OnChildAttachStateChangeListener {

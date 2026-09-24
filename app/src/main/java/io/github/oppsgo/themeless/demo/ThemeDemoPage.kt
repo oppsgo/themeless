@@ -44,7 +44,7 @@ private const val DEMO_TAG = "ThemelessDemo"
  */
 object ThemeDemoPage {
     init {
-        // 必须在 setContentView 之前注册，否则 inflate 时 RecyclerView 只会挂上 ViewGroupBinding
+        // inflate 前显式注册；否则 RecyclerView 只会挂上默认 ViewGroupBinding
         RecyclerViewResourceBinding.register()
         AppCompatImageViewResourceBinding.register()
         AppCompatTextViewResourceBinding.register()
@@ -82,6 +82,16 @@ object ThemeDemoPage {
         DemoThemeMode.LIGHT, DemoThemeMode.CUSTOM, DemoThemeMode.DARK ->
             AppCompatDelegate.MODE_NIGHT_YES
         DemoThemeMode.FOLLOW_SYSTEM -> dayNightMode
+    }
+
+    /**
+     * 「跟随」语义下当前该用暗色皮肤吗。
+     * 首页 [dayNightMode] 优先；只有 FOLLOW_SYSTEM 才读真正的系统 Application uiMode。
+     */
+    fun resolveFollowNight(context: android.content.Context): Boolean = when (dayNightMode) {
+        AppCompatDelegate.MODE_NIGHT_YES -> true
+        AppCompatDelegate.MODE_NIGHT_NO -> false
+        else -> DayNightResourceResolver.isSystemNight(context)
     }
 }
 
@@ -188,17 +198,20 @@ internal fun Activity.applyThemeNight(dark: Boolean) {
 internal fun Activity.applyThemeResources() {
     ThemeDemoPage.setDemoThemeMode(DemoThemeMode.FOLLOW_SYSTEM)
     if (syncActivityNightMode(dark = null)) return
+    // 跟随首页 DefaultNightMode，而不是只读系统 Application（否则「强制暗色」皮肤不生效）
+    val night = ThemeDemoPage.resolveFollowNight(this)
     val resolver = if (this is AppCompatActivity) {
-        AppCompatDayNightResourceResolver.followSystem(this)
+        AppCompatDayNightResourceResolver.of(this, night)
     } else {
-        DayNightResourceResolver.followSystem(this)
+        DayNightResourceResolver.of(this, night)
     }
     val page = resolver.getColor(R.color.skin_page_bg)
     val panel = resolver.getColor(R.color.skin_panel_bg)
     val card = resolver.getColor(R.color.skin_card_bg)
     Log.i(
         DEMO_TAG,
-        "apply follow page=0x${page.hex()} panel=0x${panel.hex()} card=0x${card.hex()} " +
+        "apply follow night=$night page=0x${page.hex()} panel=0x${panel.hex()} card=0x${card.hex()} " +
+            "dayNightMode=${ThemeDemoPage.getDefaultNightMode()} " +
             "systemNight=${DayNightResourceResolver.isSystemNight(this)} actNight=${isActivityNight()}",
     )
     ThemeManager.get().apply(this, resolver)
@@ -206,41 +219,30 @@ internal fun Activity.applyThemeResources() {
 }
 
 /**
- * @return true 表示正在 recreate，调用方应立刻 return，等新实例 restoreDemoTheme。
+ * @return true 表示正在切 localNightMode / recreate，调用方应立刻 return，等新实例 restoreDemoTheme。
  *
- * 手动亮/暗/自定义：若当前是 Light 宿主（MODE_NIGHT_NO）则切到 YES 躲开 Force Dark；
- * 已是 FOLLOW/YES 时不要强改，否则可能不 recreate 却跳过 apply。
+ * 仅 AppCompatActivity 需要同步宿主日夜（躲开 Force Dark、对齐首页 DefaultNightMode）。
+ * FragmentActivity 肤色全靠隔离 [DayNightResourceResolver]；旧逻辑在 uiMode 不一致时
+ * 只 [Activity.recreate] 却不改配置，会无限闪屏。
  */
 private fun Activity.syncActivityNightMode(dark: Boolean?): Boolean {
-    if (this is AppCompatActivity) {
-        if (dark == null) {
-            val mode = ThemeDemoPage.getDefaultNightMode()
-            if (delegate.localNightMode != mode) {
-                delegate.localNightMode = mode
-                return true
-            }
-            return false
+    if (this !is AppCompatActivity) return false
+
+    if (dark == null) {
+        val mode = ThemeDemoPage.getDefaultNightMode()
+        if (delegate.localNightMode != mode) {
+            delegate.localNightMode = mode
+            return true
         }
-        val mode = delegate.localNightMode
-        if (mode == AppCompatDelegate.MODE_NIGHT_YES || mode != AppCompatDelegate.MODE_NIGHT_NO) {
-            return false
-        }
-        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-        return true
+        return false
     }
-    val wantNight = dark != null || DayNightResourceResolver.isSystemNight(this)
-    val mask = android.content.res.Configuration.UI_MODE_NIGHT_MASK
-    val cur = resources.configuration.uiMode and mask
-    val target = if (wantNight) {
-        android.content.res.Configuration.UI_MODE_NIGHT_YES
-    } else {
-        android.content.res.Configuration.UI_MODE_NIGHT_NO
+    // 手动亮/暗/自定义：若当前是 Light 宿主则切到 YES 躲开 Force Dark
+    val mode = delegate.localNightMode
+    if (mode == AppCompatDelegate.MODE_NIGHT_YES || mode != AppCompatDelegate.MODE_NIGHT_NO) {
+        return false
     }
-    if (cur != target) {
-        recreate()
-        return true
-    }
-    return false
+    delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+    return true
 }
 
 private fun Activity.isActivityNight(): Boolean {
