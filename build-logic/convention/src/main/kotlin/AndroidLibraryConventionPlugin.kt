@@ -41,8 +41,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
 
             // JDK 17+ javac warns that -source/-target 8 are obsolete; keep Java 8 bytecode.
+            // -parameters：写入 MethodParameters，发布 AAR 后 IDE 能显示真实形参名。
             tasks.withType<JavaCompile>().configureEach {
                 options.compilerArgs.add("-Xlint:-options")
+                options.compilerArgs.add("-parameters")
             }
 
             // JitPack：publishToMavenLocal 需要 publication。group/version 继承根工程。

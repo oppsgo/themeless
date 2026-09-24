@@ -2,7 +2,9 @@ package io.github.oppsgo.android.theme;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,7 +12,9 @@ import androidx.annotation.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding;
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding;
+import io.github.oppsgo.android.theme.binding.SwitchResourceBinding;
 import io.github.oppsgo.android.theme.binding.TextViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
@@ -36,6 +40,8 @@ public final class ResourceBindingFactory {
         register(ViewGroup.class, ViewGroupResourceBinding::new);
         register(TextView.class, TextViewResourceBinding::new);
         register(ImageView.class, ImageViewResourceBinding::new);
+        register(CompoundButton.class, CompoundButtonResourceBinding::new);
+        register(Switch.class, SwitchResourceBinding::new);
     }
 
     public <V extends View> void register(@NonNull Class<V> viewType, @NonNull Creator<V> creator) {

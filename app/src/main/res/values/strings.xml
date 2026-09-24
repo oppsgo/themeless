@@ -37,4 +37,12 @@
     <string name="theme_demo_list_hint">右侧列表 · 点条目可追加 · 复用项跟肤</string>
     <string name="theme_demo_list_title_format">项 %1$d</string>
     <string name="theme_demo_list_subtitle">主色 / 次要色 / 卡片底会跟肤</string>
+    <string name="theme_demo_compound_hint">AppCompat CompoundButton / SwitchCompat · buttonTint / thumbTint 跟肤</string>
+    <string name="theme_demo_checkbox">CheckBox</string>
+    <string name="theme_demo_radio_a">Radio A</string>
+    <string name="theme_demo_radio_b">Radio B</string>
+    <string name="theme_demo_toggle">ToggleButton</string>
+    <string name="theme_demo_toggle_on">开</string>
+    <string name="theme_demo_toggle_off">关</string>
+    <string name="theme_demo_switch">SwitchCompat</string>
 </resources>

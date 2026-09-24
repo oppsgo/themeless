@@ -28,6 +28,7 @@ class MappedResourceResolver(
         delegate.getColorStateList(mapColor(id))
 
     override fun getDrawable(@AnyRes id: Int): Drawable? {
+        // colorMap 也可挂 drawable id（嵌套 @color 的 selector / vector 需整份替换）
         val mapped = colorMap[id]
         return if (mapped != null) {
             delegate.getDrawable(mapped)
@@ -45,7 +46,7 @@ class MappedResourceResolver(
     override fun getViewCompat(): ThemeViewCompat = delegate.viewCompat
 
     companion object {
-        /** 晴空蓝：把常规 skin 色映射到 _blue 变体。 */
+        /** 晴空蓝：把常规 skin 色 / 嵌套色资源映射到 _blue 变体。 */
         fun skyBlue(delegate: ResourceResolver): MappedResourceResolver {
             return MappedResourceResolver(
                 delegate,
@@ -59,6 +60,10 @@ class MappedResourceResolver(
                     R.color.skin_divider to R.color.skin_divider_blue,
                     R.color.skin_button_bg to R.color.skin_button_bg_blue,
                     R.color.skin_button_text to R.color.skin_button_text_blue,
+                    // 内部写死 @color/skin_* 的资源：只映射顶层 id，嵌套色不会自动跟着变
+                    R.color.theme_demo_toggle_text to R.color.theme_demo_toggle_text_blue,
+                    R.drawable.theme_demo_toggle_bg to R.drawable.theme_demo_toggle_bg_blue,
+                    R.drawable.mail_star_fill to R.drawable.mail_star_fill_blue,
                 ),
             )
         }

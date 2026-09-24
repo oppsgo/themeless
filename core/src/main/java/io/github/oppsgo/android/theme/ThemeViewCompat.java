@@ -2,7 +2,9 @@ package io.github.oppsgo.android.theme;
 
 import android.content.res.ColorStateList;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,4 +21,10 @@ public interface ThemeViewCompat {
     void setImageTintList(@NonNull ImageView view, @Nullable ColorStateList tint);
 
     void setCompoundDrawableTintList(@NonNull TextView view, @Nullable ColorStateList tint);
+
+    void setButtonTintList(@NonNull CompoundButton button, @Nullable ColorStateList tint);
+
+    void setThumbTintList(@NonNull Switch switchView, @Nullable ColorStateList tint);
+
+    void setTrackTintList(@NonNull Switch switchView, @Nullable ColorStateList tint);
 }

@@ -24,9 +24,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.oppsgo.android.theme.ThemeManager
+import io.github.oppsgo.android.theme.androidx.binding.AppCompatCompoundButtonResourceBinding
 import io.github.oppsgo.android.theme.androidx.binding.AppCompatImageViewResourceBinding
 import io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewResourceBinding
 import io.github.oppsgo.android.theme.androidx.binding.RecyclerViewResourceBinding
+import io.github.oppsgo.android.theme.androidx.binding.SwitchCompatResourceBinding
 import io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver
 import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding
@@ -48,6 +50,8 @@ object ThemeDemoPage {
         RecyclerViewResourceBinding.register()
         AppCompatImageViewResourceBinding.register()
         AppCompatTextViewResourceBinding.register()
+        AppCompatCompoundButtonResourceBinding.register()
+        SwitchCompatResourceBinding.register()
     }
 
     /** 首页「全局日夜」；进 AppCompat Demo 时作为 FOLLOW 的 localNightMode。 */
@@ -391,10 +395,16 @@ private fun Activity.bindManualText() {
             true,
         )
         window.isOutsideTouchable = true
+        window.elevation = 8f * resources.displayMetrics.density
         window.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         popup = window
         window.setOnDismissListener { if (popup === window) popup = null }
-        window.showAsDropDown(popupAnchor, 0, 0, Gravity.START)
+        // 锚点已偏下时 DropDown 容易落到屏外；固定贴在标题栏下方居中
+        val titleBar = findViewById<View>(R.id.themeTitleBar)
+        val loc = IntArray(2)
+        titleBar.getLocationInWindow(loc)
+        val y = loc[1] + titleBar.height
+        window.showAtLocation(titleBar, Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, y)
     }
 }
 

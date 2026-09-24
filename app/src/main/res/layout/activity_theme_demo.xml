@@ -178,6 +178,73 @@
                     android:textColor="@color/skin_text_secondary"
                     android:textSize="14sp" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/theme_demo_compound_hint"
+                    android:textColor="@color/skin_text_secondary"
+                    android:textSize="12sp" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/themeCheckBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:checked="true"
+                    android:text="@string/theme_demo_checkbox"
+                    android:textColor="@color/skin_text_primary"
+                    app:buttonTint="@color/skin_accent" />
+
+                <RadioGroup
+                    android:id="@+id/themeRadioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/themeRadioA"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/theme_demo_radio_a"
+                        android:textColor="@color/skin_text_primary"
+                        app:buttonTint="@color/skin_accent" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/themeRadioB"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/theme_demo_radio_b"
+                        android:textColor="@color/skin_text_primary"
+                        app:buttonTint="@color/skin_accent" />
+                </RadioGroup>
+
+                <androidx.appcompat.widget.AppCompatToggleButton
+                    android:id="@+id/themeToggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/theme_demo_toggle_bg"
+                    android:backgroundTint="@null"
+                    android:checked="true"
+                    android:textOff="@string/theme_demo_toggle_off"
+                    android:textOn="@string/theme_demo_toggle_on"
+                    android:textColor="@color/theme_demo_toggle_text"
+                    app:backgroundTint="@null" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/themeSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:checked="true"
+                    android:text="@string/theme_demo_switch"
+                    android:textColor="@color/skin_text_primary"
+                    app:thumbTint="@color/skin_accent"
+                    app:trackTint="@color/skin_divider" />
+
                 <Button
                     android:id="@+id/btnThemeDynamic"
                     style="@style/Widget.Themeless.Button"
