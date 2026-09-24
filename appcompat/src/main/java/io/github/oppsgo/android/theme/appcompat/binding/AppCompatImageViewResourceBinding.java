@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding;
-import io.github.oppsgo.theme.appcompat.R;
+import android.support.v7.appcompat.R;
 
 /**
  * Support Library（appcompat-v7）版：读 {@code app:srcCompat} / {@code app:tint} / {@code app:backgroundTint}。

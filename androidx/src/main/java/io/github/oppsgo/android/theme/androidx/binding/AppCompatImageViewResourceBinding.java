@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding;
-import io.github.oppsgo.theme.androidx.R;
+import androidx.appcompat.R;
 
 /**
  * 读 {@code app:srcCompat} / {@code app:tint} / {@code app:backgroundTint}，
