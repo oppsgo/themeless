@@ -32,7 +32,7 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     public static final int ATTR_TRACK_TINT_COMPAT = R.attr.trackTint;
 
     public static void register() {
-        ThemeManager.get().bindings().register(SwitchCompat.class, SwitchCompatResourceBinding::new);
+        ThemeManager.get().registry().register(SwitchCompat.class, SwitchCompatResourceBinding::new);
     }
 
     public SwitchCompatResourceBinding(@NonNull SwitchCompat view) {

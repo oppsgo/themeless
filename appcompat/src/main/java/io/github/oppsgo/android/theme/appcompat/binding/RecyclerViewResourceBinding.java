@@ -16,7 +16,7 @@ public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding<Re
         implements RecyclerView.OnChildAttachStateChangeListener {
 
     public static void register() {
-        ThemeManager.get().bindings().register(RecyclerView.class, RecyclerViewResourceBinding::new);
+        ThemeManager.get().registry().register(RecyclerView.class, RecyclerViewResourceBinding::new);
     }
 
     public RecyclerViewResourceBinding(@NonNull RecyclerView view) {

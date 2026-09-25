@@ -24,15 +24,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.oppsgo.android.theme.ThemeManager
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatCompoundButtonResourceBinding
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatImageViewResourceBinding
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewResourceBinding
-import io.github.oppsgo.android.theme.androidx.binding.RecyclerViewResourceBinding
-import io.github.oppsgo.android.theme.androidx.binding.SwitchCompatResourceBinding
+import io.github.oppsgo.android.theme.androidx.ktx.registerAppCompatThemeBindings
 import io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver
 import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding
 import io.github.oppsgo.android.theme.binding.TextViewResourceBinding
+import io.github.oppsgo.android.theme.binding.ViewResourceBinding
 import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver
 import io.github.oppsgo.android.theme.resource.DrawableRef
 import io.github.oppsgo.themeless.R
@@ -47,11 +44,7 @@ private const val DEMO_TAG = "ThemelessDemo"
 object ThemeDemoPage {
     init {
         // inflate 前显式注册；否则 RecyclerView 只会挂上默认 ViewGroupBinding
-        RecyclerViewResourceBinding.register()
-        AppCompatImageViewResourceBinding.register()
-        AppCompatTextViewResourceBinding.register()
-        AppCompatCompoundButtonResourceBinding.register()
-        SwitchCompatResourceBinding.register()
+        registerAppCompatThemeBindings()
     }
 
     /** 首页「全局日夜」；进 AppCompat Demo 时作为 FOLLOW 的 localNightMode。 */
@@ -128,8 +121,8 @@ internal fun Activity.showThemeDemo(@StringRes subtitle: Int) {
 private fun Activity.ensureDemoBackgroundBindings() {
     fun bindBg(id: Int, color: Int) {
         val v = findViewById<View>(id) ?: return
-        val binding = ThemeManager.get().obtainBinding(v)
-        if (binding is BaseViewResourceBinding<*>) {
+        val binding = ThemeManager.get().obtain(v)
+        if (binding is ViewResourceBinding) {
             binding.setBackground(color)
         }
     }
@@ -341,7 +334,7 @@ private fun Int.hex(): String = Integer.toHexString(this)
 
 private fun Activity.bindSizedIcon() {
     val icon = findViewById<ImageView>(R.id.themeSizedIcon)
-    val binding = ThemeManager.get().obtainBinding(icon) as ImageViewResourceBinding
+    val binding = ThemeManager.get().obtain(icon) as ImageViewResourceBinding
     val size = (72 * resources.displayMetrics.density).toInt()
     binding.setImage(
         DrawableRef.of(R.drawable.mail_star_fill) { resolver, resourceId ->

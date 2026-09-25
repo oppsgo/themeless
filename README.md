@@ -39,8 +39,12 @@ VERSION_NAME=0.1.1-SNAPSHOT
 maven { url = uri("https://jitpack.io") }
 
 implementation("com.github.oppsgo.themeless:core:0.1.1")
+implementation("com.github.oppsgo.themeless:core-ktx:0.1.1") // Kotlin 扩展，可选
 implementation("com.github.oppsgo.themeless:androidx:0.1.1")
-// 或 Support：com.github.oppsgo.themeless:appcompat:0.1.1
+implementation("com.github.oppsgo.themeless:androidx-ktx:0.1.1") // AndroidX Kotlin 扩展，可选
+// 或 Support：
+// implementation("com.github.oppsgo.themeless:appcompat:0.1.1")
+// implementation("com.github.oppsgo.themeless:appcompat-ktx:0.1.1")
 ```
 
 开发期未打 tag 时用分支快照，例如 `main-SNAPSHOT`，**不要**指望别人写 `0.1.1-SNAPSHOT` 就能从 JitPack 拉到（除非你真的打了叫 `0.1.1-SNAPSHOT` 的 tag）。
@@ -52,13 +56,17 @@ implementation("com.github.oppsgo.themeless:androidx:0.1.1")
 | 模块 | 说明 |
 |------|------|
 | `:core` | 核心：`ThemeManager`、`ResourceBinding`、日夜与 Context 系 `ResourceResolver` |
+| `:core-ktx` | `:core` 的 Kotlin 扩展（`installTheme` / `edit` / `theme` 等）；需同时依赖 `:core` |
 | `:androidx` | AndroidX AppCompat / RecyclerView 扩展绑定与 Resolver |
+| `:androidx-ktx` | `:androidx` 的 Kotlin 扩展；需同时依赖 `:androidx`、`:core`、`:core-ktx` |
 | `:appcompat` | 旧版 Support Library（`appcompat-v7` / `recyclerview-v7`）扩展 |
-| `:app` | Demo（依赖 `:core` + `:androidx`） |
+| `:appcompat-ktx` | `:appcompat` 的 Kotlin 扩展；需同时依赖 `:appcompat`、`:core`、`:core-ktx` |
+| `:app` | Demo |
 
-- 已迁 AndroidX → 依赖 `:core` + `:androidx`
-- 仍用 Support Library → 依赖 `:core` + `:appcompat`
-- **不要**在同一个 APK 里同时引入 `:androidx` 与 `:appcompat`
+- 已迁 AndroidX → 依赖 `:core` + `:androidx`（可选再加对应 ktx）
+- 仍用 Support Library → 依赖 `:core` + `:appcompat`（可选再加对应 ktx）
+- ktx 模块对底层库使用 `implementation`，**不会**把 `core` / `androidx` / `appcompat` 暴露给消费者，请显式声明
+- **不要**在同一个 APK 里同时引入 `:androidx` 与 `:appcompat`（及其 ktx）
 
 ## 快速接入
 
@@ -68,6 +76,9 @@ implementation("com.github.oppsgo.themeless:androidx:0.1.1")
 dependencies {
     implementation(project(":core"))
     implementation(project(":androidx")) // 或 :appcompat
+    // 可选 Kotlin 扩展：
+    // implementation(project(":core-ktx"))
+    // implementation(project(":androidx-ktx")) // 或 :appcompat-ktx
 }
 ```
 
@@ -146,15 +157,50 @@ Demo 的亮色 / 晴空蓝已按上述方式处理（见 `ThemeDemoPage.syncActi
 | `ThemeManager.apply` | 换 Resolver、递增代数、刷新内容树与已登记浮层 |
 | `ThemeManager.setRefreshOnInflate` | 换肤后新 inflate 的 View 立刻刷一遍（Dialog / Popup 常用） |
 | `ThemeManager.refresh` | 仅刷新，不换 Resolver |
+| `ThemeManager.registry` | Binding 注册表（register / create） |
+| `ThemeManager.edit` | 取 Binding：已挂载则复用，否则临时（不挂 tag） |
+| `ThemeManager.obtain` | 取或创建并挂到 View tag（inflate 同源） |
+| `ThemeManager.find` | 只查已挂载 Binding，可 null |
 | `TextViewResourceBinding.setTrackTextSize` | 全局：inflate 是否自动跟肤 `android:textSize`（默认关；须在 inflate 前设置） |
-| `TextViewResourceBinding.of(view).setTextColor(…)` | 手动绑定后 `.refresh()` |
+| `TextViewResourceBinding.of(view).setTextColor(…)` | 手动绑定后可立刻写 View / 随 apply 刷新 |
+
+### core-ktx（与 Manager 动词对齐）
+
+```kotlin
+import io.github.oppsgo.android.theme.ktx.*
+
+installTheme()                 // Activity
+applyTheme(dayNightNight())
+refreshTheme()
+
+registry { register(MyView::class.java, ::MyBinding) }
+
+textView.edit().setTextColor(R.color.skin_text_primary)  // = ThemeManager.edit / of()
+view.obtain()                                            // = ThemeManager.obtain
+view.findBinding()                                       // = ThemeManager.find
+
+textView.theme { setTextColor(R.color.skin_text_primary) }  // 块 DSL；勿做成 edit { }
+```
+
+AndroidX（`:androidx-ktx`）：
+
+```kotlin
+import io.github.oppsgo.android.theme.androidx.ktx.*
+
+registerAppCompatThemeBindings()   // inflate 前
+applyAppCompatDayNight(dark = true)
+appCompatTextView.edit().setTextColor(R.color.skin_text_primary)
+switchCompat.theme { setThumbTint(R.color.skin_accent) }
+```
+
+Support Library（`:appcompat-ktx`，包名 `io.github.oppsgo.android.theme.appcompat.ktx`）API 同构；无 `AppCompatToggleButton`。
 
 手动 `setTextSize(dimen)` 不受 `setTrackTextSize` 影响。
 
 ## 自定义 Binding
 
 1. 继承对应 `*ResourceBinding`，在 `getViewStyleable()` 里声明要跟踪的 attr  
-2. `ThemeManager.get().bindings().register(YourView.class, YourBinding::new)`  
+2. `ThemeManager.get().registry().register(YourView.class, YourBinding::new)`  
 3. 完全自写、不继承库内 Binding 时，属性列表与开关需自行实现（例如字号不会自动吃到 `setTrackTextSize`）
 
 ## Demo

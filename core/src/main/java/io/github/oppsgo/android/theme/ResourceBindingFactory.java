@@ -1,5 +1,7 @@
 package io.github.oppsgo.android.theme;
 
+import static io.github.oppsgo.android.theme.ResourceBinding.TAG_BINDING;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -18,19 +20,16 @@ import io.github.oppsgo.android.theme.binding.SwitchResourceBinding;
 import io.github.oppsgo.android.theme.binding.TextViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
-import io.github.oppsgo.theme.core.R;
 
 /**
  * 沿 View 继承链查找并创建最具体的已注册 Binding。
- * Binding 存在 View 的 {@link #TAG_BINDING} 上，同一个 View 只创建一次。
+ * Binding 存在 View 的 {@link ResourceBinding#TAG_BINDING} 上，同一个 View 只创建一次。
  */
 public final class ResourceBindingFactory {
 
-    public static final int TAG_BINDING = R.id.theme_attribute_binding_tag;
-
     public interface Creator<VIEW extends View> {
         @NonNull
-        ResourceBinding create(@NonNull VIEW view);
+        ResourceBinding<?> create(@NonNull VIEW view);
     }
 
     private final ConcurrentHashMap<Class<?>, Creator<?>> registry = new ConcurrentHashMap<>();
@@ -65,27 +64,27 @@ public final class ResourceBindingFactory {
 
     @NonNull
     @SuppressWarnings("unchecked")
-    public ResourceBinding create(@NonNull View view) {
+    public ResourceBinding<?> create(@NonNull View view) {
         Creator<View> creator = (Creator<View>) resolve(view.getClass());
         return creator.create(view);
     }
 
     @Nullable
-    public ResourceBinding maybe(@Nullable View view) {
+    public ResourceBinding<?> find(@Nullable View view) {
         Object tag = view == null ? null : view.getTag(TAG_BINDING);
         if (tag instanceof ResourceBinding) {
-            return (ResourceBinding) tag;
+            return (ResourceBinding<?>) tag;
         }
         return null;
     }
 
     @NonNull
-    public ResourceBinding obtain(@NonNull View view) {
-        ResourceBinding existing = maybe(view);
+    public ResourceBinding<?> obtain(@NonNull View view) {
+        ResourceBinding<?> existing = find(view);
         if (existing != null) {
             return existing;
         }
-        ResourceBinding binding = create(view);
+        ResourceBinding<?> binding = create(view);
         view.setTag(TAG_BINDING, binding);
         return binding;
     }

@@ -5,7 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import io.github.oppsgo.android.theme.ThemeManager
+import io.github.oppsgo.android.theme.ktx.installTheme
 import io.github.oppsgo.themeless.R
 
 /**
@@ -24,7 +24,7 @@ class ThemeAppCompatDemoActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeManager.get().install(this, delegate as? LayoutInflater.Factory2)
+        installTheme(delegate as? LayoutInflater.Factory2)
         super.onCreate(savedInstanceState)
         showThemeDemo(R.string.theme_demo_appcompat_subtitle)
     }

@@ -50,8 +50,11 @@ rootProject.name = "Themeless"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
 include(":core")
+include(":core-ktx")
 include(":androidx")
+include(":androidx-ktx")
 include(":appcompat")
+include(":appcompat-ktx")
 
 println(
     """

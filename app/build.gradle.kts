@@ -15,7 +15,9 @@ android {
 
 dependencies {
     implementation(projects.core)
+    implementation(projects.coreKtx)
     implementation(projects.androidx)
+    implementation(projects.androidxKtx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.constraintlayout)

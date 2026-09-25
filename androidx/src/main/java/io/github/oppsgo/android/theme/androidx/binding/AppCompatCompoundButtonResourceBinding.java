@@ -26,11 +26,11 @@ public class AppCompatCompoundButtonResourceBinding extends CompoundButtonResour
     public static final int ATTR_DRAWABLE_TINT_COMPAT = R.attr.drawableTint;
 
     public static void register() {
-        ThemeManager.get().bindings().register(
+        ThemeManager.get().registry().register(
                 AppCompatCheckBox.class, AppCompatCompoundButtonResourceBinding::new);
-        ThemeManager.get().bindings().register(
+        ThemeManager.get().registry().register(
                 AppCompatRadioButton.class, AppCompatCompoundButtonResourceBinding::new);
-        ThemeManager.get().bindings().register(
+        ThemeManager.get().registry().register(
                 AppCompatToggleButton.class, AppCompatCompoundButtonResourceBinding::new);
     }
 

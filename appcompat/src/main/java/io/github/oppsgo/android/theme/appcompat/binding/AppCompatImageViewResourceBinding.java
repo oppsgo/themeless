@@ -21,7 +21,7 @@ public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding 
     public static final int ATTR_BACKGROUND_TINT_COMPAT = R.attr.backgroundTint;
 
     public static void register() {
-        ThemeManager.get().bindings().register(AppCompatImageView.class, AppCompatImageViewResourceBinding::new);
+        ThemeManager.get().registry().register(AppCompatImageView.class, AppCompatImageViewResourceBinding::new);
     }
 
     public AppCompatImageViewResourceBinding(@NonNull AppCompatImageView view) {

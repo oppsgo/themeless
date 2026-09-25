@@ -29,7 +29,7 @@ public class ThemeManager {
 
     private static final ThemeManager INSTANCE = new ThemeManager();
 
-    private final ResourceBindingFactory bindings = new ResourceBindingFactory();
+    private final ResourceBindingFactory registry = new ResourceBindingFactory();
 
     protected ThemeManager() {
     }
@@ -169,7 +169,7 @@ public class ThemeManager {
     private void refresh(@NonNull ResourceResolver resolver, @NonNull View view) {
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
-            if (bindings.maybe(group) != null) {
+            if (registry.find(group) != null) {
                 apply(resolver, group);
                 return;
             }
@@ -183,7 +183,7 @@ public class ThemeManager {
     }
 
     private void apply(@NonNull ResourceResolver resolver, @NonNull View view) {
-        ResourceBinding binding = bindings.maybe(view);
+        ResourceBinding<?> binding = registry.find(view);
         if (binding != null && binding.isEnable()) {
             binding.apply(resolver);
         }
@@ -213,24 +213,53 @@ public class ThemeManager {
         return null;
     }
 
+    /**
+     * Binding 注册表（按 View 类型登记 Creator）。
+     */
     @NonNull
-    public ResourceBindingFactory bindings() {
-        return bindings;
+    public ResourceBindingFactory registry() {
+        return registry;
     }
 
+    /**
+     * 取 View 上的 Binding：已挂载则复用，否则按注册表临时创建（不挂 tag）。
+     * 具体类型的 {@code setXxx} 请用对应 Binding 的 {@code of()}，例如
+     * {@code TextViewResourceBinding.of(textView).setTextColor(...)}。
+     * <p>
+     * 与 {@link #obtain} 的区别：obtain 会挂到 View 上供 inflate/refresh 使用；
+     * edit 不强制挂载。
+     */
     @NonNull
-    public ResourceBinding obtainBinding(@NonNull View view) {
-        return bindings.obtain(view);
+    public ResourceBinding<?> edit(@NonNull View view) {
+        ResourceBinding<?> existing = registry.find(view);
+        if (existing != null) {
+            return existing;
+        }
+        return registry.create(view);
     }
 
-    @Nullable
-    public ResourceBinding getResourceBinding(@Nullable View view) {
-        return bindings.maybe(view);
+    /**
+     * 取或创建并挂到 View tag 上（inflate 同源）。
+     */
+    @NonNull
+    public ResourceBinding<?> obtain(@NonNull View view) {
+        return registry.obtain(view);
     }
 
+    /**
+     * 只查已挂载的 Binding；没有则 {@code null}。
+     */
     @Nullable
-    public <T extends ResourceBinding> T getResourceBinding(@Nullable View view, @NonNull Class<T> clazz) {
-        ResourceBinding binding = getResourceBinding(view);
+    public ResourceBinding<?> find(@Nullable View view) {
+        return registry.find(view);
+    }
+
+    /**
+     * 只查已挂载且类型匹配的 Binding；没有或不匹配则 {@code null}。
+     */
+    @Nullable
+    public <T extends ResourceBinding<?>> T find(@Nullable View view, @NonNull Class<T> clazz) {
+        ResourceBinding<?> binding = find(view);
         return clazz.isInstance(binding) ? clazz.cast(binding) : null;
     }
 }

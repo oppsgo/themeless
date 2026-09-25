@@ -26,7 +26,7 @@ public class AppCompatTextViewResourceBinding extends TextViewResourceBinding {
     public static final int ATTR_DRAWABLE_TINT_COMPAT = R.attr.drawableTint;
 
     public static void register() {
-        ThemeManager.get().bindings().register(AppCompatTextView.class, AppCompatTextViewResourceBinding::new);
+        ThemeManager.get().registry().register(AppCompatTextView.class, AppCompatTextViewResourceBinding::new);
     }
 
     public AppCompatTextViewResourceBinding(@NonNull AppCompatTextView view) {

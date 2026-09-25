@@ -27,7 +27,7 @@ public class BaseViewGroupResourceBinding<GROUP extends ViewGroup> extends BaseV
         int count = view.getChildCount();
         for (int i = 0; i < count; i++) {
             View child = view.getChildAt(i);
-            ResourceBinding binding = manager.getResourceBinding(child);
+            ResourceBinding<?> binding = manager.find(child);
             if (binding != null && binding.isEnable()) {
                 binding.apply(resolver);
             }

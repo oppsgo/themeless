@@ -33,7 +33,7 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * 各 Binding 自己声明 {@code ATTR_*}，AppCompat 别名经 {@link #normalizeAttr} 收成平台 attr。
  * 布局解析和手动 setXxx 写进同一张表，刷新时再统一取出来设回 View。
  */
-public abstract class BaseViewResourceBinding<VIEW extends View> implements ResourceBinding {
+public abstract class BaseViewResourceBinding<VIEW extends View> implements ResourceBinding<VIEW> {
 
     public static final int ATTR_BACKGROUND = android.R.attr.background;
     public static final int ATTR_BACKGROUND_TINT = android.R.attr.backgroundTint;
@@ -49,6 +49,9 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
 
     private boolean enable;
     protected transient int modCount;
+    /** 临时 Binding 在未 apply 时复用的 Context Resolver，避免每次 setXxx 都 new。 */
+    @Nullable
+    private transient ResourceResolver fallbackResolver;
 
     public BaseViewResourceBinding(@NonNull VIEW view) {
         this.view = view;
@@ -56,25 +59,26 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
     }
 
     /**
-     * View 上已有 {@code type} 或它的子类就返回，用户自己的子类实现会生效。
-     * 没有，或挂的是别的类型：用 {@code factory} 造一个不挂到 View 上的临时实例。
-     * {@code T} 允许是 {@code BaseViewResourceBinding<? super V>}，这样 AppCompatImageView
-     * 可以挂在 {@code ImageView} 的 Binding 子类上。
+     * View 上已有 {@code type} 或它的子类就返回（含用户子类 / 代理子类）。
+     * 没有：用 {@code factory} 造临时实例（不挂 tag）。
+     * {@code T} 约束在 {@link ResourceBinding}，不强制 {@code BaseViewResourceBinding}，
+     * 这样自写实现只要类型匹配也能被 {@code of()} 复用。
+     * {@code ? super V}：AppCompatImageView 可挂在 {@code ImageView} Binding 子类上。
      */
     @NonNull
-    protected static <V extends View, T extends BaseViewResourceBinding<? super V>> T of(
+    protected static <V extends View, T extends ResourceBinding<? super V>> T of(
             @NonNull V view,
             @NonNull Class<T> type,
             @NonNull Factory<V, T> factory
     ) {
-        T existing = ThemeManager.get().getResourceBinding(view, type);
+        T existing = ThemeManager.get().find(view, type);
         if (existing != null) {
             return existing;
         }
         return factory.create(view);
     }
 
-    protected interface Factory<V extends View, T extends BaseViewResourceBinding<? super V>> {
+    protected interface Factory<V extends View, T extends ResourceBinding<? super V>> {
         @NonNull
         T create(@NonNull V view);
     }
@@ -119,7 +123,7 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
 
     @NonNull
     @Override
-    public ResourceBinding bind(@Nullable AttributeSet set) {
+    public BaseViewResourceBinding<VIEW> bind(@Nullable AttributeSet set) {
         if (set == null) return this;
         int[] attrs = getViewStyleable();
         Arrays.sort(attrs);
@@ -244,16 +248,22 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
 
     /**
      * 已 {@link ThemeManager#apply(Context, ResourceResolver)} 时用安装好的 Resolver。
-     * {@code of()} 造出来、没挂到 View 上的临时绑定，没有安装好的 Resolver 时退回 View 自己的 Context。
+     * 临时 Binding 且尚未 apply 时，懒缓存一份基于 View Context 的 Resolver，供 setXxx 立刻取值。
      */
     @Nullable
     protected ResourceResolver currentResolver() {
         ThemeManager manager = ThemeManager.get();
         ResourceResolver resolver = manager.getResolver(view.getContext());
-        if (resolver == null && manager.getResourceBinding(view) != this) {
-            return new ContextResourceResolver(view.getContext());
+        if (resolver != null) {
+            return resolver;
         }
-        return resolver;
+        if (isAttached()) {
+            return null;
+        }
+        if (fallbackResolver == null) {
+            fallbackResolver = new ContextResourceResolver(view.getContext());
+        }
+        return fallbackResolver;
     }
 
     @NonNull

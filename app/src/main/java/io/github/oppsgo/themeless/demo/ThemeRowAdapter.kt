@@ -27,12 +27,12 @@ internal class ThemeRowAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_theme_row, parent, false)
         // 用已挂在 item 上的 Binding（一般是 ViewGroupResourceBinding）。
-        val binding = ThemeManager.get().obtainBinding(view)
+        val binding = ThemeManager.get().obtain(view)
         if (binding is BaseViewResourceBinding<*>) {
             binding.setBackground(R.color.skin_card_bg)
         }
         view.findViewById<View>(R.id.itemAccent)?.let { accent ->
-            val accentBinding = ThemeManager.get().obtainBinding(accent)
+            val accentBinding = ThemeManager.get().obtain(accent)
             if (accentBinding is BaseViewResourceBinding<*>) {
                 accentBinding.setBackground(R.color.skin_accent)
             }
