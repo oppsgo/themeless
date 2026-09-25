@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.AnyRes;
@@ -40,49 +41,83 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
 
     /**
      * inflate 时是否自动跟肤 {@code android:textSize}。默认关闭。
-     * 只影响本类及调用 {@link #getViewStyleable()} / {@link #isTrackTextSize()} 的子类；
-     * 完全自写、不继承本类的 Binding 需自行决定要不要绑字号。
+     * 全局默认的跟踪行为，使用 volatile 保证可见性。
+     * 默认为 false，即不追踪 textSize 变化。
      */
-    private static boolean trackTextSize;
-
-    private static final int[] STYLEABLE_EXTRAS = {
-            ATTR_TEXT_COLOR,
-            ATTR_TEXT_COLOR_HINT,
-            ATTR_DRAWABLE_LEFT,
-            ATTR_DRAWABLE_TOP,
-            ATTR_DRAWABLE_RIGHT,
-            ATTR_DRAWABLE_BOTTOM,
-            ATTR_DRAWABLE_START,
-            ATTR_DRAWABLE_END,
-            ATTR_DRAWABLE_TINT,
-    };
-
-    public TextViewResourceBinding(@NonNull TextView view) {
-        super(view);
-    }
+    private static volatile boolean sDefaultTrackTextSize = false;
 
     /**
      * 全局开关：inflate 时是否自动跟踪 {@code android:textSize}。
      * 默认 {@code false}。手动 {@link #setTextSize} 不受影响。须在相关布局 inflate 之前设置。
      */
-    public static void setTrackTextSize(boolean track) {
-        trackTextSize = track;
+    public static void setDefaultTrackTextSize(boolean track) {
+        sDefaultTrackTextSize = track;
     }
 
-    public static boolean isTrackTextSize() {
-        return trackTextSize;
+    /**
+     * 获取全局默认配置
+     */
+    public static boolean getDefaultTrackTextSize() {
+        return sDefaultTrackTextSize;
     }
 
-    /** 已有本类或子类就返回；否则给一个不挂到 View 上的实例。 */
+    public TextViewResourceBinding(@NonNull View view) {
+        super((TextView) view);
+    }
+
+    /**
+     * 已有本类或子类就返回；否则给一个不挂到 View 上的实例。
+     */
     @NonNull
     public static TextViewResourceBinding of(@NonNull TextView view) {
         return of(view, TextViewResourceBinding.class, TextViewResourceBinding::new);
     }
 
+
+    /**
+     * 实例级别的覆盖配置。
+     * null 表示使用全局默认值；true/false 表示针对当前 View 的显式覆盖。
+     */
+    @Nullable
+    private Boolean trackTextSize;
+
+    /**
+     * 为当前 TextView 实例设置 trackTextSize，将覆盖全局默认配置
+     */
+    public void setTrackTextSize(boolean track) {
+        this.trackTextSize = track;
+    }
+
+    /**
+     * 重置为全局默认配置
+     */
+    public void resetTrackTextSize() {
+        this.trackTextSize = null;
+    }
+
+    /**
+     * 内部方法：获取当前实际生效的配置
+     * 优先级：实例覆盖配置 > 全局默认配置
+     */
+    protected boolean isTrackTextSize() {
+        return trackTextSize != null ? trackTextSize : sDefaultTrackTextSize;
+    }
+
     @Override
     protected int[] getViewStyleable() {
-        int[] attrs = mergeStyleable(super.getViewStyleable(), STYLEABLE_EXTRAS);
-        return isTrackTextSize() ? mergeStyleable(attrs, ATTR_TEXT_SIZE) : attrs;
+        return mergeStyleable(
+                super.getViewStyleable(),
+                ATTR_TEXT_COLOR,
+                ATTR_TEXT_COLOR_HINT,
+                ATTR_TEXT_SIZE,
+                ATTR_DRAWABLE_LEFT,
+                ATTR_DRAWABLE_TOP,
+                ATTR_DRAWABLE_RIGHT,
+                ATTR_DRAWABLE_BOTTOM,
+                ATTR_DRAWABLE_START,
+                ATTR_DRAWABLE_END,
+                ATTR_DRAWABLE_TINT
+        );
     }
 
     @Nullable
@@ -171,7 +206,14 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
 
     @NonNull
     public TextViewResourceBinding setTextSize(@NonNull DimenRef size) {
-        putAndUpdate(ATTR_TEXT_SIZE, size);
+        if (isTrackTextSize()) {
+            putAndUpdate(ATTR_TEXT_SIZE, size);
+        } else {
+            // 手动调用
+            putAttr(ATTR_TEXT_SIZE, size);
+            ResourceResolver resolver = currentResolver();
+            if (resolver != null) applyTextSize(size, resolver);
+        }
         return this;
     }
 
@@ -304,7 +346,7 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
             return;
         }
         if (attr == ATTR_TEXT_SIZE) {
-            applyTextSize(value, resolver);
+            if (isTrackTextSize()) applyTextSize(value, resolver);
             return;
         }
         if (attr == ATTR_DRAWABLE_TINT) {

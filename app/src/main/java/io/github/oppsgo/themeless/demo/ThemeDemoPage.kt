@@ -3,7 +3,9 @@ package io.github.oppsgo.themeless.demo
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -78,6 +80,7 @@ object ThemeDemoPage {
     fun resolveLocalNightMode(): Int = when (demoThemeMode) {
         DemoThemeMode.LIGHT, DemoThemeMode.CUSTOM, DemoThemeMode.DARK ->
             AppCompatDelegate.MODE_NIGHT_YES
+
         DemoThemeMode.FOLLOW_SYSTEM -> dayNightMode
     }
 
@@ -164,9 +167,9 @@ internal fun Activity.applyCustomTheme() {
     Log.i(
         DEMO_TAG,
         "apply custom page=0x${page.hex()} panel=0x${panel.hex()} card=0x${card.hex()} " +
-            "raw=0x${base.getColor(R.color.skin_page_bg).hex()} " +
-            "blue=0x${base.getColor(R.color.skin_page_bg_blue).hex()} " +
-            "appNight=${DayNightResourceResolver.isSystemNight(this)} actNight=${isActivityNight()}",
+                "raw=0x${base.getColor(R.color.skin_page_bg).hex()} " +
+                "blue=0x${base.getColor(R.color.skin_page_bg_blue).hex()} " +
+                "appNight=${DayNightResourceResolver.isSystemNight(this)} actNight=${isActivityNight()}",
     )
     ThemeManager.get().apply(this, mapped)
     paintDemoSurfaces("custom", page, panel, card)
@@ -186,7 +189,7 @@ internal fun Activity.applyThemeNight(dark: Boolean) {
     Log.i(
         DEMO_TAG,
         "apply ${if (dark) "dark" else "light"} page=0x${page.hex()} panel=0x${panel.hex()} " +
-            "card=0x${card.hex()} actNight=${isActivityNight()}",
+                "card=0x${card.hex()} actNight=${isActivityNight()}",
     )
     ThemeManager.get().apply(this, resolver)
     paintDemoSurfaces(if (dark) "dark" else "light", page, panel, card)
@@ -208,8 +211,8 @@ internal fun Activity.applyThemeResources() {
     Log.i(
         DEMO_TAG,
         "apply follow night=$night page=0x${page.hex()} panel=0x${panel.hex()} card=0x${card.hex()} " +
-            "dayNightMode=${ThemeDemoPage.getDefaultNightMode()} " +
-            "systemNight=${DayNightResourceResolver.isSystemNight(this)} actNight=${isActivityNight()}",
+                "dayNightMode=${ThemeDemoPage.getDefaultNightMode()} " +
+                "systemNight=${DayNightResourceResolver.isSystemNight(this)} actNight=${isActivityNight()}",
     )
     ThemeManager.get().apply(this, resolver)
     paintDemoSurfaces("follow", page, panel, card)
@@ -245,7 +248,7 @@ private fun Activity.syncActivityNightMode(dark: Boolean?): Boolean {
 private fun Activity.isActivityNight(): Boolean {
     val mask = android.content.res.Configuration.UI_MODE_NIGHT_MASK
     return (resources.configuration.uiMode and mask) ==
-        android.content.res.Configuration.UI_MODE_NIGHT_YES
+            android.content.res.Configuration.UI_MODE_NIGHT_YES
 }
 
 /**
@@ -288,7 +291,7 @@ private fun Activity.paintDemoSurfaces(label: String, page: Int, panel: Int, car
                 Log.i(
                     DEMO_TAG,
                     "pixel $label drawable=0x${page.hex()} panePx=0x${panePx.hex()} " +
-                        "titlePx=0x${titlePx.hex()} match=${panePx == page}",
+                            "titlePx=0x${titlePx.hex()} match=${panePx == page}",
                 )
             }
         }
@@ -310,7 +313,8 @@ private fun Activity.sampleDisplayedPixel(view: View?, onResult: (Int) -> Unit) 
         view.getLocationInWindow(loc)
         val x = (loc[0] + view.width / 2).coerceAtLeast(0)
         val y = (loc[1] + view.height / 2).coerceAtLeast(0)
-        val bitmap = android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.ARGB_8888)
+        val bitmap =
+            android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.ARGB_8888)
         val src = android.graphics.Rect(x, y, x + 1, y + 1)
         try {
             android.view.PixelCopy.request(
@@ -365,7 +369,16 @@ private fun Activity.bindManualText() {
         rows.addView(created)
         TextViewResourceBinding.of(created)
             .setTextColor(R.color.skin_accent)
-            .refresh()
+            .setBackground(DrawableRef.of { resolver, resourceId ->
+                val drawable = GradientDrawable()
+                drawable.cornerRadius = 15F
+                drawable.orientation = GradientDrawable.Orientation.LEFT_RIGHT
+                drawable.colors = intArrayOf(
+                    resolver.getColor(R.color.skin_card_bg),
+                    resolver.getColor(R.color.skin_panel_bg_blue)
+                )
+                return@of drawable
+            })
     }
 
     val host = this as? FragmentActivity

@@ -32,7 +32,7 @@ public final class ResourceBindingFactory {
         ResourceBinding<?> create(@NonNull VIEW view);
     }
 
-    private final ConcurrentHashMap<Class<?>, Creator<?>> registry = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Class<? extends View>, Creator<? extends View>> registry = new ConcurrentHashMap<>();
 
     ResourceBindingFactory() {
         register(View.class, ViewResourceBinding::new);
@@ -47,7 +47,9 @@ public final class ResourceBindingFactory {
         registry.put(viewType, creator);
     }
 
-    /** 是否为该 View 类型登记过 Creator（不含沿继承链向上解析）。 */
+    /**
+     * 是否为该 View 类型登记过 Creator（不含沿继承链向上解析）。
+     */
     public boolean isRegistered(@NonNull Class<? extends View> viewType) {
         return registry.containsKey(viewType);
     }
@@ -63,8 +65,8 @@ public final class ResourceBindingFactory {
     }
 
     @NonNull
-    @SuppressWarnings("unchecked")
     public ResourceBinding<?> create(@NonNull View view) {
+        @SuppressWarnings("unchecked")
         Creator<View> creator = (Creator<View>) resolve(view.getClass());
         return creator.create(view);
     }
@@ -89,7 +91,9 @@ public final class ResourceBindingFactory {
         return binding;
     }
 
-    /** 从具体类往父类找。{@link View} 的注册不能摘掉，否则没有匹配时无法兜底。 */
+    /**
+     * 从具体类往父类找。{@link View} 的注册不能摘掉，否则没有匹配时无法兜底。
+     */
     @NonNull
     public Creator<?> resolve(@NonNull Class<? extends View> viewClass) {
         for (Class<?> current = viewClass; current != null; current = current.getSuperclass()) {

@@ -42,7 +42,7 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
     @Nullable
     ResourceResolver resolver;
 
-    int modCount;
+    volatile int modCount;
 
     /**
      * 创建完 View 是否需要立即刷新。默认不需要，运行中换主题时需要。
@@ -63,11 +63,8 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
 
         @Override
         public void onViewDetachedFromWindow(@NonNull View v) {
-            // 窗口关掉时 parent 链还在，getRootView() 仍是 DecorView，且已经 detached。
             View root = v.getRootView();
-            if (!root.isAttachedToWindow()) {
-                windowRoots.remove(root);
-            }
+            windowRoots.remove(root);
         }
     };
 

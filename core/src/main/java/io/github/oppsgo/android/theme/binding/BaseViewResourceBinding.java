@@ -48,12 +48,14 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
     protected final SparseArray<ResourceRef<?>> attributes = new SparseArray<>();
 
     private boolean enable;
-    protected transient int modCount;
-    /** 临时 Binding 在未 apply 时复用的 Context Resolver，避免每次 setXxx 都 new。 */
+    protected volatile int modCount;
+    /**
+     * 临时 Binding 在未 apply 时复用的 Context Resolver，避免每次 setXxx 都 new。
+     */
     @Nullable
-    private transient ResourceResolver fallbackResolver;
+    private transient volatile ResourceResolver fallbackResolver;
 
-    public BaseViewResourceBinding(@NonNull VIEW view) {
+    protected BaseViewResourceBinding(@NonNull VIEW view) {
         this.view = view;
         this.enable = true;
     }
@@ -261,7 +263,11 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
             return null;
         }
         if (fallbackResolver == null) {
-            fallbackResolver = new ContextResourceResolver(view.getContext());
+            synchronized (this) {
+                if (fallbackResolver == null) {
+                    fallbackResolver = new ContextResourceResolver(view.getContext());
+                }
+            }
         }
         return fallbackResolver;
     }

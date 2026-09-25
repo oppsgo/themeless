@@ -12,6 +12,9 @@ import android.view.Window;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 主题入口，全局一个实例。
  * 每个 Activity 在 {@code super.onCreate()} 之前 {@link #install}。
@@ -93,7 +96,9 @@ public class ThemeManager {
         return installed == null ? MOD_COUNT_NONE : installed.modCount;
     }
 
-    /** 运行中换主题后，新 inflate 出来的 View 也要马上刷一遍。默认关闭。 */
+    /**
+     * 运行中换主题后，新 inflate 出来的 View 也要马上刷一遍。默认关闭。
+     */
     public void setRefreshOnInflate(@NonNull Context context, boolean refresh) {
         ThemeDelegate installed = findDelegate(context);
         if (installed != null) {
@@ -196,7 +201,12 @@ public class ThemeManager {
     @Nullable
     ThemeDelegate findDelegate(@Nullable Context context) {
         Context current = context;
+        Set<Context> visited = new HashSet<>();
         while (current != null) {
+            // 防环检查
+            if (visited.contains(current)) return null;
+            visited.add(current);
+
             LayoutInflater.Factory2 factory2 = LayoutInflater.from(current).getFactory2();
             if (factory2 instanceof ThemeDelegate) {
                 return (ThemeDelegate) factory2;
