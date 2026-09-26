@@ -16,10 +16,11 @@ import io.github.oppsgo.theme.core.R;
  * <p>
  * 实例通常挂在 View 的 tag 上，由 {@link ResourceBindingFactory} 创建；
  * 也可自行实现本接口（含代理包装），不必继承 {@code BaseViewResourceBinding}。
- *
- * @param <V> 绑定的 View 类型
+ * <p>
+ * 不带 View 泛型：具体 Binding 用协变 {@link #getView()} 暴露真实类型
+ * （如 {@code SwitchResourceBinding#getView()} 返回 {@code Switch}），避免继承链把类型收窄。
  */
-public interface ResourceBinding<V extends View> {
+public interface ResourceBinding {
 
     /**
      * 无效资源 id（值为 {@code 0}）。
@@ -30,29 +31,29 @@ public interface ResourceBinding<V extends View> {
     int TAG_BINDING = R.id.theme_attribute_binding_tag;
 
     @NonNull
-    V getView();
+    View getView();
 
     /**
      * 从布局 AttributeSet 记下资源引用，不立刻刷到 View。
      */
     @NonNull
-    ResourceBinding<V> bind(@Nullable AttributeSet attrs);
+    ResourceBinding bind(@Nullable AttributeSet attrs);
 
     /**
      * 手动绑定。key 不要求是 {@code R.attr}，自定义 View 可以用 Binding 内部常量。
      * 值的类型由 {@link io.github.oppsgo.android.theme.resource.ResourceRef} 的子类约束。
      */
     @NonNull
-    ResourceBinding<V> bind(@AttrRes int attr, @NonNull ResourceRef<?> ref);
+    ResourceBinding bind(@AttrRes int attr, @NonNull ResourceRef<?> ref);
 
     @NonNull
-    ResourceBinding<V> unbind(@AttrRes int attr);
+    ResourceBinding unbind(@AttrRes int attr);
 
     /**
      * 关闭后 {@link #refresh()} 和 {@link #apply} 都不再改这个 View。
      */
     @NonNull
-    ResourceBinding<V> setEnable(boolean enable);
+    ResourceBinding setEnable(boolean enable);
 
     boolean isEnable();
 
@@ -88,15 +89,14 @@ public interface ResourceBinding<V extends View> {
      * 日常请优先 {@link ThemeManager#edit(View)} / 各 Binding 的 {@code of()}；不要先 {@code new} 再 attach。
      */
     @NonNull
-    @SuppressWarnings("unchecked")
-    default ResourceBinding<? extends V> attach() {
-        V view = getView();
-        ResourceBinding<?> existing = ThemeManager.get().find(view);
+    default ResourceBinding attach() {
+        View view = getView();
+        ResourceBinding existing = ThemeManager.get().find(view);
         if (existing == this) {
             return this;
         }
         if (existing != null) {
-            return (ResourceBinding<? extends V>) existing;
+            return existing;
         }
         view.setTag(ResourceBinding.TAG_BINDING, this);
         return this;

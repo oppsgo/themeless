@@ -12,7 +12,7 @@ import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
  * Support Library（recyclerview-v7）版。
  * 接入方有 RecyclerView 时，在 inflate 前调用 {@link #register()}。
  */
-public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding<RecyclerView>
+public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding
         implements RecyclerView.OnChildAttachStateChangeListener {
 
     public static void register() {
@@ -23,6 +23,12 @@ public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding<Re
         super(view);
         view.removeOnChildAttachStateChangeListener(this);
         view.addOnChildAttachStateChangeListener(this);
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView getView() {
+        return (RecyclerView) view;
     }
 
     @NonNull

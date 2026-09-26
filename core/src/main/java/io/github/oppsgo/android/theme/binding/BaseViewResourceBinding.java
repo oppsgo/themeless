@@ -29,17 +29,15 @@ import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
 
 /**
- * 把属性 key 映射到 {@link ResourceRef}。
- * 各 Binding 自己声明 {@code ATTR_*}，AppCompat 别名经 {@link #normalizeAttr} 收成平台 attr。
- * 布局解析和手动 setXxx 写进同一张表，刷新时再统一取出来设回 View。
+ * Binding 基础设施：属性表、布局解析、生命周期。
+ * View 级属性在 {@link ViewResourceBinding}；更具体的能力由各子类声明。
+ * <p>
+ * 不带 View 泛型；子类用协变 {@link #getView()} 暴露真实类型。
  */
-public abstract class BaseViewResourceBinding<VIEW extends View> implements ResourceBinding<VIEW> {
-
-    public static final int ATTR_BACKGROUND = android.R.attr.background;
-    public static final int ATTR_BACKGROUND_TINT = android.R.attr.backgroundTint;
+public abstract class BaseViewResourceBinding implements ResourceBinding {
 
     @NonNull
-    protected final VIEW view;
+    protected final View view;
 
     /**
      * 同一张表同时服务有 attr 和没有 attr 的 View。
@@ -55,7 +53,7 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
     @Nullable
     private transient volatile ResourceResolver fallbackResolver;
 
-    protected BaseViewResourceBinding(@NonNull VIEW view) {
+    protected BaseViewResourceBinding(@NonNull View view) {
         this.view = view;
         this.enable = true;
     }
@@ -63,12 +61,9 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
     /**
      * View 上已有 {@code type} 或它的子类就返回（含用户子类 / 代理子类）。
      * 没有：用 {@code factory} 造临时实例（不挂 tag）。
-     * {@code T} 约束在 {@link ResourceBinding}，不强制 {@code BaseViewResourceBinding}，
-     * 这样自写实现只要类型匹配也能被 {@code of()} 复用。
-     * {@code ? super V}：AppCompatImageView 可挂在 {@code ImageView} Binding 子类上。
      */
     @NonNull
-    protected static <V extends View, T extends ResourceBinding<? super V>> T of(
+    protected static <V extends View, T extends ResourceBinding> T of(
             @NonNull V view,
             @NonNull Class<T> type,
             @NonNull Factory<V, T> factory
@@ -80,14 +75,14 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
         return factory.create(view);
     }
 
-    protected interface Factory<V extends View, T extends ResourceBinding<? super V>> {
+    protected interface Factory<V extends View, T extends ResourceBinding> {
         @NonNull
         T create(@NonNull V view);
     }
 
     @Override
     @NonNull
-    public VIEW getView() {
+    public View getView() {
         return view;
     }
 
@@ -98,13 +93,11 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
 
     /**
      * 子类声明要跟踪的属性。{@code obtainStyledAttributes} 要求数组升序，这里会排序。
+     * 默认无属性；View 级见 {@link ViewResourceBinding}。
      */
     @StyleableRes
     protected int[] getViewStyleable() {
-        return new int[]{
-                ATTR_BACKGROUND,
-                ATTR_BACKGROUND_TINT,
-        };
+        return new int[0];
     }
 
     /**
@@ -125,7 +118,7 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
 
     @NonNull
     @Override
-    public BaseViewResourceBinding<VIEW> bind(@Nullable AttributeSet set) {
+    public BaseViewResourceBinding bind(@Nullable AttributeSet set) {
         if (set == null) return this;
         int[] attrs = getViewStyleable();
         Arrays.sort(attrs);
@@ -151,13 +144,6 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
      */
     @Nullable
     protected ResourceRef<?> createResource(@AttrRes int attr, @AnyRes int resId) {
-        if (resId == ID_NULL) return null;
-        if (attr == ATTR_BACKGROUND) {
-            return isPureColor(resId) ? ColorRef.of(resId) : DrawableRef.of(resId);
-        }
-        if (attr == ATTR_BACKGROUND_TINT) {
-            return createColorResource(resId);
-        }
         return null;
     }
 
@@ -169,14 +155,14 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
 
     @NonNull
     @Override
-    public BaseViewResourceBinding<VIEW> bind(@AttrRes int attr, @NonNull ResourceRef<?> value) {
+    public BaseViewResourceBinding bind(@AttrRes int attr, @NonNull ResourceRef<?> value) {
         putAttr(attr, value);
         return this;
     }
 
     @NonNull
     @Override
-    public BaseViewResourceBinding<VIEW> unbind(@AttrRes int attr) {
+    public BaseViewResourceBinding unbind(@AttrRes int attr) {
         attributes.delete(normalizeAttr(attr));
         return this;
     }
@@ -191,61 +177,11 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
     }
 
     protected void putAndUpdate(@AttrRes int attr, @Nullable ResourceRef<?> value) {
-        attr = normalizeAttr(attr);
         putAttr(attr, value);
         ResourceResolver resolver = currentResolver();
         if (resolver != null) {
             updateAttribute(resolver, attr, attributes.get(attr));
         }
-    }
-
-    /**
-     * 手动指定 background 资源，写入 Binding 供后续 apply 使用。
-     */
-    @NonNull
-    public BaseViewResourceBinding<VIEW> setBackground(@AnyRes int background) {
-        if (background == ID_NULL) {
-            unbind(ATTR_BACKGROUND);
-            return this;
-        }
-        if (isPureColor(background)) {
-            return setBackground(ColorRef.of(background));
-        }
-        return setBackground(DrawableRef.of(background));
-    }
-
-    @NonNull
-    public BaseViewResourceBinding<VIEW> setBackground(@NonNull ColorRef background) {
-        putAndUpdate(ATTR_BACKGROUND, background);
-        return this;
-    }
-
-    @NonNull
-    public BaseViewResourceBinding<VIEW> setBackground(@NonNull DrawableRef background) {
-        putAndUpdate(ATTR_BACKGROUND, background);
-        return this;
-    }
-
-    @NonNull
-    public BaseViewResourceBinding<VIEW> setBackgroundTint(@ColorRes int tint) {
-        if (tint == ID_NULL) {
-            unbind(ATTR_BACKGROUND_TINT);
-            return this;
-        }
-        putAndUpdate(ATTR_BACKGROUND_TINT, createColorResource(tint));
-        return this;
-    }
-
-    @NonNull
-    public BaseViewResourceBinding<VIEW> setBackgroundTint(@NonNull ColorRef tint) {
-        putAndUpdate(ATTR_BACKGROUND_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public BaseViewResourceBinding<VIEW> setBackgroundTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(ATTR_BACKGROUND_TINT, tint);
-        return this;
     }
 
     /**
@@ -274,7 +210,7 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
 
     @NonNull
     @Override
-    public BaseViewResourceBinding<VIEW> setEnable(boolean enable) {
+    public BaseViewResourceBinding setEnable(boolean enable) {
         this.enable = enable;
         return this;
     }
@@ -312,21 +248,14 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
         }
     }
 
-    protected void updateAttribute(@NonNull ResourceResolver resolver, @AttrRes int attr, @Nullable ResourceRef<?> value) {
-        if (value == null || value.isEmpty()) return;
-        if (attr == ATTR_BACKGROUND) {
-            if (value instanceof ColorRef) {
-                Integer color = ((ColorRef) value).resolve(resolver);
-                if (color != null) view.setBackgroundColor(color);
-            } else if (value instanceof DrawableRef) {
-                view.setBackground(((DrawableRef) value).resolve(resolver));
-            }
-            return;
-        }
-        if (attr == ATTR_BACKGROUND_TINT) {
-            ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setBackgroundTintList(view, tint);
-        }
+    /**
+     * 按 attr 把已解析的 {@link ResourceRef} 写回 View。子类按自己的属性补充分支。
+     */
+    protected void updateAttribute(
+            @NonNull ResourceResolver resolver,
+            @AttrRes int attr,
+            @Nullable ResourceRef<?> value
+    ) {
     }
 
     @Nullable
@@ -349,7 +278,7 @@ public abstract class BaseViewResourceBinding<VIEW extends View> implements Reso
     }
 
     /**
-     * background 既可以是颜色也可以是图片，靠 {@link TypedValue} 的类型区分。
+     * 资源既可以是颜色也可以是图片时，靠 {@link TypedValue} 的类型区分。
      */
     public boolean isPureColor(@ColorRes int id) {
         if (id == ID_NULL) return false;

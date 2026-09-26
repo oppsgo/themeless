@@ -15,8 +15,6 @@ import androidx.appcompat.widget.SwitchCompat;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.SwitchResourceBinding;
-import io.github.oppsgo.android.theme.resource.ColorRef;
-import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
 
@@ -84,6 +82,12 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     }
 
     @NonNull
+    public SwitchCompatResourceBinding setThumb(@NonNull ResourceRef<?> thumb) {
+        putAndUpdate(SwitchResourceBinding.ATTR_THUMB, thumb);
+        return this;
+    }
+
+    @NonNull
     public SwitchCompatResourceBinding setThumbResource(@DrawableRes int resId) {
         if (resId == ID_NULL) {
             unbind(SwitchResourceBinding.ATTR_THUMB);
@@ -93,8 +97,8 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     }
 
     @NonNull
-    public SwitchCompatResourceBinding setThumb(@NonNull DrawableRef thumb) {
-        putAndUpdate(SwitchResourceBinding.ATTR_THUMB, thumb);
+    public SwitchCompatResourceBinding setTrack(@NonNull ResourceRef<?> track) {
+        putAndUpdate(SwitchResourceBinding.ATTR_TRACK, track);
         return this;
     }
 
@@ -108,8 +112,8 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     }
 
     @NonNull
-    public SwitchCompatResourceBinding setTrack(@NonNull DrawableRef track) {
-        putAndUpdate(SwitchResourceBinding.ATTR_TRACK, track);
+    public SwitchCompatResourceBinding setThumbTint(@NonNull ResourceRef<?> tint) {
+        putAndUpdate(SwitchResourceBinding.ATTR_THUMB_TINT, tint);
         return this;
     }
 
@@ -119,19 +123,12 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
             unbind(SwitchResourceBinding.ATTR_THUMB_TINT);
             return this;
         }
-        putAndUpdate(SwitchResourceBinding.ATTR_THUMB_TINT, createColorResource(tint));
-        return this;
+        return setThumbTint(createColorResource(tint));
     }
 
     @NonNull
-    public SwitchCompatResourceBinding setThumbTint(@NonNull ColorRef tint) {
-        putAndUpdate(SwitchResourceBinding.ATTR_THUMB_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public SwitchCompatResourceBinding setThumbTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(SwitchResourceBinding.ATTR_THUMB_TINT, tint);
+    public SwitchCompatResourceBinding setTrackTint(@NonNull ResourceRef<?> tint) {
+        putAndUpdate(SwitchResourceBinding.ATTR_TRACK_TINT, tint);
         return this;
     }
 
@@ -141,20 +138,7 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
             unbind(SwitchResourceBinding.ATTR_TRACK_TINT);
             return this;
         }
-        putAndUpdate(SwitchResourceBinding.ATTR_TRACK_TINT, createColorResource(tint));
-        return this;
-    }
-
-    @NonNull
-    public SwitchCompatResourceBinding setTrackTint(@NonNull ColorRef tint) {
-        putAndUpdate(SwitchResourceBinding.ATTR_TRACK_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public SwitchCompatResourceBinding setTrackTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(SwitchResourceBinding.ATTR_TRACK_TINT, tint);
-        return this;
+        return setTrackTint(createColorResource(tint));
     }
 
     @Override

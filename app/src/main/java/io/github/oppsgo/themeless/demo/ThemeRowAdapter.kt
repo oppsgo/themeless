@@ -6,12 +6,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.github.oppsgo.android.theme.ThemeManager
-import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding
+import io.github.oppsgo.android.theme.binding.ViewResourceBinding
+import io.github.oppsgo.android.theme.resource.ColorRef
 import io.github.oppsgo.themeless.R
 
 /**
  * 列表颜色靠布局里的资源引用。
- * 换主题后：已贴上的条目由整页 refresh；复用回来的条目由 RecyclerViewResourceBinding 补刷。
+ * 换主题后：已贴上的条目由整页 refresh；复用回来的条目由 RecyclerView Binding 补刷。
  */
 internal class ThemeRowAdapter(
     private val indexes: MutableList<Int>,
@@ -26,15 +27,14 @@ internal class ThemeRowAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_theme_row, parent, false)
-        // 用已挂在 item 上的 Binding（一般是 ViewGroupResourceBinding）。
         val binding = ThemeManager.get().obtain(view)
-        if (binding is BaseViewResourceBinding<*>) {
-            binding.setBackground(R.color.skin_card_bg)
+        if (binding is ViewResourceBinding) {
+            binding.setBackground(ColorRef.of(R.color.skin_card_bg))
         }
         view.findViewById<View>(R.id.itemAccent)?.let { accent ->
             val accentBinding = ThemeManager.get().obtain(accent)
-            if (accentBinding is BaseViewResourceBinding<*>) {
-                accentBinding.setBackground(R.color.skin_accent)
+            if (accentBinding is ViewResourceBinding) {
+                accentBinding.setBackground(ColorRef.of(R.color.skin_accent))
             }
         }
         return Holder(view)
@@ -47,9 +47,7 @@ internal class ThemeRowAdapter(
         )
         holder.subtitle.setText(R.string.theme_demo_list_subtitle)
         holder.itemView.setOnClickListener { onItemClick?.invoke() }
-        // 复用时按当前 Resolver 再刷一遍（含卡片底）。
         ThemeManager.get().refresh(holder.itemView)
-        // 再强制写一遍卡片底，避免 ConstantState / 厂商残留夜间色。
         val resolver = ThemeManager.get().getResolver(holder.itemView.context)
         if (resolver != null) {
             val card = resolver.getColor(R.color.skin_card_bg)

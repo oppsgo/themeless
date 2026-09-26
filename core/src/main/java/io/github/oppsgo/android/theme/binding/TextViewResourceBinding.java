@@ -4,7 +4,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.AnyRes;
@@ -26,7 +25,7 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * {@link TextView} 绑定。文字颜色按资源类型分成 {@link ColorRef} 和 {@link ColorStateListRef}。
  * compound drawable 的尺寸沿用 {@code Drawable.setBounds}，没设过才用 intrinsic。
  */
-public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
+public class TextViewResourceBinding extends ViewResourceBinding {
 
     public static final int ATTR_TEXT_COLOR = android.R.attr.textColor;
     public static final int ATTR_TEXT_COLOR_HINT = android.R.attr.textColorHint;
@@ -61,8 +60,14 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
         return sDefaultTrackTextSize;
     }
 
-    public TextViewResourceBinding(@NonNull View view) {
-        super((TextView) view);
+    public TextViewResourceBinding(@NonNull TextView view) {
+        super(view);
+    }
+
+    @NonNull
+    @Override
+    public TextView getView() {
+        return (TextView) view;
     }
 
     /**
@@ -144,26 +149,23 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
     }
 
     @NonNull
-    public TextViewResourceBinding setTextColor(@ColorRes int colorRes) {
-        if (colorRes == ID_NULL) {
-            unbind(ATTR_TEXT_COLOR);
-            return this;
-        }
-        if (isPureColor(colorRes)) {
-            return setTextColor(ColorRef.of(colorRes));
-        }
-        return setTextColor(ColorStateListRef.of(colorRes));
-    }
-
-    @NonNull
-    public TextViewResourceBinding setTextColor(@NonNull ColorRef color) {
+    public TextViewResourceBinding setTextColor(@NonNull ResourceRef<?> color) {
         putAndUpdate(ATTR_TEXT_COLOR, color);
         return this;
     }
 
     @NonNull
-    public TextViewResourceBinding setTextColor(@NonNull ColorStateListRef color) {
-        putAndUpdate(ATTR_TEXT_COLOR, color);
+    public TextViewResourceBinding setTextColor(@ColorRes int colorRes) {
+        if (colorRes == ID_NULL) {
+            unbind(ATTR_TEXT_COLOR);
+            return this;
+        }
+        return setTextColor(isPureColor(colorRes) ? ColorRef.of(colorRes) : ColorStateListRef.of(colorRes));
+    }
+
+    @NonNull
+    public TextViewResourceBinding setHintTextColor(@NonNull ResourceRef<?> color) {
+        putAndUpdate(ATTR_TEXT_COLOR_HINT, color);
         return this;
     }
 
@@ -173,28 +175,25 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
             unbind(ATTR_TEXT_COLOR_HINT);
             return this;
         }
-        if (isPureColor(colorRes)) {
-            return setHintTextColor(ColorRef.of(colorRes));
-        }
-        return setHintTextColor(ColorStateListRef.of(colorRes));
-    }
-
-    @NonNull
-    public TextViewResourceBinding setHintTextColor(@NonNull ColorRef color) {
-        putAndUpdate(ATTR_TEXT_COLOR_HINT, color);
-        return this;
-    }
-
-    @NonNull
-    public TextViewResourceBinding setHintTextColor(@NonNull ColorStateListRef color) {
-        putAndUpdate(ATTR_TEXT_COLOR_HINT, color);
-        return this;
+        return setHintTextColor(isPureColor(colorRes) ? ColorRef.of(colorRes) : ColorStateListRef.of(colorRes));
     }
 
     /**
      * 用 {@link ResourceResolver#getDimension} 取出 px（{@code sp} 会跟 {@code fontScale}），
      * 再 {@code setTextSize(PX, ...)}。
      */
+    @NonNull
+    public TextViewResourceBinding setTextSize(@NonNull ResourceRef<?> size) {
+        if (isTrackTextSize()) {
+            putAndUpdate(ATTR_TEXT_SIZE, size);
+        } else {
+            putAttr(ATTR_TEXT_SIZE, size);
+            ResourceResolver resolver = currentResolver();
+            if (resolver != null) applyTextSize(size, resolver);
+        }
+        return this;
+    }
+
     @NonNull
     public TextViewResourceBinding setTextSize(@DimenRes int size) {
         if (size == ID_NULL) {
@@ -205,15 +204,8 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
     }
 
     @NonNull
-    public TextViewResourceBinding setTextSize(@NonNull DimenRef size) {
-        if (isTrackTextSize()) {
-            putAndUpdate(ATTR_TEXT_SIZE, size);
-        } else {
-            // 手动调用
-            putAttr(ATTR_TEXT_SIZE, size);
-            ResourceResolver resolver = currentResolver();
-            if (resolver != null) applyTextSize(size, resolver);
-        }
+    public TextViewResourceBinding setCompoundDrawableTint(@Nullable ResourceRef<?> tint) {
+        putAndUpdate(ATTR_DRAWABLE_TINT, tint);
         return this;
     }
 
@@ -223,20 +215,7 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
             unbind(ATTR_DRAWABLE_TINT);
             return this;
         }
-        putAndUpdate(ATTR_DRAWABLE_TINT, createColorResource(tint));
-        return this;
-    }
-
-    @NonNull
-    public TextViewResourceBinding setCompoundDrawableTint(@NonNull ColorRef tint) {
-        putAndUpdate(ATTR_DRAWABLE_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public TextViewResourceBinding setCompoundDrawableTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(ATTR_DRAWABLE_TINT, tint);
-        return this;
+        return setCompoundDrawableTint(createColorResource(tint));
     }
 
     @NonNull
@@ -316,13 +295,13 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
             keepBounds(top);
             keepBounds(end);
             keepBounds(bottom);
-            view.setCompoundDrawablesRelative(start, top, end, bottom);
+            getView().setCompoundDrawablesRelative(start, top, end, bottom);
         } else if (left != null || right != null || top != null || bottom != null) {
             keepBounds(left);
             keepBounds(top);
             keepBounds(right);
             keepBounds(bottom);
-            view.setCompoundDrawables(left, top, right, bottom);
+            getView().setCompoundDrawables(left, top, right, bottom);
         }
     }
 
@@ -351,7 +330,7 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
         }
         if (attr == ATTR_DRAWABLE_TINT) {
             ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setCompoundDrawableTintList(view, tint);
+            resolver.getViewCompat().setCompoundDrawableTintList(getView(), tint);
             return;
         }
         super.updateAttribute(resolver, attr, value);
@@ -360,13 +339,13 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
     private void applyTextSize(@NonNull ResourceRef<?> value, @NonNull ResourceResolver resolver) {
         if (!(value instanceof DimenRef)) return;
         DimenRef dimen = (DimenRef) value;
-        if (!dimen.hasResolver() && dimen.getResourceId() != ID_NULL) {
-            view.setTextSize(TypedValue.COMPLEX_UNIT_PX, resolver.getDimension(dimen.getResourceId()));
+        if (!dimen.hasCustom() && dimen.getResourceId() != ID_NULL) {
+            getView().setTextSize(TypedValue.COMPLEX_UNIT_PX, resolver.getDimension(dimen.getResourceId()));
             return;
         }
         Integer px = dimen.resolve(resolver);
         if (px != null) {
-            view.setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
+            getView().setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
         }
     }
 
@@ -374,15 +353,15 @@ public class TextViewResourceBinding extends BaseViewResourceBinding<TextView> {
         if (value instanceof ColorRef) {
             Integer color = ((ColorRef) value).resolve(resolver);
             if (color == null) return;
-            if (hint) view.setHintTextColor(color);
-            else view.setTextColor(color);
+            if (hint) getView().setHintTextColor(color);
+            else getView().setTextColor(color);
             return;
         }
         if (value instanceof ColorStateListRef) {
             ColorStateList colors = ((ColorStateListRef) value).resolve(resolver);
             if (colors == null) return;
-            if (hint) view.setHintTextColor(colors);
-            else view.setTextColor(colors);
+            if (hint) getView().setHintTextColor(colors);
+            else getView().setTextColor(colors);
         }
     }
 }

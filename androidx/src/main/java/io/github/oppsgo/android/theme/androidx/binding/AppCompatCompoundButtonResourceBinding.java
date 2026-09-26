@@ -10,7 +10,7 @@ import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.appcompat.widget.AppCompatToggleButton;
 
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
+import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding;
 import io.github.oppsgo.android.theme.binding.TextViewResourceBinding;
 
@@ -58,7 +58,7 @@ public class AppCompatCompoundButtonResourceBinding extends CompoundButtonResour
     @Override
     protected int normalizeAttr(@AttrRes int attr) {
         if (attr == ATTR_BUTTON_TINT_COMPAT) return CompoundButtonResourceBinding.ATTR_BUTTON_TINT;
-        if (attr == ATTR_BACKGROUND_TINT_COMPAT) return BaseViewResourceBinding.ATTR_BACKGROUND_TINT;
+        if (attr == ATTR_BACKGROUND_TINT_COMPAT) return ViewResourceBinding.ATTR_BACKGROUND_TINT;
         if (attr == ATTR_DRAWABLE_TINT_COMPAT) return TextViewResourceBinding.ATTR_DRAWABLE_TINT;
         return super.normalizeAttr(attr);
     }

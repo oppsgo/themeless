@@ -9,7 +9,7 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
+import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding;
 
 /**
@@ -54,7 +54,7 @@ public class AppCompatCompoundButtonResourceBinding extends CompoundButtonResour
     @Override
     protected int normalizeAttr(@AttrRes int attr) {
         if (attr == ATTR_BUTTON_TINT_COMPAT) return CompoundButtonResourceBinding.ATTR_BUTTON_TINT;
-        if (attr == ATTR_BACKGROUND_TINT_COMPAT) return BaseViewResourceBinding.ATTR_BACKGROUND_TINT;
+        if (attr == ATTR_BACKGROUND_TINT_COMPAT) return ViewResourceBinding.ATTR_BACKGROUND_TINT;
         return super.normalizeAttr(attr);
     }
 }

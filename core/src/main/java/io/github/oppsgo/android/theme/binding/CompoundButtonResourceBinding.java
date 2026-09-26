@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
-import io.github.oppsgo.android.theme.resource.ColorRef;
-import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
 
@@ -32,13 +30,14 @@ public class CompoundButtonResourceBinding extends TextViewResourceBinding {
     }
 
     @NonNull
-    public static CompoundButtonResourceBinding of(@NonNull CompoundButton view) {
-        return of(view, CompoundButtonResourceBinding.class, CompoundButtonResourceBinding::new);
+    @Override
+    public CompoundButton getView() {
+        return (CompoundButton) view;
     }
 
     @NonNull
-    protected CompoundButton getCompoundButton() {
-        return (CompoundButton) view;
+    public static CompoundButtonResourceBinding of(@NonNull CompoundButton view) {
+        return of(view, CompoundButtonResourceBinding.class, CompoundButtonResourceBinding::new);
     }
 
     @Override
@@ -62,6 +61,12 @@ public class CompoundButtonResourceBinding extends TextViewResourceBinding {
     }
 
     @NonNull
+    public CompoundButtonResourceBinding setButtonDrawable(@NonNull ResourceRef<?> button) {
+        putAndUpdate(ATTR_BUTTON, button);
+        return this;
+    }
+
+    @NonNull
     public CompoundButtonResourceBinding setButtonDrawable(@DrawableRes int resId) {
         if (resId == ID_NULL) {
             unbind(ATTR_BUTTON);
@@ -71,8 +76,8 @@ public class CompoundButtonResourceBinding extends TextViewResourceBinding {
     }
 
     @NonNull
-    public CompoundButtonResourceBinding setButtonDrawable(@NonNull DrawableRef button) {
-        putAndUpdate(ATTR_BUTTON, button);
+    public CompoundButtonResourceBinding setButtonTint(@NonNull ResourceRef<?> tint) {
+        putAndUpdate(ATTR_BUTTON_TINT, tint);
         return this;
     }
 
@@ -82,20 +87,7 @@ public class CompoundButtonResourceBinding extends TextViewResourceBinding {
             unbind(ATTR_BUTTON_TINT);
             return this;
         }
-        putAndUpdate(ATTR_BUTTON_TINT, createColorResource(tint));
-        return this;
-    }
-
-    @NonNull
-    public CompoundButtonResourceBinding setButtonTint(@NonNull ColorRef tint) {
-        putAndUpdate(ATTR_BUTTON_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public CompoundButtonResourceBinding setButtonTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(ATTR_BUTTON_TINT, tint);
-        return this;
+        return setButtonTint(createColorResource(tint));
     }
 
     @Override
@@ -103,12 +95,12 @@ public class CompoundButtonResourceBinding extends TextViewResourceBinding {
         if (value == null || value.isEmpty()) return;
         if (attr == ATTR_BUTTON && value instanceof DrawableRef) {
             Drawable drawable = ((DrawableRef) value).resolve(resolver);
-            getCompoundButton().setButtonDrawable(drawable);
+            getView().setButtonDrawable(drawable);
             return;
         }
         if (attr == ATTR_BUTTON_TINT) {
             ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setButtonTintList(getCompoundButton(), tint);
+            resolver.getViewCompat().setButtonTintList(getView(), tint);
             return;
         }
         super.updateAttribute(resolver, attr, value);

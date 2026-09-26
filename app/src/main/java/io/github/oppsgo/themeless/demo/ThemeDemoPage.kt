@@ -28,11 +28,11 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.androidx.ktx.registerAppCompatThemeBindings
 import io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver
-import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding
 import io.github.oppsgo.android.theme.binding.TextViewResourceBinding
 import io.github.oppsgo.android.theme.binding.ViewResourceBinding
 import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver
+import io.github.oppsgo.android.theme.resource.ColorRef
 import io.github.oppsgo.android.theme.resource.DrawableRef
 import io.github.oppsgo.themeless.R
 
@@ -124,9 +124,10 @@ internal fun Activity.showThemeDemo(@StringRes subtitle: Int) {
 private fun Activity.ensureDemoBackgroundBindings() {
     fun bindBg(id: Int, color: Int) {
         val v = findViewById<View>(id) ?: return
-        val binding = ThemeManager.get().obtain(v)
-        if (binding is ViewResourceBinding) {
-            binding.setBackground(color)
+        val ref = ColorRef.of(color)
+        when (val binding = ThemeManager.get().obtain(v)) {
+            is ViewResourceBinding -> binding.setBackground(ref)
+            else -> binding.bind(android.R.attr.background, ref)
         }
     }
     bindBg(R.id.themeRoot, R.color.skin_page_bg)
@@ -341,8 +342,8 @@ private fun Activity.bindSizedIcon() {
     val binding = ThemeManager.get().obtain(icon) as ImageViewResourceBinding
     val size = (72 * resources.displayMetrics.density).toInt()
     binding.setImage(
-        DrawableRef.of(R.drawable.mail_star_fill) { resolver, resourceId ->
-            val drawable = resolver.getDrawable(resourceId)?.mutate() ?: return@of null
+        DrawableRef.of(R.drawable.mail_star_fill) { resolver ->
+            val drawable = resolver.getDrawable(R.drawable.mail_star_fill)?.mutate() ?: return@of null
             drawable.setBounds(0, 0, size, size)
             drawable
         },
@@ -355,7 +356,10 @@ private fun Activity.bindManualText() {
     findViewById<Button>(R.id.btnThemeDynamic).setOnClickListener {
         useAccent = !useAccent
         val color = if (useAccent) R.color.skin_accent else R.color.skin_text_primary
-        TextViewResourceBinding.of(managed).setTextColor(color).refresh()
+        TextViewResourceBinding.of(managed).apply {
+            setTextColor(ColorRef.of(color))
+            refresh()
+        }
     }
 
     val rows = findViewById<LinearLayout>(R.id.themeExtraRows)
@@ -368,8 +372,8 @@ private fun Activity.bindManualText() {
         }
         rows.addView(created)
         TextViewResourceBinding.of(created)
-            .setTextColor(R.color.skin_accent)
-            .setBackground(DrawableRef.of { resolver, resourceId ->
+            .setTextColor(ColorRef.of(R.color.skin_accent))
+            .setBackground(DrawableRef.of { resolver ->
                 val drawable = GradientDrawable()
                 drawable.cornerRadius = 15F
                 drawable.orientation = GradientDrawable.Orientation.LEFT_RIGHT
@@ -377,7 +381,7 @@ private fun Activity.bindManualText() {
                     resolver.getColor(R.color.skin_card_bg),
                     resolver.getColor(R.color.skin_panel_bg_blue)
                 )
-                return@of drawable
+                drawable
             })
     }
 
@@ -414,7 +418,7 @@ private fun Activity.bindManualText() {
     }
 }
 
-/** 单个 RecyclerView；复用条目由 RecyclerViewResourceBinding 补刷。 */
+/** 单个 RecyclerView；复用条目由 androidx RecyclerView Binding 补刷。 */
 private fun Activity.bindThemeList() {
     val recycler = findViewById<RecyclerView>(R.id.themeRecycler)
     lateinit var adapter: ThemeRowAdapter

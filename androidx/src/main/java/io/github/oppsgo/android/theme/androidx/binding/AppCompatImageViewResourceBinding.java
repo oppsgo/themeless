@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.BaseViewResourceBinding;
+import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding;
 import androidx.appcompat.R;
 
@@ -19,7 +19,7 @@ public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding 
     public static final int ATTR_SRC_COMPAT = R.attr.srcCompat;
     /** {@code app:tint}，和 {@link ImageViewResourceBinding#ATTR_TINT}（{@code android:tint}）不是同一个 id。 */
     public static final int ATTR_TINT_COMPAT = R.attr.tint;
-    /** {@code app:backgroundTint}，和 {@link BaseViewResourceBinding#ATTR_BACKGROUND_TINT} 不是同一个 id。 */
+    /** {@code app:backgroundTint}，和 {@link ViewResourceBinding#ATTR_BACKGROUND_TINT} 不是同一个 id。 */
     public static final int ATTR_BACKGROUND_TINT_COMPAT = R.attr.backgroundTint;
 
     public static void register() {
@@ -48,7 +48,7 @@ public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding 
     protected int normalizeAttr(@AttrRes int attr) {
         if (attr == ATTR_SRC_COMPAT) return ImageViewResourceBinding.ATTR_SRC;
         if (attr == ATTR_TINT_COMPAT) return ImageViewResourceBinding.ATTR_TINT;
-        if (attr == ATTR_BACKGROUND_TINT_COMPAT) return BaseViewResourceBinding.ATTR_BACKGROUND_TINT;
+        if (attr == ATTR_BACKGROUND_TINT_COMPAT) return ViewResourceBinding.ATTR_BACKGROUND_TINT;
         return super.normalizeAttr(attr);
     }
 }

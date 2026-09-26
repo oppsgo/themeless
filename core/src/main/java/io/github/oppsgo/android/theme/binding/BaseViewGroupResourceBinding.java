@@ -13,10 +13,16 @@ import io.github.oppsgo.android.theme.ThemeManager;
  * 刷新自己之后，把同一套 {@link ResourceResolver} 应用到已绑定的直接子 View。
  * 更深的子树由子 View 自己的 ViewGroup Binding 继续传递。
  */
-public class BaseViewGroupResourceBinding<GROUP extends ViewGroup> extends BaseViewResourceBinding<GROUP> {
+public class BaseViewGroupResourceBinding extends ViewResourceBinding {
 
-    public BaseViewGroupResourceBinding(@NonNull GROUP view) {
+    public BaseViewGroupResourceBinding(@NonNull ViewGroup view) {
         super(view);
+    }
+
+    @NonNull
+    @Override
+    public ViewGroup getView() {
+        return (ViewGroup) view;
     }
 
     @Override
@@ -24,10 +30,11 @@ public class BaseViewGroupResourceBinding<GROUP extends ViewGroup> extends BaseV
         super.invalidate(resolver);
 
         ThemeManager manager = ThemeManager.get();
-        int count = view.getChildCount();
+        ViewGroup group = getView();
+        int count = group.getChildCount();
         for (int i = 0; i < count; i++) {
-            View child = view.getChildAt(i);
-            ResourceBinding<?> binding = manager.find(child);
+            View child = group.getChildAt(i);
+            ResourceBinding binding = manager.find(child);
             if (binding != null && binding.isEnable()) {
                 binding.apply(resolver);
             }

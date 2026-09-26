@@ -11,12 +11,12 @@ import io.github.oppsgo.android.theme.ResourceBinding;
 
 /**
  * dimen 引用，默认取出 {@link ResourceResolver#getDimensionPixelSize}。
- * 字号要用带小数、且跟随 {@code fontScale} 的值时，用 {@link Resolver} 调 {@link ResourceResolver#getDimension}。
+ * 字号要用带小数、且跟随 {@code fontScale} 的值时，用 {@link ResourceValue} 调 {@link ResourceResolver#getDimension}。
  */
-public final class DimenRef extends ResourceRef<Integer> {
+public class DimenRef extends ResourceRef<Integer> {
 
-    private DimenRef(@DimenRes int resourceId, @Nullable Resolver<Integer> resolver) {
-        super(resourceId, resolver);
+    protected DimenRef(@DimenRes int resourceId, @Nullable ResourceValue<Integer> custom) {
+        super(resourceId, custom);
     }
 
     @NonNull
@@ -25,13 +25,13 @@ public final class DimenRef extends ResourceRef<Integer> {
     }
 
     @NonNull
-    public static DimenRef of(@DimenRes int resourceId, @NonNull Resolver<Integer> resolver) {
-        return new DimenRef(resourceId, resolver);
+    public static DimenRef of(@DimenRes int resourceId, @NonNull ResourceValue<Integer> custom) {
+        return new DimenRef(resourceId, custom);
     }
 
     @NonNull
-    public static DimenRef of(@NonNull Resolver<Integer> resolver) {
-        return new DimenRef(ResourceBinding.ID_NULL, resolver);
+    public static DimenRef of(@NonNull ResourceValue<Integer> custom) {
+        return new DimenRef(ResourceBinding.ID_NULL, custom);
     }
 
     @Px

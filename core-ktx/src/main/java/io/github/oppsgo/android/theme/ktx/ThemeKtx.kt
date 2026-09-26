@@ -82,8 +82,8 @@ fun Context.applyDayNight(dark: Boolean) {
  * 带 lambda 的配置请用 [theme]，不要做成 `edit { }`（与零参抢解析）。
  */
 @Suppress("UNCHECKED_CAST")
-fun <V : View> V.edit(): ResourceBinding<V> =
-    (ThemeManager.get().edit(this) as ResourceBinding<V>)
+fun <V : View> V.edit(): ResourceBinding =
+    ThemeManager.get().edit(this)
 
 fun TextView.edit(): TextViewResourceBinding = TextViewResourceBinding.of(this)
 
@@ -94,20 +94,20 @@ fun CompoundButton.edit(): CompoundButtonResourceBinding = CompoundButtonResourc
 fun Switch.edit(): SwitchResourceBinding = SwitchResourceBinding.of(this)
 
 /** 取或创建并挂 tag，等价于 [ThemeManager.obtain]。 */
-fun View.obtain(): ResourceBinding<*> = ThemeManager.get().obtain(this)
+fun View.obtain(): ResourceBinding = ThemeManager.get().obtain(this)
 
 /** 只查已挂载 Binding，等价于 [ThemeManager.find]。 */
-fun View.findBinding(): ResourceBinding<*>? = ThemeManager.get().find(this)
+fun View.findBinding(): ResourceBinding? = ThemeManager.get().find(this)
 
 /** 只查已挂载且类型匹配的 Binding。 */
-fun <T : ResourceBinding<*>> View.findBinding(clazz: Class<T>): T? =
+fun <T : ResourceBinding> View.findBinding(clazz: Class<T>): T? =
     ThemeManager.get().find(this, clazz)
 
 /**
  * 在 Binding 上配置主题属性（同构于社区 `view.skin { }`；块名仍可再议）。
  * `setXxx` 在已 apply 或临时 fallback Resolver 下会立刻写 View。
  */
-inline fun <V : View> V.theme(block: ResourceBinding<V>.(V) -> Unit): V {
+inline fun <V : View> V.theme(block: ResourceBinding.(V) -> Unit): V {
     edit().block(this)
     return this
 }

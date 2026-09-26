@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
 /** 默认的 {@link ViewGroup} 绑定，刷新子树的逻辑在 {@link BaseViewGroupResourceBinding}。 */
-public class ViewGroupResourceBinding extends BaseViewGroupResourceBinding<ViewGroup> {
+public class ViewGroupResourceBinding extends BaseViewGroupResourceBinding {
 
     public ViewGroupResourceBinding(@NonNull ViewGroup view) {
         super(view);

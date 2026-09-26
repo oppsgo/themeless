@@ -7,14 +7,16 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ResourceBinding;
+import io.github.oppsgo.android.theme.ResourceResolver;
 
-/** Drawable 引用，对应 {@code setBackground}、{@code setImageDrawable} 等。 */
-public final class DrawableRef extends ResourceRef<Drawable> {
+/**
+ * Drawable 引用，对应 {@code setBackground}、{@code setImageDrawable} 等。
+ */
+public class DrawableRef extends ResourceRef<Drawable> {
 
-    private DrawableRef(@DrawableRes int resourceId, @Nullable Resolver<Drawable> resolver) {
-        super(resourceId, resolver);
+    protected DrawableRef(@DrawableRes int resourceId, @Nullable ResourceValue<Drawable> custom) {
+        super(resourceId, custom);
     }
 
     @NonNull
@@ -23,13 +25,13 @@ public final class DrawableRef extends ResourceRef<Drawable> {
     }
 
     @NonNull
-    public static DrawableRef of(@DrawableRes int resourceId, @NonNull Resolver<Drawable> resolver) {
-        return new DrawableRef(resourceId, resolver);
+    public static DrawableRef of(@DrawableRes int resourceId, @NonNull ResourceValue<Drawable> custom) {
+        return new DrawableRef(resourceId, custom);
     }
 
     @NonNull
-    public static DrawableRef of(@NonNull Resolver<Drawable> resolver) {
-        return new DrawableRef(ResourceBinding.ID_NULL, resolver);
+    public static DrawableRef of(@NonNull ResourceValue<Drawable> custom) {
+        return new DrawableRef(ResourceBinding.ID_NULL, custom);
     }
 
     @Nullable

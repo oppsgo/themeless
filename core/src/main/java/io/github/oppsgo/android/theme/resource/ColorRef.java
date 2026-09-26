@@ -10,10 +10,10 @@ import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ResourceBinding;
 
 /** 纯色引用，对应 {@code setTextColor(int)}、{@code setBackgroundColor}。 */
-public final class ColorRef extends ResourceRef<Integer> {
+public class ColorRef extends ResourceRef<Integer> {
 
-    private ColorRef(@ColorRes int resourceId, @Nullable Resolver<Integer> resolver) {
-        super(resourceId, resolver);
+    protected ColorRef(@ColorRes int resourceId, @Nullable ResourceValue<Integer> custom) {
+        super(resourceId, custom);
     }
 
     @NonNull
@@ -22,13 +22,13 @@ public final class ColorRef extends ResourceRef<Integer> {
     }
 
     @NonNull
-    public static ColorRef of(@ColorRes int resourceId, @NonNull Resolver<Integer> resolver) {
-        return new ColorRef(resourceId, resolver);
+    public static ColorRef of(@ColorRes int resourceId, @NonNull ResourceValue<Integer> custom) {
+        return new ColorRef(resourceId, custom);
     }
 
     @NonNull
-    public static ColorRef of(@NonNull Resolver<Integer> resolver) {
-        return new ColorRef(ResourceBinding.ID_NULL, resolver);
+    public static ColorRef of(@NonNull ResourceValue<Integer> custom) {
+        return new ColorRef(ResourceBinding.ID_NULL, custom);
     }
 
     @ColorInt

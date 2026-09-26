@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
-import io.github.oppsgo.android.theme.resource.ColorRef;
-import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
 
@@ -33,13 +31,14 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
-    public static SwitchResourceBinding of(@NonNull Switch view) {
-        return of(view, SwitchResourceBinding.class, SwitchResourceBinding::new);
+    @Override
+    public Switch getView() {
+        return (Switch) view;
     }
 
     @NonNull
-    protected Switch getSwitch() {
-        return (Switch) view;
+    public static SwitchResourceBinding of(@NonNull Switch view) {
+        return of(view, SwitchResourceBinding.class, SwitchResourceBinding::new);
     }
 
     @Override
@@ -64,6 +63,12 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
+    public SwitchResourceBinding setThumb(@NonNull ResourceRef<?> thumb) {
+        putAndUpdate(ATTR_THUMB, thumb);
+        return this;
+    }
+
+    @NonNull
     public SwitchResourceBinding setThumbResource(@DrawableRes int resId) {
         if (resId == ID_NULL) {
             unbind(ATTR_THUMB);
@@ -73,8 +78,8 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
-    public SwitchResourceBinding setThumb(@NonNull DrawableRef thumb) {
-        putAndUpdate(ATTR_THUMB, thumb);
+    public SwitchResourceBinding setTrack(@NonNull ResourceRef<?> track) {
+        putAndUpdate(ATTR_TRACK, track);
         return this;
     }
 
@@ -88,8 +93,8 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
-    public SwitchResourceBinding setTrack(@NonNull DrawableRef track) {
-        putAndUpdate(ATTR_TRACK, track);
+    public SwitchResourceBinding setThumbTint(@NonNull ResourceRef<?> tint) {
+        putAndUpdate(ATTR_THUMB_TINT, tint);
         return this;
     }
 
@@ -99,19 +104,12 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
             unbind(ATTR_THUMB_TINT);
             return this;
         }
-        putAndUpdate(ATTR_THUMB_TINT, createColorResource(tint));
-        return this;
+        return setThumbTint(createColorResource(tint));
     }
 
     @NonNull
-    public SwitchResourceBinding setThumbTint(@NonNull ColorRef tint) {
-        putAndUpdate(ATTR_THUMB_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public SwitchResourceBinding setThumbTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(ATTR_THUMB_TINT, tint);
+    public SwitchResourceBinding setTrackTint(@NonNull ResourceRef<?> tint) {
+        putAndUpdate(ATTR_TRACK_TINT, tint);
         return this;
     }
 
@@ -121,20 +119,7 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
             unbind(ATTR_TRACK_TINT);
             return this;
         }
-        putAndUpdate(ATTR_TRACK_TINT, createColorResource(tint));
-        return this;
-    }
-
-    @NonNull
-    public SwitchResourceBinding setTrackTint(@NonNull ColorRef tint) {
-        putAndUpdate(ATTR_TRACK_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public SwitchResourceBinding setTrackTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(ATTR_TRACK_TINT, tint);
-        return this;
+        return setTrackTint(createColorResource(tint));
     }
 
     @Override
@@ -142,22 +127,22 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
         if (value == null || value.isEmpty()) return;
         if (attr == ATTR_THUMB && value instanceof DrawableRef) {
             Drawable drawable = ((DrawableRef) value).resolve(resolver);
-            getSwitch().setThumbDrawable(drawable);
+            getView().setThumbDrawable(drawable);
             return;
         }
         if (attr == ATTR_TRACK && value instanceof DrawableRef) {
             Drawable drawable = ((DrawableRef) value).resolve(resolver);
-            getSwitch().setTrackDrawable(drawable);
+            getView().setTrackDrawable(drawable);
             return;
         }
         if (attr == ATTR_THUMB_TINT) {
             ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setThumbTintList(getSwitch(), tint);
+            resolver.getViewCompat().setThumbTintList(getView(), tint);
             return;
         }
         if (attr == ATTR_TRACK_TINT) {
             ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setTrackTintList(getSwitch(), tint);
+            resolver.getViewCompat().setTrackTintList(getView(), tint);
             return;
         }
         super.updateAttribute(resolver, attr, value);

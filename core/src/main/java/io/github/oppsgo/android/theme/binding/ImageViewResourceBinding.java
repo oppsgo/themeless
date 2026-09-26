@@ -14,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
-import io.github.oppsgo.android.theme.resource.ColorRef;
-import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
 
@@ -23,13 +21,19 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * {@link ImageView} 绑定，额外跟踪 src 和 tint。
  * src 的显示尺寸见 {@link #applySrc}：调用方用 {@code Drawable.setBounds} 指定。
  */
-public class ImageViewResourceBinding extends BaseViewResourceBinding<ImageView> {
+public class ImageViewResourceBinding extends ViewResourceBinding {
 
     public static final int ATTR_SRC = android.R.attr.src;
     public static final int ATTR_TINT = android.R.attr.tint;
 
     public ImageViewResourceBinding(@NonNull ImageView view) {
         super(view);
+    }
+
+    @NonNull
+    @Override
+    public ImageView getView() {
+        return (ImageView) view;
     }
 
     /** 已有本类或子类就返回；否则给一个不挂到 View 上的实例。 */
@@ -58,6 +62,12 @@ public class ImageViewResourceBinding extends BaseViewResourceBinding<ImageView>
     }
 
     @NonNull
+    public ImageViewResourceBinding setImage(@NonNull ResourceRef<?> src) {
+        putAndUpdate(ATTR_SRC, src);
+        return this;
+    }
+
+    @NonNull
     public ImageViewResourceBinding setImageResource(@DrawableRes int resId) {
         if (resId == ID_NULL) {
             unbind(ATTR_SRC);
@@ -67,8 +77,8 @@ public class ImageViewResourceBinding extends BaseViewResourceBinding<ImageView>
     }
 
     @NonNull
-    public ImageViewResourceBinding setImage(@NonNull DrawableRef src) {
-        putAndUpdate(ATTR_SRC, src);
+    public ImageViewResourceBinding setImageTint(@NonNull ResourceRef<?> tint) {
+        putAndUpdate(ATTR_TINT, tint);
         return this;
     }
 
@@ -78,20 +88,7 @@ public class ImageViewResourceBinding extends BaseViewResourceBinding<ImageView>
             unbind(ATTR_TINT);
             return this;
         }
-        putAndUpdate(ATTR_TINT, createColorResource(tint));
-        return this;
-    }
-
-    @NonNull
-    public ImageViewResourceBinding setImageTint(@NonNull ColorRef tint) {
-        putAndUpdate(ATTR_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public ImageViewResourceBinding setImageTint(@NonNull ColorStateListRef tint) {
-        putAndUpdate(ATTR_TINT, tint);
-        return this;
+        return setImageTint(createColorResource(tint));
     }
 
     @Override
@@ -103,7 +100,7 @@ public class ImageViewResourceBinding extends BaseViewResourceBinding<ImageView>
         }
         if (attr == ATTR_TINT) {
             ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setImageTintList(view, tint);
+            resolver.getViewCompat().setImageTintList(getView(), tint);
             return;
         }
         super.updateAttribute(resolver, attr, value);
@@ -115,19 +112,20 @@ public class ImageViewResourceBinding extends BaseViewResourceBinding<ImageView>
      * bounds 为空表示没改过尺寸，不动原来的 layout 宽高。
      */
     private void applySrc(@Nullable Drawable drawable) {
+        ImageView imageView = getView();
         if (drawable != null) {
             Rect bounds = drawable.getBounds();
             if (bounds.width() > 0 && bounds.height() > 0) {
-                ViewGroup.LayoutParams lp = view.getLayoutParams();
+                ViewGroup.LayoutParams lp = imageView.getLayoutParams();
                 if (lp == null) {
-                    view.setLayoutParams(new ViewGroup.LayoutParams(bounds.width(), bounds.height()));
+                    imageView.setLayoutParams(new ViewGroup.LayoutParams(bounds.width(), bounds.height()));
                 } else if (lp.width != bounds.width() || lp.height != bounds.height()) {
                     lp.width = bounds.width();
                     lp.height = bounds.height();
-                    view.setLayoutParams(lp);
+                    imageView.setLayoutParams(lp);
                 }
             }
         }
-        view.setImageDrawable(drawable);
+        imageView.setImageDrawable(drawable);
     }
 }

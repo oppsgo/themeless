@@ -50,21 +50,21 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
     boolean refreshOnInflate;
 
     /**
-     * Dialog、PopupWindow 等独立窗口的根（DecorView / PopupDecorView）。
-     * 只记窗口根，子 View 由刷新自己往下走。按对象身份去重。
+     * Dialog、PopupWindow 等独立窗口的内容根（{@code inflate(..., null)} 的 XML 根）。
+     * 只记这一层，子树由 ViewGroup Binding 往下传。按对象身份去重。
      */
     private final Set<View> windowRoots = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private final View.OnAttachStateChangeListener windowWatcher = new View.OnAttachStateChangeListener() {
         @Override
         public void onViewAttachedToWindow(@NonNull View v) {
-            trackWindowRoot(v.getRootView());
+            // 记 inflate 出来的内容根（已有 Binding），不要记 DecorView。
+            trackWindowRoot(v);
         }
 
         @Override
         public void onViewDetachedFromWindow(@NonNull View v) {
-            View root = v.getRootView();
-            windowRoots.remove(root);
+            windowRoots.remove(v);
         }
     };
 
@@ -103,7 +103,7 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
 
     protected void attachViewBind(@Nullable View view, @Nullable AttributeSet attrs) {
         if (view == null) return;
-        ResourceBinding<?> binding = ThemeManager.get().obtain(view);
+        ResourceBinding binding = ThemeManager.get().obtain(view);
         binding.bind(attrs);
         if (refreshOnInflate) {
             binding.refresh();
@@ -126,15 +126,16 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
     }
 
     private void trackWindowRoot(@Nullable View root) {
-        if (root == null || isActivityDecor(root)) {
+        if (root == null) {
+            return;
+        }
+        // Activity setContent 会带 parent inflate，不会进 watchForeignWindow；
+        // 这里再挡一次，避免误把 Activity 内容树记成浮层根。
+        View decor = peekActivityDecor();
+        if (decor != null && (root == decor || root.getRootView() == decor)) {
             return;
         }
         windowRoots.add(root);
-    }
-
-    private boolean isActivityDecor(@Nullable View view) {
-        View decor = peekActivityDecor();
-        return decor != null && view == decor;
     }
 
     @Nullable

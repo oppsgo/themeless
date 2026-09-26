@@ -29,7 +29,7 @@ public final class ResourceBindingFactory {
 
     public interface Creator<VIEW extends View> {
         @NonNull
-        ResourceBinding<?> create(@NonNull VIEW view);
+        ResourceBinding create(@NonNull VIEW view);
     }
 
     private final ConcurrentHashMap<Class<? extends View>, Creator<? extends View>> registry = new ConcurrentHashMap<>();
@@ -65,28 +65,28 @@ public final class ResourceBindingFactory {
     }
 
     @NonNull
-    public ResourceBinding<?> create(@NonNull View view) {
+    public ResourceBinding create(@NonNull View view) {
         @SuppressWarnings("unchecked")
         Creator<View> creator = (Creator<View>) resolve(view.getClass());
         return creator.create(view);
     }
 
     @Nullable
-    public ResourceBinding<?> find(@Nullable View view) {
+    public ResourceBinding find(@Nullable View view) {
         Object tag = view == null ? null : view.getTag(TAG_BINDING);
         if (tag instanceof ResourceBinding) {
-            return (ResourceBinding<?>) tag;
+            return (ResourceBinding) tag;
         }
         return null;
     }
 
     @NonNull
-    public ResourceBinding<?> obtain(@NonNull View view) {
-        ResourceBinding<?> existing = find(view);
+    public ResourceBinding obtain(@NonNull View view) {
+        ResourceBinding existing = find(view);
         if (existing != null) {
             return existing;
         }
-        ResourceBinding<?> binding = create(view);
+        ResourceBinding binding = create(view);
         view.setTag(TAG_BINDING, binding);
         return binding;
     }

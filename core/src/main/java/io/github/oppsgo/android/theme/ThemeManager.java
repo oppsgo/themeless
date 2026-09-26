@@ -111,6 +111,12 @@ public class ThemeManager {
         return installed != null && installed.refreshOnInflate;
     }
 
+    /**
+     * 刷该 Activity 的内容树，以及已登记的 Dialog / PopupWindow 内容根。
+     * <p>
+     * Activity 最多落到 {@code setContentView} 那一层（{@code android.R.id.content} 的直接子 View）；
+     * 浮层只刷登记的内容根。更深层由 {@link io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding} 传递。
+     */
     public void refresh(@Nullable Context context) {
         ThemeDelegate installed = findDelegate(context);
         if (installed == null) return;
@@ -118,21 +124,24 @@ public class ThemeManager {
         if (activity.isFinishing() || activity.isDestroyed()) return;
         ResourceResolver resolver = installed.resolver;
         if (resolver == null) return;
-        // 必须用 Activity 上记下的 resolver。Dialog / PopupWindow 的 DecorView Context
+        // 必须用 Activity 上记下的 resolver。Dialog / PopupWindow 的 Context
         // 常常找不到 ThemeDelegate，按 View.getContext() 取会直接跳过，浮层就不变色。
         View content = activity.findViewById(Window.ID_ANDROID_CONTENT);
         if (content != null) {
-            refresh(resolver, content);
+            refreshActivityContent(resolver, content);
         }
-        View activityDecor = activity.getWindow() == null ? null : activity.getWindow().peekDecorView();
         for (View root : installed.copyWindowRoots()) {
-            if (!root.isAttachedToWindow() || root == activityDecor) {
+            if (!root.isAttachedToWindow()) {
                 continue;
             }
-            refresh(resolver, root);
+            apply(resolver, root);
         }
     }
 
+    /**
+     * 只刷指定 View 上的 Binding，不往子树遍历。
+     * ViewGroup 若已挂 Binding，子树由其自身的 apply 继续传递。
+     */
     public void refresh(@Nullable View view) {
         if (view == null) return;
         ResourceResolver resolver = getResolver(view.getContext());
@@ -148,7 +157,7 @@ public class ThemeManager {
             resolver = installed == null ? null : installed.resolver;
         }
         if (resolver == null) return;
-        refresh(resolver, view);
+        apply(resolver, view);
     }
 
     @Nullable
@@ -168,27 +177,27 @@ public class ThemeManager {
     }
 
     /**
-     * ViewGroup 自己有 Binding 时只刷它，子树由 {@link io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding} 继续传递。
-     * 没有 Binding 才往下找，避免同一棵子树刷两次。
+     * {@code android.R.id.content} 是系统 FrameLayout，通常没有 Binding。
+     * 只刷它的直接子 View（{@code setContentView} 根），不再往下 DFS。
      */
-    private void refresh(@NonNull ResourceResolver resolver, @NonNull View view) {
-        if (view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) view;
-            if (registry.find(group) != null) {
-                apply(resolver, group);
-                return;
-            }
-            int childCount = group.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                refresh(resolver, group.getChildAt(i));
-            }
+    private void refreshActivityContent(@NonNull ResourceResolver resolver, @NonNull View content) {
+        if (registry.find(content) != null) {
+            apply(resolver, content);
             return;
         }
-        apply(resolver, view);
+        if (!(content instanceof ViewGroup)) {
+            apply(resolver, content);
+            return;
+        }
+        ViewGroup group = (ViewGroup) content;
+        int childCount = group.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            apply(resolver, group.getChildAt(i));
+        }
     }
 
     private void apply(@NonNull ResourceResolver resolver, @NonNull View view) {
-        ResourceBinding<?> binding = registry.find(view);
+        ResourceBinding binding = registry.find(view);
         if (binding != null && binding.isEnable()) {
             binding.apply(resolver);
         }
@@ -240,8 +249,8 @@ public class ThemeManager {
      * edit 不强制挂载。
      */
     @NonNull
-    public ResourceBinding<?> edit(@NonNull View view) {
-        ResourceBinding<?> existing = registry.find(view);
+    public ResourceBinding edit(@NonNull View view) {
+        ResourceBinding existing = registry.find(view);
         if (existing != null) {
             return existing;
         }
@@ -252,7 +261,7 @@ public class ThemeManager {
      * 取或创建并挂到 View tag 上（inflate 同源）。
      */
     @NonNull
-    public ResourceBinding<?> obtain(@NonNull View view) {
+    public ResourceBinding obtain(@NonNull View view) {
         return registry.obtain(view);
     }
 
@@ -260,7 +269,7 @@ public class ThemeManager {
      * 只查已挂载的 Binding；没有则 {@code null}。
      */
     @Nullable
-    public ResourceBinding<?> find(@Nullable View view) {
+    public ResourceBinding find(@Nullable View view) {
         return registry.find(view);
     }
 
@@ -268,8 +277,8 @@ public class ThemeManager {
      * 只查已挂载且类型匹配的 Binding；没有或不匹配则 {@code null}。
      */
     @Nullable
-    public <T extends ResourceBinding<?>> T find(@Nullable View view, @NonNull Class<T> clazz) {
-        ResourceBinding<?> binding = find(view);
+    public <T extends ResourceBinding> T find(@Nullable View view, @NonNull Class<T> clazz) {
+        ResourceBinding binding = find(view);
         return clazz.isInstance(binding) ? clazz.cast(binding) : null;
     }
 }
