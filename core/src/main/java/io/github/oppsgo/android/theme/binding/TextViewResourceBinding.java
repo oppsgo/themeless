@@ -149,7 +149,7 @@ public class TextViewResourceBinding extends ViewResourceBinding {
     }
 
     @NonNull
-    public TextViewResourceBinding setTextColor(@NonNull ResourceRef<?> color) {
+    public TextViewResourceBinding setTextColor(ResourceRef<?> color) {
         putAndUpdate(ATTR_TEXT_COLOR, color);
         return this;
     }
@@ -164,7 +164,7 @@ public class TextViewResourceBinding extends ViewResourceBinding {
     }
 
     @NonNull
-    public TextViewResourceBinding setHintTextColor(@NonNull ResourceRef<?> color) {
+    public TextViewResourceBinding setHintTextColor(ResourceRef<?> color) {
         putAndUpdate(ATTR_TEXT_COLOR_HINT, color);
         return this;
     }
@@ -183,7 +183,7 @@ public class TextViewResourceBinding extends ViewResourceBinding {
      * 再 {@code setTextSize(PX, ...)}。
      */
     @NonNull
-    public TextViewResourceBinding setTextSize(@NonNull ResourceRef<?> size) {
+    public TextViewResourceBinding setTextSize(ResourceRef<?> size) {
         if (isTrackTextSize()) {
             putAndUpdate(ATTR_TEXT_SIZE, size);
         } else {
@@ -204,7 +204,7 @@ public class TextViewResourceBinding extends ViewResourceBinding {
     }
 
     @NonNull
-    public TextViewResourceBinding setCompoundDrawableTint(@Nullable ResourceRef<?> tint) {
+    public TextViewResourceBinding setCompoundDrawableTint(ResourceRef<?> tint) {
         putAndUpdate(ATTR_DRAWABLE_TINT, tint);
         return this;
     }

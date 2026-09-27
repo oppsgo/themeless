@@ -11,7 +11,7 @@
     <string name="home_body">Themeless 在 inflate 时记录资源 id，apply 时按 ResourceResolver 写回 View。右上角「设置」可改皮肤并持久保存；演示页内切肤只作用于当前页，返回后不影响首页。</string>
     <string name="home_skin_status_format">当前皮肤：%1$s（以设置页保存为准）</string>
     <string name="home_lab_section">二级演示</string>
-    <string name="home_lab_hint">对照两种安装方式。进入后按「控件 / 列表 / 浮层」分 Tab，不再挤在一页。</string>
+    <string name="home_lab_hint">对照两种安装方式。进入后按「控件 / 列表 / 其它 / 浮层」分 Tab，不再挤在一页。</string>
 
     <string name="main_night_follow">跟随系统</string>
     <string name="main_night_light">强制亮色</string>
@@ -34,9 +34,19 @@
 
     <string name="demo_tab_widgets">控件</string>
     <string name="demo_tab_list">列表</string>
+    <string name="demo_tab_extras">其它</string>
     <string name="demo_tab_overlays">浮层</string>
-    <string name="demo_widgets_hint">此处切肤只作用于当前演示页，离开即丢弃；要保存请回首页右上角「设置」。</string>
-    <string name="demo_overlays_hint">先弹出 Dialog / Popup，再回「控件」Tab 切肤，浮层应一起变。</string>
+    <string name="demo_list_sub_rv">RecyclerView</string>
+    <string name="demo_list_sub_lv">ListView</string>
+    <string name="demo_list_sub_gv">GridView</string>
+    <string name="demo_widgets_hint">顶部切肤只作用于当前演示页，离开即丢弃；要保存请回首页右上角「设置」。</string>
+    <string name="demo_extras_hint">ProgressBar / SeekBar 的 tint 与 drawable 跟肤；顶部切肤后应一起变。</string>
+    <string name="demo_extras_progress_title">ProgressBar</string>
+    <string name="demo_extras_progress_hint">横向进度 + 不确定转圈 · progressTint / indeterminateTint</string>
+    <string name="demo_extras_seek_title">SeekBar</string>
+    <string name="demo_extras_seek_hint">progressTint / thumbTint 跟肤</string>
+    <string name="demo_extras_seek_value_format">进度 %1$d</string>
+    <string name="demo_overlays_hint">先弹出 Dialog / Popup，再点顶部切肤，浮层应一起变。</string>
 
     <string name="theme_demo_title">主题演示</string>
     <string name="theme_demo_title_format">换肤 %1$s</string>
@@ -57,7 +67,7 @@
     <string name="theme_demo_light">亮色</string>
     <string name="theme_demo_dark">暗色</string>
     <string name="theme_demo_custom">晴空蓝</string>
-    <string name="theme_demo_list_hint">点条目可追加 · 复用项跟肤</string>
+    <string name="theme_demo_list_hint">点条目可追加 · 复用项跟肤（RV / ListView / GridView）</string>
     <string name="theme_demo_list_title_format">项 %1$d</string>
     <string name="theme_demo_list_subtitle">主色 / 次要色 / 卡片底会跟肤</string>
     <string name="theme_demo_compound_hint">AppCompat CompoundButton / SwitchCompat · buttonTint / thumbTint 跟肤</string>

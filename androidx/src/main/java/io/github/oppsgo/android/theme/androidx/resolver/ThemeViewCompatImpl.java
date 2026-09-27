@@ -1,11 +1,9 @@
 package io.github.oppsgo.android.theme.androidx.resolver;
 
 import android.content.res.ColorStateList;
-import android.os.Build;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,17 +36,5 @@ public class ThemeViewCompatImpl implements ThemeViewCompat {
     @Override
     public void setButtonTintList(@NonNull CompoundButton button, @Nullable ColorStateList tint) {
         CompoundButtonCompat.setButtonTintList(button, tint);
-    }
-
-    @Override
-    public void setThumbTintList(@NonNull Switch switchView, @Nullable ColorStateList tint) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        switchView.setThumbTintList(tint);
-    }
-
-    @Override
-    public void setTrackTintList(@NonNull Switch switchView, @Nullable ColorStateList tint) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        switchView.setTrackTintList(tint);
     }
 }

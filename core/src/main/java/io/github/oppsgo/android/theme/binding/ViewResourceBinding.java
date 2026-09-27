@@ -55,7 +55,7 @@ public class ViewResourceBinding extends BaseViewResourceBinding {
     }
 
     @NonNull
-    public ViewResourceBinding setBackground(@NonNull ResourceRef<?> background) {
+    public ViewResourceBinding setBackground(ResourceRef<?> background) {
         putAndUpdate(ATTR_BACKGROUND, background);
         return this;
     }
@@ -70,7 +70,7 @@ public class ViewResourceBinding extends BaseViewResourceBinding {
     }
 
     @NonNull
-    public ViewResourceBinding setBackgroundTint(@Nullable ResourceRef<?> tint) {
+    public ViewResourceBinding setBackgroundTint(ResourceRef<?> tint) {
         putAndUpdate(ATTR_BACKGROUND_TINT, tint);
         return this;
     }
@@ -95,8 +95,6 @@ public class ViewResourceBinding extends BaseViewResourceBinding {
             if (value instanceof ColorRef) {
                 Integer color = ((ColorRef) value).resolve(resolver);
                 if (color != null) {
-                    // AppCompat Button 默认带 backgroundTint，只 setBackgroundColor 会被 tint 盖住
-                    resolver.getViewCompat().setBackgroundTintList(view, null);
                     view.setBackgroundColor(color);
                 }
             } else if (value instanceof DrawableRef) {

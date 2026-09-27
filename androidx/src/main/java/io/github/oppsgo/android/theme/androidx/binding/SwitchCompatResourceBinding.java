@@ -82,7 +82,7 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     }
 
     @NonNull
-    public SwitchCompatResourceBinding setThumb(@NonNull ResourceRef<?> thumb) {
+    public SwitchCompatResourceBinding setThumb(ResourceRef<?> thumb) {
         putAndUpdate(SwitchResourceBinding.ATTR_THUMB, thumb);
         return this;
     }
@@ -97,7 +97,7 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     }
 
     @NonNull
-    public SwitchCompatResourceBinding setTrack(@NonNull ResourceRef<?> track) {
+    public SwitchCompatResourceBinding setTrack(ResourceRef<?> track) {
         putAndUpdate(SwitchResourceBinding.ATTR_TRACK, track);
         return this;
     }
@@ -112,7 +112,7 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     }
 
     @NonNull
-    public SwitchCompatResourceBinding setThumbTint(@NonNull ResourceRef<?> tint) {
+    public SwitchCompatResourceBinding setThumbTint(ResourceRef<?> tint) {
         putAndUpdate(SwitchResourceBinding.ATTR_THUMB_TINT, tint);
         return this;
     }
@@ -127,7 +127,7 @@ public class SwitchCompatResourceBinding extends AppCompatCompoundButtonResource
     }
 
     @NonNull
-    public SwitchCompatResourceBinding setTrackTint(@NonNull ResourceRef<?> tint) {
+    public SwitchCompatResourceBinding setTrackTint(ResourceRef<?> tint) {
         putAndUpdate(SwitchResourceBinding.ATTR_TRACK_TINT, tint);
         return this;
     }

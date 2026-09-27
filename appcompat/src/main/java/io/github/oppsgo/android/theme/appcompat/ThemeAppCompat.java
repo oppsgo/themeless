@@ -7,6 +7,7 @@ import io.github.oppsgo.android.theme.appcompat.binding.AppCompatImageViewResour
 import io.github.oppsgo.android.theme.appcompat.binding.AppCompatTextViewResourceBinding;
 import io.github.oppsgo.android.theme.appcompat.binding.RecyclerViewResourceBinding;
 import io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding;
+import io.github.oppsgo.android.theme.appcompat.binding.ViewPagerResourceBinding;
 
 /**
  * Support Library AppCompat 扩展入口。
@@ -22,7 +23,7 @@ public final class ThemeAppCompat {
     /**
      * inflate 前调用：有对应控件依赖则 {@code register}，没有则静默跳过（幂等）。
      * <p>
-     * 覆盖 AppCompat 文本/图片/CompoundButton、SwitchCompat、RecyclerView。
+     * 覆盖 AppCompat 文本/图片/CompoundButton、SwitchCompat、RecyclerView、ViewPager。
      * Support 栈无 ViewPager2 Binding。
      */
     public static void registerAvailable() {
@@ -31,6 +32,7 @@ public final class ThemeAppCompat {
         tryRegister(AppCompatCompoundButtonResourceBinding::register);
         tryRegister(SwitchCompatResourceBinding::register);
         tryRegister(RecyclerViewResourceBinding::register);
+        tryRegister(ViewPagerResourceBinding::register);
     }
 
     private static void tryRegister(@NonNull Runnable register) {

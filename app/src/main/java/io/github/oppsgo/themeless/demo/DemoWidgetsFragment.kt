@@ -30,17 +30,6 @@ class DemoWidgetsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view.bindBg(R.id.demoWidgetsRoot, R.color.skin_page_bg)
 
-        val activity = requireActivity()
-        view.findViewById<Button>(R.id.btnLight).setOnClickListener {
-            activity.applyThemeNight(dark = false)
-        }
-        view.findViewById<Button>(R.id.btnDark).setOnClickListener {
-            activity.applyThemeNight(dark = true)
-        }
-        view.findViewById<Button>(R.id.btnCustom).setOnClickListener {
-            activity.applyCustomTheme()
-        }
-
         val icon = view.findViewById<ImageView>(R.id.themeSizedIcon)
         val binding = ThemeManager.get().obtain(icon) as ImageViewResourceBinding
         val size = (72 * resources.displayMetrics.density).toInt()

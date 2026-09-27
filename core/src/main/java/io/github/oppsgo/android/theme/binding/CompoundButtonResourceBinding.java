@@ -61,7 +61,7 @@ public class CompoundButtonResourceBinding extends TextViewResourceBinding {
     }
 
     @NonNull
-    public CompoundButtonResourceBinding setButtonDrawable(@NonNull ResourceRef<?> button) {
+    public CompoundButtonResourceBinding setButtonDrawable(ResourceRef<?> button) {
         putAndUpdate(ATTR_BUTTON, button);
         return this;
     }
@@ -76,7 +76,7 @@ public class CompoundButtonResourceBinding extends TextViewResourceBinding {
     }
 
     @NonNull
-    public CompoundButtonResourceBinding setButtonTint(@NonNull ResourceRef<?> tint) {
+    public CompoundButtonResourceBinding setButtonTint(ResourceRef<?> tint) {
         putAndUpdate(ATTR_BUTTON_TINT, tint);
         return this;
     }

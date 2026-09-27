@@ -23,6 +23,7 @@ androidxViewpager2 = "1.1.0"
 # 旧版 Support Library（未迁移 AndroidX 的宿主使用 :appcompat）
 supportAppcompat = "28.0.0"
 supportRecyclerview = "28.0.0"
+supportV4 = "28.0.0"
 desugarJdkLibs = "2.1.5"
 
 gson = "2.11.0"
@@ -42,6 +43,7 @@ androidx-viewpager = { group = "androidx.viewpager", name = "viewpager", version
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "androidxViewpager2" }
 support-appcompat = { group = "com.android.support", name = "appcompat-v7", version.ref = "supportAppcompat" }
 support-recyclerview = { group = "com.android.support", name = "recyclerview-v7", version.ref = "supportRecyclerview" }
+support-v4 = { group = "com.android.support", name = "support-v4", version.ref = "supportV4" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }

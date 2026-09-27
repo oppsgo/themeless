@@ -2,6 +2,7 @@ package io.github.oppsgo.android.theme.binding;
 
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.widget.Switch;
 
 import androidx.annotation.AnyRes;
@@ -63,7 +64,7 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
-    public SwitchResourceBinding setThumb(@NonNull ResourceRef<?> thumb) {
+    public SwitchResourceBinding setThumb(ResourceRef<?> thumb) {
         putAndUpdate(ATTR_THUMB, thumb);
         return this;
     }
@@ -78,7 +79,7 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
-    public SwitchResourceBinding setTrack(@NonNull ResourceRef<?> track) {
+    public SwitchResourceBinding setTrack(ResourceRef<?> track) {
         putAndUpdate(ATTR_TRACK, track);
         return this;
     }
@@ -93,7 +94,7 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
-    public SwitchResourceBinding setThumbTint(@NonNull ResourceRef<?> tint) {
+    public SwitchResourceBinding setThumbTint(ResourceRef<?> tint) {
         putAndUpdate(ATTR_THUMB_TINT, tint);
         return this;
     }
@@ -108,7 +109,7 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
     }
 
     @NonNull
-    public SwitchResourceBinding setTrackTint(@NonNull ResourceRef<?> tint) {
+    public SwitchResourceBinding setTrackTint(ResourceRef<?> tint) {
         putAndUpdate(ATTR_TRACK_TINT, tint);
         return this;
     }
@@ -137,12 +138,16 @@ public class SwitchResourceBinding extends CompoundButtonResourceBinding {
         }
         if (attr == ATTR_THUMB_TINT) {
             ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setThumbTintList(getView(), tint);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getView().setThumbTintList(tint);
+            }
             return;
         }
         if (attr == ATTR_TRACK_TINT) {
             ColorStateList tint = resolveTint(resolver, value);
-            resolver.getViewCompat().setTrackTintList(getView(), tint);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getView().setTrackTintList(tint);
+            }
             return;
         }
         super.updateAttribute(resolver, attr, value);

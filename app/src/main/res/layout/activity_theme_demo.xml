@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/themeRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -37,10 +38,56 @@
             android:textSize="13sp" />
 
         <LinearLayout
-            android:id="@+id/demoTabBar"
+            android:id="@+id/demoThemeActions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnLight"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_light"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnDark"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_dark"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnCustom"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_custom"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/demoTabBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
             <TextView
@@ -65,6 +112,19 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="@string/demo_tab_list"
+                android:textColor="@color/skin_text_secondary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/demoTabExtras"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/demo_tab_extras"
                 android:textColor="@color/skin_text_secondary"
                 android:textSize="14sp"
                 android:textStyle="bold" />

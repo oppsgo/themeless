@@ -23,7 +23,7 @@ Android **运行时换肤**库：在不重建 Activity 的前提下，按资源 
 | `:core-ktx` | `:core` 的 Kotlin 扩展（`installTheme` / `edit` / `theme` 等） |
 | `:androidx` | AndroidX AppCompat / RecyclerView 扩展绑定与 Resolver |
 | `:androidx-ktx` | `:androidx` 的 Kotlin 扩展 |
-| `:appcompat` | 旧版 Support Library（`appcompat-v7` / `recyclerview-v7`）扩展 |
+| `:appcompat` | 旧版 Support Library（`appcompat-v7` / `recyclerview-v7` / `support-v4` ViewPager）扩展 |
 | `:appcompat-ktx` | `:appcompat` 的 Kotlin 扩展 |
 | `:app` | Demo（不发布） |
 
@@ -204,7 +204,7 @@ Support：`ThemeAppCompat.registerAvailable()` + `:appcompat-ktx` DayNight 扩�
 |------|------|
 | 首页 | 说明、当前皮肤；入口进入二级演示；**右上角「设置」** |
 | 设置 | 皮肤与宿主日夜；**仅此页会持久化并作用于全应用** |
-| 二级演示 | 按 Tab 分控件 / 列表 / 浮层；页内切肤**只改当前页** |
+| 二级演示 | 按 Tab 分控件 / 列表（含 ListView·GridView）/ 其它（ProgressBar·SeekBar）/ 浮层；页内切肤**只改当前页** |
 
 冷启动由 `ThemelessApp` 恢复皮肤与宿主日夜。需要 **JDK 17+**：
 

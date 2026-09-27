@@ -8,7 +8,6 @@ import android.support.v4.widget.ImageViewCompat;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,7 @@ import io.github.oppsgo.android.theme.ThemeViewCompat;
 
 /**
  * Support Library：background / image / button 走 Compat；
- * compound drawable、Switch thumb/track tint 在 Support 无对应 API 时退回平台。
+ * compound drawable 在 Support 无对应 API 时退回平台。
  */
 public class ThemeViewCompatImpl implements ThemeViewCompat {
 
@@ -41,17 +40,5 @@ public class ThemeViewCompatImpl implements ThemeViewCompat {
     @Override
     public void setButtonTintList(@NonNull CompoundButton button, @Nullable ColorStateList tint) {
         CompoundButtonCompat.setButtonTintList(button, tint);
-    }
-
-    @Override
-    public void setThumbTintList(@NonNull Switch switchView, @Nullable ColorStateList tint) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        switchView.setThumbTintList(tint);
-    }
-
-    @Override
-    public void setTrackTintList(@NonNull Switch switchView, @Nullable ColorStateList tint) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        switchView.setTrackTintList(tint);
     }
 }

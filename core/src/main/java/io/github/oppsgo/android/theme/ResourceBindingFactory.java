@@ -4,8 +4,11 @@ import static io.github.oppsgo.android.theme.ResourceBinding.TAG_BINDING;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsSeekBar;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -14,8 +17,11 @@ import androidx.annotation.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.github.oppsgo.android.theme.binding.AbsListViewResourceBinding;
+import io.github.oppsgo.android.theme.binding.AbsSeekBarResourceBinding;
 import io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding;
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding;
+import io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding;
 import io.github.oppsgo.android.theme.binding.SwitchResourceBinding;
 import io.github.oppsgo.android.theme.binding.TextViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
@@ -41,6 +47,9 @@ public final class ResourceBindingFactory {
         register(ImageView.class, ImageViewResourceBinding::new);
         register(CompoundButton.class, CompoundButtonResourceBinding::new);
         register(Switch.class, SwitchResourceBinding::new);
+        register(ProgressBar.class, ProgressBarResourceBinding::new);
+        register(AbsSeekBar.class, AbsSeekBarResourceBinding::new);
+        register(AbsListView.class, AbsListViewResourceBinding::new);
     }
 
     public <V extends View> void register(@NonNull Class<V> viewType, @NonNull Creator<V> creator) {

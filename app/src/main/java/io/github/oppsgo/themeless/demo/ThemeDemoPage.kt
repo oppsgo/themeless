@@ -306,9 +306,19 @@ internal fun Activity.refreshDemoTabColors() {
     listOf(
         R.id.demoTabWidgets to 0,
         R.id.demoTabList to 1,
-        R.id.demoTabOverlays to 2,
+        R.id.demoTabExtras to 2,
+        R.id.demoTabOverlays to 3,
     ).forEach { (id, index) ->
         findViewById<TextView>(id)?.setTextColor(if (index == selected) accent else secondary)
+    }
+    val listSubBar = findViewById<ViewGroup>(R.id.demoListSubTabs) ?: return
+    val listSelected = listSubBar.tag as? Int ?: 0
+    listOf(
+        R.id.demoListSubRv to 0,
+        R.id.demoListSubLv to 1,
+        R.id.demoListSubGv to 2,
+    ).forEach { (id, index) ->
+        findViewById<TextView>(id)?.setTextColor(if (index == listSelected) accent else secondary)
     }
 }
 

@@ -62,7 +62,7 @@ public class ImageViewResourceBinding extends ViewResourceBinding {
     }
 
     @NonNull
-    public ImageViewResourceBinding setImage(@NonNull ResourceRef<?> src) {
+    public ImageViewResourceBinding setImage(ResourceRef<?> src) {
         putAndUpdate(ATTR_SRC, src);
         return this;
     }
@@ -77,7 +77,7 @@ public class ImageViewResourceBinding extends ViewResourceBinding {
     }
 
     @NonNull
-    public ImageViewResourceBinding setImageTint(@NonNull ResourceRef<?> tint) {
+    public ImageViewResourceBinding setImageTint(ResourceRef<?> tint) {
         putAndUpdate(ATTR_TINT, tint);
         return this;
     }
