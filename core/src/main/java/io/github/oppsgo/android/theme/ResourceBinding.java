@@ -64,11 +64,14 @@ public interface ResourceBinding {
 
     /**
      * 用当前已安装的 {@link ResourceResolver} 刷新。还没 {@link ThemeManager#apply(Context, ResourceResolver)} 时什么都不做。
+     * <p>
+     * 若已是本轮 {@link ThemeManager#getModCount} 代数则跳过，供 RecyclerView / ViewPager 复用补刷。
+     * 换肤请走 {@link #apply}，不会因代数跳过。
      */
     void refresh();
 
     /**
-     * 最近一次 {@link #apply} 时 {@link ThemeManager} 的刷新代数，供列表复用判断要不要再刷。
+     * 最近一次 {@link #apply} 时 {@link ThemeManager} 的刷新代数，供 {@link #refresh()} 判断要不要再刷。
      */
     int getModCount();
 

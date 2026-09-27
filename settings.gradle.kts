@@ -52,9 +52,9 @@ include(":app")
 include(":core")
 include(":core-ktx")
 include(":androidx")
-include(":androidx-ktx")
+//include(":androidx-ktx")
 include(":appcompat")
-include(":appcompat-ktx")
+//include(":appcompat-ktx")
 
 println(
     """

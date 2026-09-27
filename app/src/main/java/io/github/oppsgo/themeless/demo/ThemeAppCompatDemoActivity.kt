@@ -9,14 +9,9 @@ import io.github.oppsgo.android.theme.ktx.installTheme
 import io.github.oppsgo.themeless.R
 
 /**
- * AppCompat 只多传一个 Factory2：AppCompatDelegate 的实现类本身就是 Factory2。
- *
- * 手动亮/自定义锁夜间宿主，避免 Light 主题触发 Force Dark。肤色只来自 ResourceResolver。
+ * AppCompat：install 时传入 Delegate。二级页按功能拆成 Tab。
  */
 class ThemeAppCompatDemoActivity : AppCompatActivity() {
-    init {
-        ThemeDemoPage.init()
-    }
 
     override fun attachBaseContext(newBase: Context) {
         delegate.localNightMode = ThemeDemoPage.resolveLocalNightMode()
@@ -26,7 +21,7 @@ class ThemeAppCompatDemoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installTheme(delegate as? LayoutInflater.Factory2)
         super.onCreate(savedInstanceState)
-        showThemeDemo(R.string.theme_demo_appcompat_subtitle)
+        setupThemeDemoHost(R.string.theme_demo_appcompat_subtitle)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

@@ -22,4 +22,6 @@ dependencies {
     implementation(projects.androidx)
     compileOnly(libs.androidx.appcompat)
     compileOnly(libs.androidx.recyclerview)
+    compileOnly(libs.androidx.viewpager)
+    compileOnly(libs.androidx.viewpager2)
 }

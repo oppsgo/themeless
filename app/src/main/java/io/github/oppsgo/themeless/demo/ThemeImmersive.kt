@@ -14,9 +14,7 @@ import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.themeless.R
 
 /**
- * 沉浸式标题：内容顶到状态栏下，[themeTitleBar] 自己垫 statusBars；
- * 左右内容区 [themeBody] 垫 navigationBars。
- * 状态栏图标深浅按标题栏背景亮度切换（换肤后也要再调一次）。
+ * 沉浸式：标题栏垫 statusBars；底部内容区垫 navigationBars。
  */
 internal fun Activity.setupImmersiveTitleBar() {
     WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -28,17 +26,33 @@ internal fun Activity.setupImmersiveTitleBar() {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
     }
 
-    val root = findViewById<View>(R.id.themeRoot)
-    val titleBar = findViewById<View>(R.id.themeTitleBar)
-    val body = findViewById<View>(R.id.themeBody)
+    val root = findViewById<View>(R.id.mainRoot)
+        ?: findViewById(R.id.settingsPageRoot)
+        ?: findViewById(R.id.themeRoot)
+        ?: findViewById(R.id.vp2StressRoot)
+        ?: findViewById(R.id.vpStressRoot)
+        ?: return
+    val titleBar = findViewById<View>(R.id.mainTitleBar)
+        ?: findViewById(R.id.settingsTitleBar)
+        ?: findViewById(R.id.themeTitleBar)
+        ?: findViewById(R.id.vp2StressTitleBar)
+        ?: findViewById(R.id.vpStressTitleBar)
+        ?: return
+    val content = findViewById<View>(R.id.homeRoot)
+        ?: findViewById(R.id.settingsRoot)
+        ?: findViewById(R.id.demoPager)
+        ?: findViewById(R.id.vp2StressBody)
+        ?: findViewById(R.id.vpStressBody)
+        ?: return
 
+    // 记录初始 padding，避免多次 insets 叠加
     val titlePad = intArrayOf(
         titleBar.paddingLeft, titleBar.paddingTop,
         titleBar.paddingRight, titleBar.paddingBottom,
     )
-    val bodyPad = intArrayOf(
-        body.paddingLeft, body.paddingTop,
-        body.paddingRight, body.paddingBottom,
+    val contentPad = intArrayOf(
+        content.paddingLeft, content.paddingTop,
+        content.paddingRight, content.paddingBottom,
     )
 
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
@@ -50,11 +64,12 @@ internal fun Activity.setupImmersiveTitleBar() {
             titlePad[2],
             titlePad[3],
         )
-        body.setPadding(
-            bodyPad[0],
-            bodyPad[1],
-            bodyPad[2],
-            bodyPad[3] + nav.bottom,
+        // ScrollView：底/左右垫导航栏；顶部由标题栏吃 statusBars
+        content.setPadding(
+            contentPad[0] + nav.left,
+            contentPad[1],
+            contentPad[2] + nav.right,
+            contentPad[3] + nav.bottom,
         )
         insets
     }
@@ -62,7 +77,6 @@ internal fun Activity.setupImmersiveTitleBar() {
     syncStatusBarIconAppearance()
 }
 
-/** 按当前主题下标题栏背景色，决定状态栏图标用深色还是浅色。 */
 internal fun Activity.syncStatusBarIconAppearance() {
     val resolver = ThemeManager.get().getResolver(this) ?: return
     val bg = resolver.getColor(R.color.skin_panel_bg)

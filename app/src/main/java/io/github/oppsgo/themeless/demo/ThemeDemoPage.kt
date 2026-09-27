@@ -3,80 +3,72 @@ package io.github.oppsgo.themeless.demo
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.PopupWindow
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.oppsgo.android.theme.ThemeManager
-import io.github.oppsgo.android.theme.androidx.ktx.registerAppCompatThemeBindings
+import io.github.oppsgo.android.theme.androidx.ThemeAndroidX
 import io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver
-import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding
-import io.github.oppsgo.android.theme.binding.TextViewResourceBinding
 import io.github.oppsgo.android.theme.binding.ViewResourceBinding
 import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver
 import io.github.oppsgo.android.theme.resource.ColorRef
-import io.github.oppsgo.android.theme.resource.DrawableRef
 import io.github.oppsgo.themeless.R
 
 private const val DEMO_TAG = "ThemelessDemo"
 
 /**
- * Demo 页共享逻辑。
+ * Demo 共享状态与换肤 apply。
  *
- * 手动亮/暗/自定义存在进程级状态里，避免 AppCompat `localNightMode` recreate 后丢失。
+ * [demoThemeMode] / [dayNightMode] 仅表示「设置页已保存」的值（内存镜像 prefs）。
+ * 演示页临时切肤不得改写它们，只对本 Activity 做 [ThemeManager.apply]。
  */
 object ThemeDemoPage {
-    init {
-        // inflate 前显式注册；否则 RecyclerView 只会挂上默认 ViewGroupBinding
-        registerAppCompatThemeBindings()
-    }
 
-    /** 首页「全局日夜」；进 AppCompat Demo 时作为 FOLLOW 的 localNightMode。 */
+    /** 已保存的宿主 DefaultNightMode。 */
     var dayNightMode: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         private set
 
-    /** 当前 Demo 页手动主题；recreate 后 restore。 */
+    /** 已保存的皮肤；仅设置页 persist 时更新。 */
     var demoThemeMode: DemoThemeMode = DemoThemeMode.FOLLOW_SYSTEM
         private set
 
     fun init() {
-        // 触发 object init（Binding 注册）
+        ThemeAndroidX.registerAvailable()
     }
 
-    fun setDefaultNightMode(mode: Int) {
+    fun restorePersisted(context: Context) {
+        dayNightMode = ThemePrefs.loadHostNightMode(context)
+        demoThemeMode = ThemePrefs.loadThemeMode(context)
+    }
+
+    fun persist(context: Context) {
+        ThemePrefs.save(context, demoThemeMode, dayNightMode)
+    }
+
+    fun setDefaultNightMode(mode: Int, context: Context? = null) {
         dayNightMode = mode
+        context?.let { persist(it) }
     }
 
     fun getDefaultNightMode() = dayNightMode
 
-    fun setDemoThemeMode(mode: DemoThemeMode) {
+    /** 仅在设置页保存皮肤时调用。 */
+    fun setDemoThemeMode(mode: DemoThemeMode, context: Context) {
         demoThemeMode = mode
+        persist(context)
     }
 
-    /**
-     * AppCompat Demo `attachBaseContext` 用。
-     *
-     * 亮色/自定义也锁 [MODE_NIGHT_YES]：系统夜间下若 Activity 是 Light 主题，
-     * Force Dark 会把已画好的浅色像素反相。肤色只由 ThemeManager Resolver 提供。
-     */
     fun resolveLocalNightMode(): Int = when (demoThemeMode) {
         DemoThemeMode.LIGHT, DemoThemeMode.CUSTOM, DemoThemeMode.DARK ->
             AppCompatDelegate.MODE_NIGHT_YES
@@ -84,18 +76,20 @@ object ThemeDemoPage {
         DemoThemeMode.FOLLOW_SYSTEM -> dayNightMode
     }
 
-    /**
-     * 「跟随」语义下当前该用暗色皮肤吗。
-     * 首页 [dayNightMode] 优先；只有 FOLLOW_SYSTEM 才读真正的系统 Application uiMode。
-     */
-    fun resolveFollowNight(context: android.content.Context): Boolean = when (dayNightMode) {
+    fun resolveFollowNight(context: Context): Boolean = when (dayNightMode) {
         AppCompatDelegate.MODE_NIGHT_YES -> true
         AppCompatDelegate.MODE_NIGHT_NO -> false
         else -> DayNightResourceResolver.isSystemNight(context)
     }
+
+    fun themeModeLabel(context: Context): String = when (demoThemeMode) {
+        DemoThemeMode.FOLLOW_SYSTEM -> context.getString(R.string.theme_mode_follow)
+        DemoThemeMode.LIGHT -> context.getString(R.string.theme_mode_light)
+        DemoThemeMode.DARK -> context.getString(R.string.theme_mode_dark)
+        DemoThemeMode.CUSTOM -> context.getString(R.string.theme_mode_custom)
+    }
 }
 
-/** Demo 当前手动模式；跟随系统时才响应「系统」uiMode 变化。 */
 enum class DemoThemeMode {
     FOLLOW_SYSTEM,
     LIGHT,
@@ -103,81 +97,84 @@ enum class DemoThemeMode {
     CUSTOM,
 }
 
-internal fun Activity.showThemeDemo(@StringRes subtitle: Int) {
-    setContentView(R.layout.activity_theme_demo)
-    setupImmersiveTitleBar()
-    ThemeManager.get().setRefreshOnInflate(this, true)
-    ensureDemoBackgroundBindings()
-    findViewById<TextView>(R.id.themeSubtitle).setText(subtitle)
-    bindSizedIcon()
-    bindManualText()
-    bindThemeList()
-
-    findViewById<Button>(R.id.btnLight).setOnClickListener { applyThemeNight(dark = false) }
-    findViewById<Button>(R.id.btnDark).setOnClickListener { applyThemeNight(dark = true) }
-    findViewById<Button>(R.id.btnCustom).setOnClickListener { applyCustomTheme() }
-
-    restoreDemoTheme()
-}
-
-/** 确保页面容器 / 列表相关 background 一定在 Binding 里，换肤才能改到底色。 */
-private fun Activity.ensureDemoBackgroundBindings() {
-    fun bindBg(id: Int, color: Int) {
-        val v = findViewById<View>(id) ?: return
-        val ref = ColorRef.of(color)
-        when (val binding = ThemeManager.get().obtain(v)) {
-            is ViewResourceBinding -> binding.setBackground(ref)
-            else -> binding.bind(android.R.attr.background, ref)
-        }
+internal fun Activity.bindBg(id: Int, color: Int) {
+    val v = findViewById<View>(id) ?: return
+    val ref = ColorRef.of(color)
+    when (val binding = ThemeManager.get().obtain(v)) {
+        is ViewResourceBinding -> binding.setBackground(ref)
+        else -> binding.bind(android.R.attr.background, ref)
     }
-    bindBg(R.id.themeRoot, R.color.skin_page_bg)
-    bindBg(R.id.themeBody, R.color.skin_page_bg)
-    bindBg(R.id.themeControlsPane, R.color.skin_page_bg)
-    bindBg(R.id.themeTitleBar, R.color.skin_panel_bg)
-    bindBg(R.id.themeListPane, R.color.skin_panel_bg)
-    bindBg(R.id.themeRecycler, R.color.skin_panel_bg)
 }
 
-/** 按 [ThemeDemoPage.demoThemeMode] 重新 apply；进页 / config 变化后调用。 */
+internal fun View.bindBg(id: Int, color: Int) {
+    val v = findViewById<View>(id) ?: return
+    val ref = ColorRef.of(color)
+    when (val binding = ThemeManager.get().obtain(v)) {
+        is ViewResourceBinding -> binding.setBackground(ref)
+        else -> binding.bind(android.R.attr.background, ref)
+    }
+}
+
+internal fun Activity.ensureHomeBackgroundBindings() {
+    bindBg(R.id.mainRoot, R.color.skin_page_bg)
+    bindBg(R.id.mainTitleBar, R.color.skin_panel_bg)
+    bindBg(R.id.homeRoot, R.color.skin_page_bg)
+}
+
+internal fun Activity.ensureSettingsBackgroundBindings() {
+    bindBg(R.id.settingsPageRoot, R.color.skin_page_bg)
+    bindBg(R.id.settingsTitleBar, R.color.skin_panel_bg)
+    bindBg(R.id.settingsRoot, R.color.skin_page_bg)
+}
+
+internal fun Activity.ensureDemoShellBackgroundBindings() {
+    bindBg(R.id.themeRoot, R.color.skin_page_bg)
+    bindBg(R.id.themeTitleBar, R.color.skin_panel_bg)
+    bindBg(R.id.demoPager, R.color.skin_page_bg)
+}
+
 private var restoringDemoTheme = false
 
 internal fun Activity.restoreDemoTheme() {
     if (restoringDemoTheme) return
     restoringDemoTheme = true
     try {
+        // 始终按已保存皮肤恢复，不沿用其它页的临时预览
+        ThemeDemoPage.restorePersisted(this)
         when (ThemeDemoPage.demoThemeMode) {
-            DemoThemeMode.FOLLOW_SYSTEM -> applyThemeResources()
-            DemoThemeMode.LIGHT -> applyThemeNight(dark = false)
-            DemoThemeMode.DARK -> applyThemeNight(dark = true)
-            DemoThemeMode.CUSTOM -> applyCustomTheme()
+            DemoThemeMode.FOLLOW_SYSTEM -> applyThemeResources(persist = false)
+            DemoThemeMode.LIGHT -> applyThemeNight(dark = false, persist = false)
+            DemoThemeMode.DARK -> applyThemeNight(dark = true, persist = false)
+            DemoThemeMode.CUSTOM -> applyCustomTheme(persist = false)
         }
     } finally {
         restoringDemoTheme = false
     }
 }
 
-/** 自定义主题：固定亮色板 + id 重映射。底座强制走亮色 Configuration。 */
-internal fun Activity.applyCustomTheme() {
-    ThemeDemoPage.setDemoThemeMode(DemoThemeMode.CUSTOM)
+/** @param persist true 仅设置页：写入 prefs；false 只影响当前 Activity。 */
+internal fun Activity.applyCustomTheme(persist: Boolean = false) {
+    if (persist) {
+        ThemeDemoPage.setDemoThemeMode(DemoThemeMode.CUSTOM, this)
+    }
     if (syncActivityNightMode(dark = false)) return
     val base = DayNightResourceResolver.light(this)
     val mapped = MappedResourceResolver.skyBlue(base)
     val page = mapped.getColor(R.color.skin_page_bg)
     val panel = mapped.getColor(R.color.skin_panel_bg)
     val card = mapped.getColor(R.color.skin_card_bg)
-    Log.i(
-        DEMO_TAG,
-        "apply custom page=0x${page.hex()} panel=0x${panel.hex()} card=0x${card.hex()} " +
-                "raw=0x${base.getColor(R.color.skin_page_bg).hex()} " +
-                "blue=0x${base.getColor(R.color.skin_page_bg_blue).hex()} " +
-                "appNight=${DayNightResourceResolver.isSystemNight(this)} actNight=${isActivityNight()}",
-    )
+    Log.i(DEMO_TAG, "apply custom page=0x${page.hex()} panel=0x${panel.hex()} persist=$persist")
     ThemeManager.get().apply(this, mapped)
     paintDemoSurfaces("custom", page, panel, card)
 }
 
-internal fun Activity.applyThemeNight(dark: Boolean) {
-    ThemeDemoPage.setDemoThemeMode(if (dark) DemoThemeMode.DARK else DemoThemeMode.LIGHT)
+internal fun Activity.applyThemeNight(dark: Boolean, persist: Boolean = false) {
+    if (persist) {
+        ThemeDemoPage.setDemoThemeMode(
+            if (dark) DemoThemeMode.DARK else DemoThemeMode.LIGHT,
+            this,
+        )
+    }
     if (syncActivityNightMode(dark = dark)) return
     val resolver = if (this is AppCompatActivity) {
         AppCompatDayNightResourceResolver.of(this, dark)
@@ -187,19 +184,16 @@ internal fun Activity.applyThemeNight(dark: Boolean) {
     val page = resolver.getColor(R.color.skin_page_bg)
     val panel = resolver.getColor(R.color.skin_panel_bg)
     val card = resolver.getColor(R.color.skin_card_bg)
-    Log.i(
-        DEMO_TAG,
-        "apply ${if (dark) "dark" else "light"} page=0x${page.hex()} panel=0x${panel.hex()} " +
-                "card=0x${card.hex()} actNight=${isActivityNight()}",
-    )
+    Log.i(DEMO_TAG, "apply ${if (dark) "dark" else "light"} page=0x${page.hex()} persist=$persist")
     ThemeManager.get().apply(this, resolver)
     paintDemoSurfaces(if (dark) "dark" else "light", page, panel, card)
 }
 
-internal fun Activity.applyThemeResources() {
-    ThemeDemoPage.setDemoThemeMode(DemoThemeMode.FOLLOW_SYSTEM)
+internal fun Activity.applyThemeResources(persist: Boolean = false) {
+    if (persist) {
+        ThemeDemoPage.setDemoThemeMode(DemoThemeMode.FOLLOW_SYSTEM, this)
+    }
     if (syncActivityNightMode(dark = null)) return
-    // 跟随首页 DefaultNightMode，而不是只读系统 Application（否则「强制暗色」皮肤不生效）
     val night = ThemeDemoPage.resolveFollowNight(this)
     val resolver = if (this is AppCompatActivity) {
         AppCompatDayNightResourceResolver.of(this, night)
@@ -209,26 +203,31 @@ internal fun Activity.applyThemeResources() {
     val page = resolver.getColor(R.color.skin_page_bg)
     val panel = resolver.getColor(R.color.skin_panel_bg)
     val card = resolver.getColor(R.color.skin_card_bg)
-    Log.i(
-        DEMO_TAG,
-        "apply follow night=$night page=0x${page.hex()} panel=0x${panel.hex()} card=0x${card.hex()} " +
-                "dayNightMode=${ThemeDemoPage.getDefaultNightMode()} " +
-                "systemNight=${DayNightResourceResolver.isSystemNight(this)} actNight=${isActivityNight()}",
-    )
+    Log.i(DEMO_TAG, "apply follow night=$night page=0x${page.hex()} persist=$persist")
     ThemeManager.get().apply(this, resolver)
     paintDemoSurfaces("follow", page, panel, card)
 }
 
-/**
- * @return true 表示正在切 localNightMode / recreate，调用方应立刻 return，等新实例 restoreDemoTheme。
- *
- * 仅 AppCompatActivity 需要同步宿主日夜（躲开 Force Dark、对齐首页 DefaultNightMode）。
- * FragmentActivity 肤色全靠隔离 [DayNightResourceResolver]；旧逻辑在 uiMode 不一致时
- * 只 [Activity.recreate] 却不改配置，会无限闪屏。
- */
+internal fun Activity.applyHostNightMode(mode: Int) {
+    ThemeDemoPage.setDefaultNightMode(mode, this)
+    if (AppCompatDelegate.getDefaultNightMode() != mode) {
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
+    if (ThemeDemoPage.demoThemeMode == DemoThemeMode.FOLLOW_SYSTEM) {
+        restoreDemoTheme()
+    } else if (this is AppCompatActivity) {
+        syncActivityNightMode(
+            dark = when (ThemeDemoPage.demoThemeMode) {
+                DemoThemeMode.DARK -> true
+                DemoThemeMode.LIGHT, DemoThemeMode.CUSTOM -> false
+                DemoThemeMode.FOLLOW_SYSTEM -> null
+            },
+        )
+    }
+}
+
 private fun Activity.syncActivityNightMode(dark: Boolean?): Boolean {
     if (this !is AppCompatActivity) return false
-
     if (dark == null) {
         val mode = ThemeDemoPage.getDefaultNightMode()
         if (delegate.localNightMode != mode) {
@@ -237,7 +236,6 @@ private fun Activity.syncActivityNightMode(dark: Boolean?): Boolean {
         }
         return false
     }
-    // 手动亮/暗/自定义：若当前是 Light 宿主则切到 YES 躲开 Force Dark
     val mode = delegate.localNightMode
     if (mode == AppCompatDelegate.MODE_NIGHT_YES || mode != AppCompatDelegate.MODE_NIGHT_NO) {
         return false
@@ -246,16 +244,6 @@ private fun Activity.syncActivityNightMode(dark: Boolean?): Boolean {
     return true
 }
 
-private fun Activity.isActivityNight(): Boolean {
-    val mask = android.content.res.Configuration.UI_MODE_NIGHT_MASK
-    return (resources.configuration.uiMode and mask) ==
-            android.content.res.Configuration.UI_MODE_NIGHT_YES
-}
-
-/**
- * 按当前 Resolver 强制上色。左侧底色画在 themeControlsPane（LinearLayout），
- * ScrollView 保持透明。
- */
 private fun Activity.paintDemoSurfaces(label: String, page: Int, panel: Int, card: Int) {
     fun bg(id: Int, color: Int) {
         val v = findViewById<View>(id) ?: return
@@ -265,13 +253,18 @@ private fun Activity.paintDemoSurfaces(label: String, page: Int, panel: Int, car
         }
     }
     window.decorView.setBackgroundColor(page)
+    bg(R.id.mainRoot, page)
+    bg(R.id.homeRoot, page)
+    bg(R.id.mainTitleBar, panel)
+    bg(R.id.settingsPageRoot, page)
+    bg(R.id.settingsTitleBar, panel)
+    bg(R.id.settingsRoot, page)
     bg(R.id.themeRoot, page)
-    bg(R.id.themeBody, page)
-    bg(R.id.themeControlsPane, page)
-    findViewById<View>(R.id.themeControlsScroll)?.setBackgroundColor(Color.TRANSPARENT)
-    findViewById<View>(R.id.themeControlsContent)?.setBackgroundColor(Color.TRANSPARENT)
     bg(R.id.themeTitleBar, panel)
-    bg(R.id.themeListPane, panel)
+    bg(R.id.demoPager, page)
+    bg(R.id.demoWidgetsRoot, page)
+    bg(R.id.demoListRoot, panel)
+    bg(R.id.demoOverlaysRoot, page)
     findViewById<RecyclerView>(R.id.themeRecycler)?.let { rv ->
         rv.setBackgroundColor(panel)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -283,153 +276,44 @@ private fun Activity.paintDemoSurfaces(label: String, page: Int, panel: Int, car
         rv.adapter?.notifyDataSetChanged()
     }
     syncStatusBarIconAppearance()
-    findViewById<TextView>(R.id.themeTitle)?.text = "换肤 $label"
-
-    val pane = findViewById<View>(R.id.themeControlsPane) ?: return
-    pane.post {
-        sampleDisplayedPixel(pane) { panePx ->
-            sampleDisplayedPixel(findViewById(R.id.themeTitleBar)) { titlePx ->
-                Log.i(
-                    DEMO_TAG,
-                    "pixel $label drawable=0x${page.hex()} panePx=0x${panePx.hex()} " +
-                            "titlePx=0x${titlePx.hex()} match=${panePx == page}",
-                )
-            }
-        }
-    }
+    findViewById<TextView>(R.id.mainSubtitle)?.text =
+        getString(R.string.main_shell_subtitle_format, ThemeDemoPage.themeModeLabel(this))
+    findViewById<TextView>(R.id.themeTitle)?.text =
+        getString(R.string.theme_demo_title_format, label)
+    refreshChromeTextColors()
+    refreshDemoTabColors()
 }
 
-/** 读窗口合成后的真实像素，判断是否被 Force Dark / 厂商压暗。 */
-private fun Activity.sampleDisplayedPixel(view: View?, onResult: (Int) -> Unit) {
-    if (view == null || android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
-        onResult(0)
-        return
-    }
-    view.post {
-        if (view.width <= 0 || view.height <= 0) {
-            onResult(0)
-            return@post
-        }
-        val loc = IntArray(2)
-        view.getLocationInWindow(loc)
-        val x = (loc[0] + view.width / 2).coerceAtLeast(0)
-        val y = (loc[1] + view.height / 2).coerceAtLeast(0)
-        val bitmap =
-            android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.ARGB_8888)
-        val src = android.graphics.Rect(x, y, x + 1, y + 1)
-        try {
-            android.view.PixelCopy.request(
-                window,
-                src,
-                bitmap,
-                { result ->
-                    onResult(
-                        if (result == android.view.PixelCopy.SUCCESS) bitmap.getPixel(0, 0) else 0,
-                    )
-                },
-                android.os.Handler(android.os.Looper.getMainLooper()),
-            )
-        } catch (_: Throwable) {
-            onResult(0)
-        }
+internal fun Activity.refreshChromeTextColors() {
+    val resolver = ThemeManager.get().getResolver(this) ?: return
+    val primary = resolver.getColor(R.color.skin_text_primary)
+    val secondary = resolver.getColor(R.color.skin_text_secondary)
+    val accent = resolver.getColor(R.color.skin_accent)
+    findViewById<TextView>(R.id.mainTitle)?.setTextColor(primary)
+    findViewById<TextView>(R.id.mainSubtitle)?.setTextColor(secondary)
+    findViewById<ImageButton>(R.id.btnOpenSettings)?.imageTintList =
+        android.content.res.ColorStateList.valueOf(accent)
+    findViewById<TextView>(R.id.settingsTitle)?.setTextColor(primary)
+    findViewById<TextView>(R.id.themeTitle)?.setTextColor(primary)
+    findViewById<TextView>(R.id.themeSubtitle)?.setTextColor(secondary)
+}
+
+internal fun Activity.refreshDemoTabColors() {
+    val resolver = ThemeManager.get().getResolver(this) ?: return
+    val secondary = resolver.getColor(R.color.skin_text_secondary)
+    val accent = resolver.getColor(R.color.skin_accent)
+    val selected = findViewById<ViewGroup>(R.id.demoTabBar)?.tag as? Int ?: 0
+    listOf(
+        R.id.demoTabWidgets to 0,
+        R.id.demoTabList to 1,
+        R.id.demoTabOverlays to 2,
+    ).forEach { (id, index) ->
+        findViewById<TextView>(id)?.setTextColor(if (index == selected) accent else secondary)
     }
 }
 
 private fun Int.hex(): String = Integer.toHexString(this)
 
-private fun Activity.bindSizedIcon() {
-    val icon = findViewById<ImageView>(R.id.themeSizedIcon)
-    val binding = ThemeManager.get().obtain(icon) as ImageViewResourceBinding
-    val size = (72 * resources.displayMetrics.density).toInt()
-    binding.setImage(
-        DrawableRef.of(R.drawable.mail_star_fill) { resolver ->
-            val drawable = resolver.getDrawable(R.drawable.mail_star_fill)?.mutate() ?: return@of null
-            drawable.setBounds(0, 0, size, size)
-            drawable
-        },
-    )
-}
-
-private fun Activity.bindManualText() {
-    val managed = findViewById<TextView>(R.id.themeManagedLabel)
-    var useAccent = false
-    findViewById<Button>(R.id.btnThemeDynamic).setOnClickListener {
-        useAccent = !useAccent
-        val color = if (useAccent) R.color.skin_accent else R.color.skin_text_primary
-        TextViewResourceBinding.of(managed).apply {
-            setTextColor(ColorRef.of(color))
-            refresh()
-        }
-    }
-
-    val rows = findViewById<LinearLayout>(R.id.themeExtraRows)
-    findViewById<Button>(R.id.btnThemeUnmanaged).setOnClickListener {
-        val created = TextView(this).apply {
-            text = getString(R.string.theme_demo_unmanaged_line)
-            textSize = 16f
-            val pad = (8 * resources.displayMetrics.density).toInt()
-            setPadding(0, pad, 0, 0)
-        }
-        rows.addView(created)
-        TextViewResourceBinding.of(created)
-            .setTextColor(ColorRef.of(R.color.skin_accent))
-            .setBackground(DrawableRef.of { resolver ->
-                val drawable = GradientDrawable()
-                drawable.cornerRadius = 15F
-                drawable.orientation = GradientDrawable.Orientation.LEFT_RIGHT
-                drawable.colors = intArrayOf(
-                    resolver.getColor(R.color.skin_card_bg),
-                    resolver.getColor(R.color.skin_panel_bg_blue)
-                )
-                drawable
-            })
-    }
-
-    val host = this as? FragmentActivity
-    findViewById<Button>(R.id.btnThemeDialog).setOnClickListener {
-        if (host == null) return@setOnClickListener
-        ThemeLayerDialogFragment.show(
-            host.supportFragmentManager,
-            R.string.theme_demo_dialog_message
-        )
-    }
-    val popupAnchor = findViewById<Button>(R.id.btnThemePopup)
-    var popup: PopupWindow? = null
-    popupAnchor.setOnClickListener {
-        popup?.dismiss()
-        val content = layoutInflater.inflate(R.layout.popup_theme_layer, null)
-        val window = PopupWindow(
-            content,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true,
-        )
-        window.isOutsideTouchable = true
-        window.elevation = 8f * resources.displayMetrics.density
-        window.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-        popup = window
-        window.setOnDismissListener { if (popup === window) popup = null }
-        // 锚点已偏下时 DropDown 容易落到屏外；固定贴在标题栏下方居中
-        val titleBar = findViewById<View>(R.id.themeTitleBar)
-        val loc = IntArray(2)
-        titleBar.getLocationInWindow(loc)
-        val y = loc[1] + titleBar.height
-        window.showAtLocation(titleBar, Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, y)
-    }
-}
-
-/** 单个 RecyclerView；复用条目由 androidx RecyclerView Binding 补刷。 */
-private fun Activity.bindThemeList() {
-    val recycler = findViewById<RecyclerView>(R.id.themeRecycler)
-    lateinit var adapter: ThemeRowAdapter
-    adapter = ThemeRowAdapter((0..11).toMutableList()) {
-        adapter.appendMore()
-    }
-    recycler.layoutManager = LinearLayoutManager(this)
-    recycler.adapter = adapter
-}
-
-/** 从页面或从对话框按钮里再弹出。换主题时不用自己 refresh。 */
 class ThemeLayerDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

@@ -94,7 +94,11 @@ public class ViewResourceBinding extends BaseViewResourceBinding {
         if (attr == ATTR_BACKGROUND) {
             if (value instanceof ColorRef) {
                 Integer color = ((ColorRef) value).resolve(resolver);
-                if (color != null) view.setBackgroundColor(color);
+                if (color != null) {
+                    // AppCompat Button 默认带 backgroundTint，只 setBackgroundColor 会被 tint 盖住
+                    resolver.getViewCompat().setBackgroundTintList(view, null);
+                    view.setBackgroundColor(color);
+                }
             } else if (value instanceof DrawableRef) {
                 view.setBackground(((DrawableRef) value).resolve(resolver));
             }

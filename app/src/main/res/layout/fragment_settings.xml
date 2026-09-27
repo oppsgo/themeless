@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settingsRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/skin_page_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_skin_title"
+            android:textColor="@color/skin_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/settingsSkinGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/settingsSkinFollow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_mode_follow"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/settingsSkinLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_mode_light"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/settingsSkinDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_mode_dark"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/settingsSkinCustom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_mode_custom"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/settings_host_title"
+            android:textColor="@color/skin_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/settingsHostGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/settingsHostFollow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_night_follow"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/settingsHostLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_night_light"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/settingsHostDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_night_dark"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+        </RadioGroup>
+    </LinearLayout>
+</ScrollView>

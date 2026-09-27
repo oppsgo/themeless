@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vpStressRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/skin_page_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/vpStressTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/skin_panel_bg"
+        android:elevation="2dp"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:id="@+id/vpStressTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/vp_stress_title"
+            android:textColor="@color/skin_text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vpStressSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vp_stress_subtitle"
+            android:textColor="@color/skin_text_secondary"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnVpLight"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_light"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnVpDark"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_dark"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnVpCustom"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_custom"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/vpStressBody"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <HorizontalScrollView
+            android:id="@+id/vpStressTabScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/skin_panel_bg"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/vpStressTabBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+        </HorizontalScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/skin_divider" />
+
+        <TextView
+            android:id="@+id/vpStressTabsLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="4dp"
+            android:text="@string/vp_stress_section_tabs"
+            android:textColor="@color/skin_text_secondary"
+            android:textSize="12sp" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vpStressPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/skin_page_bg" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/skin_divider" />
+
+        <TextView
+            android:id="@+id/vpStressBannerLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="4dp"
+            android:text="@string/vp_stress_section_banner"
+            android:textColor="@color/skin_text_secondary"
+            android:textSize="12sp" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vpStressBanner"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never" />
+    </LinearLayout>
+</LinearLayout>

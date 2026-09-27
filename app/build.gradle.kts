@@ -7,8 +7,8 @@ android {
 
     defaultConfig {
         applicationId = "io.github.oppsgo.themeless"
-        // versionName 跟库 VERSION_NAME；versionCode 仅 Demo 安装用，与 JitPack 无关。
-        versionCode = 14
+        // versionName 跟根工程 version；versionCode 仅 Demo 安装用，与 JitPack 无关。
+        versionCode = 15
         versionName = rootProject.version.toString()
     }
 }
@@ -17,11 +17,12 @@ dependencies {
     implementation(projects.core)
     implementation(projects.coreKtx)
     implementation(projects.androidx)
-    implementation(projects.androidxKtx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager)
+    implementation(libs.androidx.viewpager2)
 }

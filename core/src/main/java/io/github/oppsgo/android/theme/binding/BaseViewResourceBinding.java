@@ -222,6 +222,10 @@ public abstract class BaseViewResourceBinding implements ResourceBinding {
 
     @Override
     public void refresh() {
+        int current = ThemeManager.get().getModCount(view.getContext());
+        if (current != ThemeManager.MOD_COUNT_NONE && this.modCount == current) {
+            return;
+        }
         ResourceResolver resolver = ThemeManager.get().getResolver(view.getContext());
         if (resolver != null) {
             apply(resolver);
@@ -230,6 +234,7 @@ public abstract class BaseViewResourceBinding implements ResourceBinding {
 
     /**
      * 记下当前刷新代数再刷。未启用时不记代数，避免列表复用时把“没刷过”当成已经最新。
+     * 换肤路径应始终走到这里，不做代数跳过。
      */
     @Override
     public void apply(@NonNull ResourceResolver resolver) {

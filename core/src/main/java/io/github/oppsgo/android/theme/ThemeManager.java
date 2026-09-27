@@ -141,39 +141,16 @@ public class ThemeManager {
     /**
      * 只刷指定 View 上的 Binding，不往子树遍历。
      * ViewGroup 若已挂 Binding，子树由其自身的 apply 继续传递。
+     * <p>
+     * 内部走 {@link ResourceBinding#refresh()}，已是本轮 modCount 则跳过
+     * （RecyclerView / ViewPager 复用场景）。
      */
     public void refresh(@Nullable View view) {
         if (view == null) return;
-        ResourceResolver resolver = getResolver(view.getContext());
-        if (resolver == null) {
-            // 浮层根 View 的 Context 可能不是 Activity 链，回退到已安装的 delegate。
-            ThemeDelegate installed = findDelegate(view.getContext());
-            if (installed == null) {
-                Activity host = findActivity(view.getContext());
-                if (host != null) {
-                    installed = findDelegate(host);
-                }
-            }
-            resolver = installed == null ? null : installed.resolver;
+        ResourceBinding binding = registry.find(view);
+        if (binding != null) {
+            binding.refresh();
         }
-        if (resolver == null) return;
-        apply(resolver, view);
-    }
-
-    @Nullable
-    private static Activity findActivity(@Nullable Context context) {
-        Context current = context;
-        while (current instanceof ContextWrapper) {
-            if (current instanceof Activity) {
-                return (Activity) current;
-            }
-            Context base = ((ContextWrapper) current).getBaseContext();
-            if (base == null || base == current) {
-                return null;
-            }
-            current = base;
-        }
-        return null;
     }
 
     /**
@@ -198,7 +175,7 @@ public class ThemeManager {
 
     private void apply(@NonNull ResourceResolver resolver, @NonNull View view) {
         ResourceBinding binding = registry.find(view);
-        if (binding != null && binding.isEnable()) {
+        if (binding != null) {
             binding.apply(resolver);
         }
     }

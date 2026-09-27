@@ -6,9 +6,7 @@ import androidx.fragment.app.FragmentActivity
 import io.github.oppsgo.android.theme.ktx.installTheme
 import io.github.oppsgo.themeless.R
 
-/**
- * 非 AppCompat：不传 Factory2，View 走默认创建。
- */
+/** 非 AppCompat：不传 Factory2。二级页按功能拆成 Tab。 */
 class ThemeDemoActivity : FragmentActivity() {
 
     init {
@@ -18,7 +16,7 @@ class ThemeDemoActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installTheme()
         super.onCreate(savedInstanceState)
-        showThemeDemo(R.string.theme_demo_subtitle)
+        setupThemeDemoHost(R.string.theme_demo_subtitle)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

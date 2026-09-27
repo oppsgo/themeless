@@ -77,13 +77,22 @@ fun Context.applyDayNight(dark: Boolean) {
 
 /**
  * 取 Binding（有则复用，无则临时），等价于 [ThemeManager.edit]。
- * 具体类型有重载，可直接 `setTextColor` 等。
+ * 运行时类型由 registry 按 View 类决定；需要具体 API 时用 [binding]。
  *
  * 带 lambda 的配置请用 [theme]，不要做成 `edit { }`（与零参抢解析）。
  */
 @Suppress("UNCHECKED_CAST")
 fun <V : View> V.edit(): ResourceBinding =
     ThemeManager.get().edit(this)
+
+/**
+ * 取 Binding 并转为 [B]（registry 已按 View 类型创建好的实例）。
+ * 新控件一般不必再写 `Xxx.edit()` 扩展，register 后直接：
+ * `view.binding<XxxResourceBinding>().…` / `view.themeAs<XxxResourceBinding> { }`。
+ */
+@Suppress("UNCHECKED_CAST")
+inline fun <reified B : ResourceBinding> View.binding(): B =
+    ThemeManager.get().edit(this) as B
 
 fun TextView.edit(): TextViewResourceBinding = TextViewResourceBinding.of(this)
 
@@ -104,11 +113,25 @@ fun <T : ResourceBinding> View.findBinding(clazz: Class<T>): T? =
     ThemeManager.get().find(this, clazz)
 
 /**
- * 在 Binding 上配置主题属性（同构于社区 `view.skin { }`；块名仍可再议）。
- * `setXxx` 在已 apply 或临时 fallback Resolver 下会立刻写 View。
+ * 在 Binding 上配置主题属性。
+ * 平台 TextView / ImageView / CompoundButton / Switch 有更具体的重载；
+ * 其它 View 用本方法，或 [themeAs] / [binding] 指定具体 Binding 类型。
  */
-inline fun <V : View> V.theme(block: ResourceBinding.(V) -> Unit): V {
-    edit().block(this)
+inline fun <V : View> V.theme(block: ResourceBinding.() -> Unit): V {
+    edit().block()
+    return this
+}
+
+/**
+ * 指定 Binding 类型的配置块，免去为每个控件写 `edit`/`theme` 扩展。
+ * 只有一个类型参数，才能写成 `view.themeAs<XxxBinding> { }`（Kotlin 不允许部分指定泛型）。
+ * 控件本身用外层变量即可；需要时在块内用 `this@themeAs` 取 View。
+ * 例：`viewPager.themeAs<ViewPager2ResourceBinding> { }`
+ */
+inline fun <reified B : ResourceBinding> View.themeAs(
+    block: B.() -> Unit,
+): View {
+    binding<B>().block()
     return this
 }
 

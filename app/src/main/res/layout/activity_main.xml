@@ -1,93 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF121820"
-    android:fillViewport="true">
+    android:background="@color/skin_page_bg"
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/mainTitleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/main_list_title"
-            android:textColor="#FFF2E8D5"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/main_list_subtitle"
-            android:textColor="#AAF2E8D5"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/main_night_mode_title"
-            android:textColor="#FFF2E8D5"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mainNightModeHint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textColor="#AAF2E8D5"
-            android:textSize="13sp" />
+        android:background="@color/skin_panel_bg"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="12dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnNightFollow"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/mainTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:text="@string/main_night_follow" />
+                android:text="@string/app_name"
+                android:textColor="@color/skin_text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnNightLight"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/mainSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:text="@string/main_night_light" />
-
-            <Button
-                android:id="@+id/btnNightDark"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/main_night_dark" />
+                android:layout_marginTop="4dp"
+                android:text="@string/main_shell_subtitle_placeholder"
+                android:textColor="@color/skin_text_secondary"
+                android:textSize="13sp" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="12dp"
-            android:text="@string/main_demo_section"
-            android:textColor="#FFF2E8D5"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        <ImageButton
+            android:id="@+id/btnOpenSettings"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_settings"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_settings"
+            app:tint="@color/skin_accent" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/homeRoot"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/skin_page_bg"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/entryList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </LinearLayout>
-</ScrollView>
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <Button
+                android:id="@+id/btnOpenFragmentDemo"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/main_entry_theme_title"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnOpenAppCompatDemo"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/main_entry_theme_appcompat_title"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnOpenVpStress"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/main_entry_vp_stress_title"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnOpenVp2Stress"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/main_entry_vp2_stress_title"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

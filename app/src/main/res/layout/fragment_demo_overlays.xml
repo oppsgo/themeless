@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/demoOverlaysRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/skin_page_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnThemeDialog"
+            style="@style/Widget.Themeless.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/skin_button_bg"
+            android:backgroundTint="@null"
+            android:text="@string/theme_demo_dialog"
+            android:textColor="@color/skin_button_text"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnThemePopup"
+            style="@style/Widget.Themeless.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/skin_button_bg"
+            android:backgroundTint="@null"
+            android:text="@string/theme_demo_popup"
+            android:textColor="@color/skin_button_text"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+</ScrollView>
