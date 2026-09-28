@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
  * 通过 {@link ViewGroup.OnHierarchyChangeListener} 监听子 View 挂上；
  * 若宿主也设置了该 listener，会被本 Binding 覆盖。
  */
-public class AbsListViewResourceBinding extends BaseViewGroupResourceBinding
+public class AbsListViewResourceBinding extends ViewGroupResourceBinding
         implements ViewGroup.OnHierarchyChangeListener {
 
     public AbsListViewResourceBinding(@NonNull AbsListView view) {

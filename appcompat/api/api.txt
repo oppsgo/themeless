@@ -33,7 +33,7 @@ package io.github.oppsgo.android.theme.appcompat.binding {
     field public static final int ATTR_BACKGROUND_TINT_COMPAT;
   }
 
-  public class RecyclerViewResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding implements android.support.v7.widget.RecyclerView.OnChildAttachStateChangeListener {
+  public class RecyclerViewResourceBinding extends io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding implements android.support.v7.widget.RecyclerView.OnChildAttachStateChangeListener {
     ctor public RecyclerViewResourceBinding(android.support.v7.widget.RecyclerView);
     method public android.support.v7.widget.RecyclerView getView();
     method public static io.github.oppsgo.android.theme.appcompat.binding.RecyclerViewResourceBinding of(android.support.v7.widget.RecyclerView);
@@ -60,7 +60,7 @@ package io.github.oppsgo.android.theme.appcompat.binding {
     field public static final int ATTR_TRACK_TINT_COMPAT;
   }
 
-  public class ViewPagerResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding {
+  public class ViewPagerResourceBinding extends io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding {
     ctor public ViewPagerResourceBinding(android.support.v4.view.ViewPager);
     method public android.support.v4.view.ViewPager getView();
     method public static io.github.oppsgo.android.theme.appcompat.binding.ViewPagerResourceBinding of(android.support.v4.view.ViewPager);

@@ -8,7 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
+import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 
 /**
  * {@link ViewPager}：page 多为直接子 View（或 Fragment 根）；decor 除外。
@@ -20,7 +20,7 @@ import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
  * <p>
  * inflate 前调用 {@link #register()}。
  */
-public class ViewPagerResourceBinding extends BaseViewGroupResourceBinding {
+public class ViewPagerResourceBinding extends ViewGroupResourceBinding {
 
     public static void register() {
         ThemeManager.get().registry().register(ViewPager.class, ViewPagerResourceBinding::new);

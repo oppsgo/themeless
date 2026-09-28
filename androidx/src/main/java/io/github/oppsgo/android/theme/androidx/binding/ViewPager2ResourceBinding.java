@@ -10,7 +10,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import io.github.oppsgo.android.theme.ResourceBindingFactory;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
+import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 
 /**
  * {@link ViewPager2}：内部 RV 与 {@code FragmentViewHolder} 的 FrameLayout 无 Binding，
@@ -22,7 +22,7 @@ import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
  * 复用挂上时由 {@link RecyclerViewResourceBinding} 的 attach 监听再补刷。
  * inflate 前调用 {@link #register()}。
  */
-public class ViewPager2ResourceBinding extends BaseViewGroupResourceBinding {
+public class ViewPager2ResourceBinding extends ViewGroupResourceBinding {
 
     public static void register() {
         ResourceBindingFactory registry = ThemeManager.get().registry();

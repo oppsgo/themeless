@@ -115,7 +115,7 @@ public class ThemeManager {
      * 刷该 Activity 的内容树，以及已登记的 Dialog / PopupWindow 内容根。
      * <p>
      * Activity 最多落到 {@code setContentView} 那一层（{@code android.R.id.content} 的直接子 View）；
-     * 浮层只刷登记的内容根。更深层由 {@link io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding} 传递。
+     * 浮层只刷登记的内容根。更深层由 {@link io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding} 传递。
      */
     public void refresh(@Nullable Context context) {
         ThemeDelegate installed = findDelegate(context);

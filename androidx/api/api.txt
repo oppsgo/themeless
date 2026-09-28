@@ -35,7 +35,7 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_DRAWABLE_TINT_COMPAT;
   }
 
-  public class RecyclerViewResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding implements androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener {
+  public class RecyclerViewResourceBinding extends io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding implements androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener {
     ctor public RecyclerViewResourceBinding(androidx.recyclerview.widget.RecyclerView);
     method public androidx.recyclerview.widget.RecyclerView getView();
     method public static io.github.oppsgo.android.theme.androidx.binding.RecyclerViewResourceBinding of(androidx.recyclerview.widget.RecyclerView);
@@ -62,14 +62,14 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_TRACK_TINT_COMPAT;
   }
 
-  public class ViewPager2ResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding {
+  public class ViewPager2ResourceBinding extends io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding {
     ctor public ViewPager2ResourceBinding(androidx.viewpager2.widget.ViewPager2);
     method public androidx.viewpager2.widget.ViewPager2 getView();
     method public static io.github.oppsgo.android.theme.androidx.binding.ViewPager2ResourceBinding of(androidx.viewpager2.widget.ViewPager2);
     method public static void register();
   }
 
-  public class ViewPagerResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding {
+  public class ViewPagerResourceBinding extends io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding {
     ctor public ViewPagerResourceBinding(androidx.viewpager.widget.ViewPager);
     method public androidx.viewpager.widget.ViewPager getView();
     method public static io.github.oppsgo.android.theme.androidx.binding.ViewPagerResourceBinding of(androidx.viewpager.widget.ViewPager);

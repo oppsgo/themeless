@@ -26,11 +26,11 @@ import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeViewCompat;
 
 /**
- * {@link BaseViewGroupResourceBinding} 的 self-or-children / depth 递归场景。
+ * {@link ViewGroupResourceBinding} 的 self-or-children / depth 递归场景。
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
-public class BaseViewGroupResourceBindingTest {
+public class ViewGroupResourceBindingTest {
 
     private Activity activity;
     private HostBinding host;
@@ -180,7 +180,7 @@ public class BaseViewGroupResourceBindingTest {
         CountingBinding child = attachCounting(new View(activity));
         parent.addView(child.getView());
 
-        BaseViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver, 1);
+        ViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver, 1);
 
         assertEquals(1, self.applyCount);
         assertEquals(0, child.applyCount);
@@ -194,7 +194,7 @@ public class BaseViewGroupResourceBindingTest {
         mid.addView(leaf.getView());
         parent.addView(mid);
 
-        BaseViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver, 2);
+        ViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver, 2);
 
         assertEquals(1, leaf.applyCount);
         assertEquals(0, leaf.refreshCount);
@@ -208,7 +208,7 @@ public class BaseViewGroupResourceBindingTest {
         mid.addView(leaf.getView());
         parent.addView(mid);
 
-        BaseViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver);
+        ViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver);
 
         assertEquals(0, leaf.applyCount);
     }
@@ -216,8 +216,8 @@ public class BaseViewGroupResourceBindingTest {
     @Test
     public void apply_nullOrNonPositiveDepth_isNoOp() {
         CountingBinding self = attachCounting(new View(activity));
-        BaseViewGroupResourceBinding.applySelfOrBoundChildren(null, resolver, 2);
-        BaseViewGroupResourceBinding.applySelfOrBoundChildren(self.getView(), resolver, 0);
+        ViewGroupResourceBinding.applySelfOrBoundChildren(null, resolver, 2);
+        ViewGroupResourceBinding.applySelfOrBoundChildren(self.getView(), resolver, 0);
         assertEquals(0, self.applyCount);
     }
 
@@ -235,14 +235,14 @@ public class BaseViewGroupResourceBindingTest {
         return binding;
     }
 
-    /** 暴露 protected 递归 API 的宿主 Binding。 */
-    private static final class HostBinding extends BaseViewGroupResourceBinding {
+    /** 鏆撮湶 protected 閫掑綊 API 鐨勫涓?Binding銆?*/
+    private static final class HostBinding extends ViewGroupResourceBinding {
         HostBinding(@NonNull ViewGroup view) {
             super(view);
         }
     }
 
-    /** 只计数，不真正改 View。 */
+    /** 鍙鏁帮紝涓嶇湡姝ｆ敼 View銆?*/
     private static final class CountingBinding extends ViewResourceBinding {
         int applyCount;
         int refreshCount;

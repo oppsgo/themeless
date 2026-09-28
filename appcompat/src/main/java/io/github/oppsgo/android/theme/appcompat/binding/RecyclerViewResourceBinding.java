@@ -6,13 +6,13 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
+import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 
 /**
  * Support Library（recyclerview-v7）版。
  * 接入方有 RecyclerView 时，在 inflate 前调用 {@link #register()}。
  */
-public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding
+public class RecyclerViewResourceBinding extends ViewGroupResourceBinding
         implements RecyclerView.OnChildAttachStateChangeListener {
 
     public static void register() {

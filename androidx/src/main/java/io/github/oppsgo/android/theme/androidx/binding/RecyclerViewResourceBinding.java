@@ -6,14 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
+import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 
 /**
  * RecyclerView 复用时，离屏缓存的条目不会出现在当前子 View 里；
  * <p>
  * 接入方有 RecyclerView 时，在 inflate 前调用 {@link #register()}。
  */
-public class RecyclerViewResourceBinding extends BaseViewGroupResourceBinding
+public class RecyclerViewResourceBinding extends ViewGroupResourceBinding
         implements RecyclerView.OnChildAttachStateChangeListener {
 
     public static void register() {

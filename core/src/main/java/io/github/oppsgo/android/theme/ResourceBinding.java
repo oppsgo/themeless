@@ -15,7 +15,7 @@ import io.github.oppsgo.android.theme.core.R;
  * 一个 View 上的主题绑定。记下要随主题变化的属性，刷新时再写回 View。
  * <p>
  * 实例通常挂在 View 的 tag 上，由 {@link ResourceBindingFactory} 创建；
- * 也可自行实现本接口（含代理包装），不必继承 {@code BaseViewResourceBinding}。
+ * 也可自行实现本接口（含代理包装），不必继承 {@link io.github.oppsgo.android.theme.binding.ViewResourceBinding}。
  * <p>
  * 不带 View 泛型：具体 Binding 用协变 {@link #getView()} 暴露真实类型
  * （如 {@code SwitchResourceBinding#getView()} 返回 {@code Switch}），避免继承链把类型收窄。
