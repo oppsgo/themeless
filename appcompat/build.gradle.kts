@@ -1,12 +1,19 @@
 plugins {
     alias(libs.plugins.convention.android.library)
+    alias(libs.plugins.metalava)
 }
 
 android {
-    namespace = "io.github.oppsgo.theme.appcompat"
+    namespace = "io.github.oppsgo.android.theme.appcompat"
     defaultConfig {
         minSdk = 19
     }
+}
+
+metalava {
+    filename.set("api/api.txt")
+    javaSourceLevel.set(JavaVersion.VERSION_1_8)
+    enforceCheck.set(true)
 }
 
 dependencies {

@@ -1,0 +1,37 @@
+// Signature format: 4.0
+package io.github.oppsgo.android.theme.ktx {
+
+  public final class ThemeKtx {
+    method public static void applyDayNight(android.content.Context, boolean dark);
+    method public static void applyTheme(android.content.Context, io.github.oppsgo.android.theme.ResourceResolver resolver);
+    method @KotlinOnly public static inline <reified B extends io.github.oppsgo.android.theme.ResourceBinding> B binding(android.view.View);
+    method public static io.github.oppsgo.android.theme.resolver.DayNightResourceResolver dayNightFollowSystem(android.content.Context);
+    method public static io.github.oppsgo.android.theme.resolver.DayNightResourceResolver dayNightLight(android.content.Context);
+    method public static io.github.oppsgo.android.theme.resolver.DayNightResourceResolver dayNightNight(android.content.Context);
+    method public static io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding edit(android.widget.CompoundButton);
+    method public static io.github.oppsgo.android.theme.binding.ImageViewResourceBinding edit(android.widget.ImageView);
+    method public static io.github.oppsgo.android.theme.binding.SwitchResourceBinding edit(android.widget.Switch);
+    method public static io.github.oppsgo.android.theme.binding.TextViewResourceBinding edit(android.widget.TextView);
+    method public static <V extends android.view.View> io.github.oppsgo.android.theme.ResourceBinding edit(V);
+    method public static io.github.oppsgo.android.theme.ResourceBinding? findBinding(android.view.View);
+    method public static <T extends io.github.oppsgo.android.theme.ResourceBinding> T? findBinding(android.view.View, Class<T> clazz);
+    method @InaccessibleFromKotlin public static boolean getRefreshOnInflate(android.content.Context);
+    method @InaccessibleFromKotlin public static io.github.oppsgo.android.theme.ResourceResolver? getResourceResolver(android.content.Context);
+    method public static void installTheme(android.app.Activity, optional android.view.LayoutInflater.Factory2? factory);
+    method public static io.github.oppsgo.android.theme.ResourceBinding obtain(android.view.View);
+    method public static void refreshTheme(android.content.Context);
+    method public static void refreshTheme(android.view.View);
+    method public static inline void registry(kotlin.jvm.functions.Function1<? super io.github.oppsgo.android.theme.ResourceBindingFactory,kotlin.Unit> block);
+    method @InaccessibleFromKotlin public static void setRefreshOnInflate(android.content.Context, boolean);
+    method public static inline android.widget.CompoundButton theme(android.widget.CompoundButton, kotlin.jvm.functions.Function2<? super io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding,? super android.widget.CompoundButton,kotlin.Unit> block);
+    method public static inline android.widget.ImageView theme(android.widget.ImageView, kotlin.jvm.functions.Function2<? super io.github.oppsgo.android.theme.binding.ImageViewResourceBinding,? super android.widget.ImageView,kotlin.Unit> block);
+    method public static inline android.widget.Switch theme(android.widget.Switch, kotlin.jvm.functions.Function2<? super io.github.oppsgo.android.theme.binding.SwitchResourceBinding,? super android.widget.Switch,kotlin.Unit> block);
+    method public static inline android.widget.TextView theme(android.widget.TextView, kotlin.jvm.functions.Function2<? super io.github.oppsgo.android.theme.binding.TextViewResourceBinding,? super android.widget.TextView,kotlin.Unit> block);
+    method public static inline <V extends android.view.View> V theme(V, kotlin.jvm.functions.Function1<? super io.github.oppsgo.android.theme.ResourceBinding,kotlin.Unit> block);
+    method @KotlinOnly public static inline <reified B extends io.github.oppsgo.android.theme.ResourceBinding> android.view.View themeAs(android.view.View, kotlin.jvm.functions.Function1<B,kotlin.Unit> block);
+    property public static boolean android.content.Context.refreshOnInflate;
+    property public static io.github.oppsgo.android.theme.ResourceResolver? android.content.Context.resourceResolver;
+  }
+
+}
+

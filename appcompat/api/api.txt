@@ -1,0 +1,97 @@
+// Signature format: 4.0
+package io.github.oppsgo.android.theme.appcompat {
+
+  public final class ThemeAppCompat {
+    method public static void registerAvailable();
+  }
+
+}
+
+package io.github.oppsgo.android.theme.appcompat.binding {
+
+  public class AppCompatCompoundButtonResourceBinding extends io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding {
+    ctor public AppCompatCompoundButtonResourceBinding(android.widget.CompoundButton);
+    method public static io.github.oppsgo.android.theme.appcompat.binding.AppCompatCompoundButtonResourceBinding of(android.widget.CompoundButton);
+    method public static void register();
+    field public static final int ATTR_BACKGROUND_TINT_COMPAT;
+    field public static final int ATTR_BUTTON_TINT_COMPAT;
+  }
+
+  public class AppCompatImageViewResourceBinding extends io.github.oppsgo.android.theme.binding.ImageViewResourceBinding {
+    ctor public AppCompatImageViewResourceBinding(android.support.v7.widget.AppCompatImageView);
+    method public static io.github.oppsgo.android.theme.appcompat.binding.AppCompatImageViewResourceBinding of(android.support.v7.widget.AppCompatImageView);
+    method public static void register();
+    field public static final int ATTR_BACKGROUND_TINT_COMPAT;
+    field public static final int ATTR_SRC_COMPAT;
+    field public static final int ATTR_TINT_COMPAT;
+  }
+
+  public class AppCompatTextViewResourceBinding extends io.github.oppsgo.android.theme.binding.TextViewResourceBinding {
+    ctor public AppCompatTextViewResourceBinding(android.support.v7.widget.AppCompatTextView);
+    method public static io.github.oppsgo.android.theme.appcompat.binding.AppCompatTextViewResourceBinding of(android.support.v7.widget.AppCompatTextView);
+    method public static void register();
+    field public static final int ATTR_BACKGROUND_TINT_COMPAT;
+  }
+
+  public class RecyclerViewResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding implements android.support.v7.widget.RecyclerView.OnChildAttachStateChangeListener {
+    ctor public RecyclerViewResourceBinding(android.support.v7.widget.RecyclerView);
+    method public android.support.v7.widget.RecyclerView getView();
+    method public static io.github.oppsgo.android.theme.appcompat.binding.RecyclerViewResourceBinding of(android.support.v7.widget.RecyclerView);
+    method public void onChildViewAttachedToWindow(android.view.View);
+    method public void onChildViewDetachedFromWindow(android.view.View);
+    method public static void register();
+  }
+
+  public class SwitchCompatResourceBinding extends io.github.oppsgo.android.theme.appcompat.binding.AppCompatCompoundButtonResourceBinding {
+    ctor public SwitchCompatResourceBinding(android.support.v7.widget.SwitchCompat);
+    method protected android.support.v7.widget.SwitchCompat getSwitchCompat();
+    method public static io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding of(android.support.v7.widget.SwitchCompat);
+    method public static void register();
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setThumb(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setThumbResource(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setThumbTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setThumbTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setTrack(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setTrackResource(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setTrackTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.appcompat.binding.SwitchCompatResourceBinding setTrackTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    field public static final int ATTR_THUMB_TINT_COMPAT;
+    field public static final int ATTR_TRACK_COMPAT;
+    field public static final int ATTR_TRACK_TINT_COMPAT;
+  }
+
+  public class ViewPagerResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding {
+    ctor public ViewPagerResourceBinding(android.support.v4.view.ViewPager);
+    method public android.support.v4.view.ViewPager getView();
+    method public static io.github.oppsgo.android.theme.appcompat.binding.ViewPagerResourceBinding of(android.support.v4.view.ViewPager);
+    method public static void register();
+  }
+
+}
+
+package io.github.oppsgo.android.theme.appcompat.resolver {
+
+  public class AppCompatContextResourceResolver extends io.github.oppsgo.android.theme.resolver.ContextResourceResolver {
+    ctor public AppCompatContextResourceResolver(android.content.Context);
+    ctor public AppCompatContextResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
+  }
+
+  public class AppCompatDayNightResourceResolver extends io.github.oppsgo.android.theme.appcompat.resolver.AppCompatContextResourceResolver {
+    ctor public AppCompatDayNightResourceResolver(android.content.Context);
+    ctor public AppCompatDayNightResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
+    method public static io.github.oppsgo.android.theme.appcompat.resolver.AppCompatDayNightResourceResolver followSystem(android.content.Context);
+    method public static io.github.oppsgo.android.theme.appcompat.resolver.AppCompatDayNightResourceResolver light(android.content.Context);
+    method public static io.github.oppsgo.android.theme.appcompat.resolver.AppCompatDayNightResourceResolver night(android.content.Context);
+    method public static io.github.oppsgo.android.theme.appcompat.resolver.AppCompatDayNightResourceResolver of(android.content.Context, boolean);
+  }
+
+  public class ThemeViewCompatImpl implements io.github.oppsgo.android.theme.ThemeViewCompat {
+    ctor public ThemeViewCompatImpl();
+    method public void setBackgroundTintList(android.view.View, android.content.res.ColorStateList?);
+    method public void setButtonTintList(android.widget.CompoundButton, android.content.res.ColorStateList?);
+    method public void setCompoundDrawableTintList(android.widget.TextView, android.content.res.ColorStateList?);
+    method public void setImageTintList(android.widget.ImageView, android.content.res.ColorStateList?);
+  }
+
+}
+

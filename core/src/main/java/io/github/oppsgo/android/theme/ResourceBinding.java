@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.resource.ResourceRef;
-import io.github.oppsgo.theme.core.R;
+import io.github.oppsgo.android.theme.core.R;
 
 /**
  * 一个 View 上的主题绑定。记下要随主题变化的属性，刷新时再写回 View。

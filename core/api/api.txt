@@ -1,0 +1,357 @@
+// Signature format: 4.0
+package io.github.oppsgo.android.theme {
+
+  public interface ResourceBinding {
+    method public void apply(io.github.oppsgo.android.theme.ResourceResolver);
+    method public default io.github.oppsgo.android.theme.ResourceBinding attach();
+    method public io.github.oppsgo.android.theme.ResourceBinding bind(android.util.AttributeSet?);
+    method public io.github.oppsgo.android.theme.ResourceBinding bind(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>);
+    method public int getModCount();
+    method public android.view.View getView();
+    method public default boolean isAttached();
+    method public boolean isEnable();
+    method public void refresh();
+    method public io.github.oppsgo.android.theme.ResourceBinding setEnable(boolean);
+    method public io.github.oppsgo.android.theme.ResourceBinding unbind(@AttrRes int);
+    field public static final int ID_NULL = 0; // 0x0
+    field public static final int TAG_BINDING;
+  }
+
+  public final class ResourceBindingFactory {
+    method public io.github.oppsgo.android.theme.ResourceBinding create(android.view.View);
+    method public io.github.oppsgo.android.theme.ResourceBinding? find(android.view.View?);
+    method public <V extends android.view.View> io.github.oppsgo.android.theme.ResourceBindingFactory.Creator<V>? getCreator(Class<V>);
+    method public boolean isRegistered(Class<? extends android.view.View!>);
+    method public io.github.oppsgo.android.theme.ResourceBinding obtain(android.view.View);
+    method public <V extends android.view.View> void register(Class<V>, io.github.oppsgo.android.theme.ResourceBindingFactory.Creator<V>);
+    method public io.github.oppsgo.android.theme.ResourceBindingFactory.Creator<? extends java.lang.Object!> resolve(Class<? extends android.view.View!>);
+  }
+
+  public static interface ResourceBindingFactory.Creator<VIEW extends android.view.View> {
+    method public io.github.oppsgo.android.theme.ResourceBinding create(VIEW);
+  }
+
+  public interface ResourceResolver {
+    method public int getColor(@ColorRes int);
+    method public android.content.res.ColorStateList? getColorStateList(@ColorRes int);
+    method public float getDimension(@DimenRes int);
+    method public int getDimensionPixelSize(@DimenRes int);
+    method public android.graphics.drawable.Drawable? getDrawable(@AnyRes int);
+    method public android.content.res.Resources! getResources();
+    method public io.github.oppsgo.android.theme.ThemeViewCompat getViewCompat();
+  }
+
+  public class ResourcesFlusher {
+    method public static void flush(android.content.res.Resources);
+  }
+
+  public class ThemeDelegate implements android.view.LayoutInflater.Factory2 {
+    ctor public ThemeDelegate(android.app.Activity);
+    ctor public ThemeDelegate(android.app.Activity, android.view.LayoutInflater.Factory2?);
+    method protected void attachViewBind(android.view.View?, android.util.AttributeSet?);
+    method public android.view.View? onCreateView(android.view.View?, String, android.content.Context, android.util.AttributeSet);
+    method public android.view.View? onCreateView(String, android.content.Context, android.util.AttributeSet);
+    method protected android.view.View? tryCreateView(android.view.LayoutInflater, String, android.util.AttributeSet);
+  }
+
+  public class ThemeManager {
+    ctor protected ThemeManager();
+    method public void apply(android.content.Context, io.github.oppsgo.android.theme.ResourceResolver);
+    method protected io.github.oppsgo.android.theme.ThemeDelegate createDelegate(android.app.Activity, android.view.LayoutInflater.Factory2?);
+    method public io.github.oppsgo.android.theme.ResourceBinding edit(android.view.View);
+    method public io.github.oppsgo.android.theme.ResourceBinding? find(android.view.View?);
+    method public <T extends io.github.oppsgo.android.theme.ResourceBinding> T? find(android.view.View?, Class<T>);
+    method public static io.github.oppsgo.android.theme.ThemeManager get();
+    method public int getModCount(android.content.Context?);
+    method public io.github.oppsgo.android.theme.ResourceResolver? getResolver(android.content.Context?);
+    method public void install(android.app.Activity);
+    method public void install(android.app.Activity, android.view.LayoutInflater.Factory2?);
+    method public io.github.oppsgo.android.theme.ResourceBinding obtain(android.view.View);
+    method public void refresh(android.content.Context?);
+    method public void refresh(android.view.View?);
+    method public io.github.oppsgo.android.theme.ResourceBindingFactory registry();
+    method public void setRefreshOnInflate(android.content.Context, boolean);
+    method public boolean shouldRefreshOnInflate(android.content.Context?);
+    field public static final int MOD_COUNT_NONE = -1; // 0xffffffff
+  }
+
+  public interface ThemeViewCompat {
+    method public void setBackgroundTintList(android.view.View, android.content.res.ColorStateList?);
+    method public void setButtonTintList(android.widget.CompoundButton, android.content.res.ColorStateList?);
+    method public void setCompoundDrawableTintList(android.widget.TextView, android.content.res.ColorStateList?);
+    method public void setImageTintList(android.widget.ImageView, android.content.res.ColorStateList?);
+  }
+
+}
+
+package io.github.oppsgo.android.theme.binding {
+
+  public class AbsListViewResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding implements android.view.ViewGroup.OnHierarchyChangeListener {
+    ctor public AbsListViewResourceBinding(android.widget.AbsListView);
+    method public android.widget.AbsListView getView();
+    method public static io.github.oppsgo.android.theme.binding.AbsListViewResourceBinding of(android.widget.AbsListView);
+    method public void onChildViewAdded(android.view.View!, android.view.View!);
+    method public void onChildViewRemoved(android.view.View!, android.view.View!);
+  }
+
+  public class AbsSeekBarResourceBinding extends io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding {
+    ctor public AbsSeekBarResourceBinding(android.widget.AbsSeekBar);
+    method public android.widget.AbsSeekBar getView();
+    method public static io.github.oppsgo.android.theme.binding.AbsSeekBarResourceBinding of(android.widget.AbsSeekBar);
+    method public io.github.oppsgo.android.theme.binding.AbsSeekBarResourceBinding setThumb(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.AbsSeekBarResourceBinding setThumbResource(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.AbsSeekBarResourceBinding setThumbTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.AbsSeekBarResourceBinding setThumbTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    field public static final int ATTR_THUMB = 16843074; // 0x1010142
+    field public static final int ATTR_THUMB_TINT = 16843889; // 0x1010471
+  }
+
+  public class BaseViewGroupResourceBinding extends io.github.oppsgo.android.theme.binding.ViewResourceBinding {
+    ctor public BaseViewGroupResourceBinding(android.view.ViewGroup);
+    method protected void applyBoundChildren(io.github.oppsgo.android.theme.ResourceResolver);
+    method protected static void applySelfOrBoundChildren(android.view.View?, io.github.oppsgo.android.theme.ResourceResolver);
+    method protected static void applySelfOrBoundChildren(android.view.View?, io.github.oppsgo.android.theme.ResourceResolver, int);
+    method protected void applyVisibleSelfOrBoundChildren(android.view.ViewGroup, io.github.oppsgo.android.theme.ResourceResolver);
+    method public android.view.ViewGroup getView();
+    method protected void refreshSelfOrBoundChildren(android.view.View?);
+    method protected void refreshSelfOrBoundChildren(android.view.View?, int);
+  }
+
+  public abstract class BaseViewResourceBinding implements io.github.oppsgo.android.theme.ResourceBinding {
+    ctor protected BaseViewResourceBinding(android.view.View);
+    method public void apply(io.github.oppsgo.android.theme.ResourceResolver);
+    method public io.github.oppsgo.android.theme.binding.BaseViewResourceBinding bind(android.util.AttributeSet?);
+    method public io.github.oppsgo.android.theme.binding.BaseViewResourceBinding bind(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>);
+    method protected io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>? createColorResource(@AnyRes int);
+    method protected io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>? createResource(@AttrRes int, @AnyRes int);
+    method protected io.github.oppsgo.android.theme.ResourceResolver? currentResolver();
+    method public int getModCount();
+    method public android.view.View getView();
+    method @StyleableRes protected int[]! getViewStyleable();
+    method protected void invalidate(io.github.oppsgo.android.theme.ResourceResolver);
+    method public boolean isEnable();
+    method public boolean isPureColor(@ColorRes int);
+    method protected static int[] mergeStyleable(int[], int...);
+    method @AttrRes protected int normalizeAttr(@AttrRes int);
+    method protected static <V extends android.view.View, T extends io.github.oppsgo.android.theme.ResourceBinding> T of(V, Class<T>, io.github.oppsgo.android.theme.binding.BaseViewResourceBinding.Factory<V,T>);
+    method protected void putAndUpdate(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
+    method protected void putAttr(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
+    method public void refresh();
+    method protected android.graphics.drawable.Drawable? resolveDrawable(io.github.oppsgo.android.theme.ResourceResolver, @AttrRes int);
+    method protected android.content.res.ColorStateList? resolveTint(io.github.oppsgo.android.theme.ResourceResolver, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
+    method public io.github.oppsgo.android.theme.binding.BaseViewResourceBinding setEnable(boolean);
+    method public io.github.oppsgo.android.theme.binding.BaseViewResourceBinding unbind(@AttrRes int);
+    method protected void updateAttribute(io.github.oppsgo.android.theme.ResourceResolver, @AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
+    field protected final android.util.SparseArray<io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!>! attributes;
+    field protected volatile int modCount;
+    field protected final android.view.View view;
+  }
+
+  protected static interface BaseViewResourceBinding.Factory<V extends android.view.View, T extends io.github.oppsgo.android.theme.ResourceBinding> {
+    method public T create(V);
+  }
+
+  public class CompoundButtonResourceBinding extends io.github.oppsgo.android.theme.binding.TextViewResourceBinding {
+    ctor public CompoundButtonResourceBinding(android.widget.CompoundButton);
+    method public android.widget.CompoundButton getView();
+    method public static io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding of(android.widget.CompoundButton);
+    method public io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding setButtonDrawable(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding setButtonDrawable(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding setButtonTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding setButtonTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    field public static final int ATTR_BUTTON = 16843015; // 0x1010107
+    field public static final int ATTR_BUTTON_TINT = 16843887; // 0x101046f
+  }
+
+  public class ImageViewResourceBinding extends io.github.oppsgo.android.theme.binding.ViewResourceBinding {
+    ctor public ImageViewResourceBinding(android.widget.ImageView);
+    method public android.widget.ImageView getView();
+    method public static io.github.oppsgo.android.theme.binding.ImageViewResourceBinding of(android.widget.ImageView);
+    method public io.github.oppsgo.android.theme.binding.ImageViewResourceBinding setImage(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.ImageViewResourceBinding setImageResource(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.ImageViewResourceBinding setImageTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.ImageViewResourceBinding setImageTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    field public static final int ATTR_SRC = 16843033; // 0x1010119
+    field public static final int ATTR_TINT = 16843041; // 0x1010121
+  }
+
+  public class ProgressBarResourceBinding extends io.github.oppsgo.android.theme.binding.ViewResourceBinding {
+    ctor public ProgressBarResourceBinding(android.widget.ProgressBar);
+    method public android.widget.ProgressBar getView();
+    method public static io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding of(android.widget.ProgressBar);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setIndeterminateDrawable(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setIndeterminateDrawable(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setIndeterminateTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setIndeterminateTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setProgressBackgroundTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setProgressBackgroundTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setProgressDrawable(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setProgressDrawable(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setProgressTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setProgressTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setSecondaryProgressTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.ProgressBarResourceBinding setSecondaryProgressTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    field public static final int ATTR_INDETERMINATE_DRAWABLE = 16843067; // 0x101013b
+    field public static final int ATTR_INDETERMINATE_TINT = 16843881; // 0x1010469
+    field public static final int ATTR_PROGRESS_BACKGROUND_TINT = 16843877; // 0x1010465
+    field public static final int ATTR_PROGRESS_DRAWABLE = 16843068; // 0x101013c
+    field public static final int ATTR_PROGRESS_TINT = 16843875; // 0x1010463
+    field public static final int ATTR_SECONDARY_PROGRESS_TINT = 16843879; // 0x1010467
+  }
+
+  public class SwitchResourceBinding extends io.github.oppsgo.android.theme.binding.CompoundButtonResourceBinding {
+    ctor public SwitchResourceBinding(android.widget.Switch);
+    method public android.widget.Switch getView();
+    method public static io.github.oppsgo.android.theme.binding.SwitchResourceBinding of(android.widget.Switch);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setThumb(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setThumbResource(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setThumbTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setThumbTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setTrack(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setTrackResource(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setTrackTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.SwitchResourceBinding setTrackTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    field public static final int ATTR_THUMB = 16843074; // 0x1010142
+    field public static final int ATTR_THUMB_TINT = 16843889; // 0x1010471
+    field public static final int ATTR_TRACK = 16843631; // 0x101036f
+    field public static final int ATTR_TRACK_TINT = 16843993; // 0x10104d9
+  }
+
+  public class TextViewResourceBinding extends io.github.oppsgo.android.theme.binding.ViewResourceBinding {
+    ctor public TextViewResourceBinding(android.widget.TextView);
+    method public static boolean getDefaultTrackTextSize();
+    method public android.widget.TextView getView();
+    method protected boolean isTrackTextSize();
+    method public static io.github.oppsgo.android.theme.binding.TextViewResourceBinding of(android.widget.TextView);
+    method public void resetTrackTextSize();
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setCompoundDrawableTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setCompoundDrawableTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setCompoundDrawablesRelativeWithIntrinsicBounds(@DrawableRes int, @DrawableRes int, @DrawableRes int, @DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setCompoundDrawablesRelativeWithIntrinsicBounds(io.github.oppsgo.android.theme.resource.DrawableRef?, io.github.oppsgo.android.theme.resource.DrawableRef?, io.github.oppsgo.android.theme.resource.DrawableRef?, io.github.oppsgo.android.theme.resource.DrawableRef?);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setCompoundDrawablesWithIntrinsicBounds(@DrawableRes int, @DrawableRes int, @DrawableRes int, @DrawableRes int);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setCompoundDrawablesWithIntrinsicBounds(io.github.oppsgo.android.theme.resource.DrawableRef?, io.github.oppsgo.android.theme.resource.DrawableRef?, io.github.oppsgo.android.theme.resource.DrawableRef?, io.github.oppsgo.android.theme.resource.DrawableRef?);
+    method public static void setDefaultTrackTextSize(boolean);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setHintTextColor(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setHintTextColor(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setTextColor(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setTextColor(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setTextSize(@DimenRes int);
+    method public io.github.oppsgo.android.theme.binding.TextViewResourceBinding setTextSize(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public void setTrackTextSize(boolean);
+    field public static final int ATTR_DRAWABLE_BOTTOM = 16843118; // 0x101016e
+    field public static final int ATTR_DRAWABLE_END = 16843667; // 0x1010393
+    field public static final int ATTR_DRAWABLE_LEFT = 16843119; // 0x101016f
+    field public static final int ATTR_DRAWABLE_RIGHT = 16843120; // 0x1010170
+    field public static final int ATTR_DRAWABLE_START = 16843666; // 0x1010392
+    field public static final int ATTR_DRAWABLE_TINT = 16843990; // 0x10104d6
+    field public static final int ATTR_DRAWABLE_TOP = 16843117; // 0x101016d
+    field public static final int ATTR_TEXT_COLOR = 16842904; // 0x1010098
+    field public static final int ATTR_TEXT_COLOR_HINT = 16842906; // 0x101009a
+    field public static final int ATTR_TEXT_SIZE = 16842901; // 0x1010095
+  }
+
+  public class ViewGroupResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding {
+    ctor public ViewGroupResourceBinding(android.view.ViewGroup);
+    method public static io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding of(android.view.ViewGroup);
+  }
+
+  public class ViewResourceBinding extends io.github.oppsgo.android.theme.binding.BaseViewResourceBinding {
+    ctor public ViewResourceBinding(android.view.View);
+    method public static io.github.oppsgo.android.theme.binding.ViewResourceBinding of(android.view.View);
+    method public io.github.oppsgo.android.theme.binding.ViewResourceBinding setBackground(@AnyRes int);
+    method public io.github.oppsgo.android.theme.binding.ViewResourceBinding setBackground(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.binding.ViewResourceBinding setBackgroundTint(@ColorRes int);
+    method public io.github.oppsgo.android.theme.binding.ViewResourceBinding setBackgroundTint(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    field public static final int ATTR_BACKGROUND = 16842964; // 0x10100d4
+    field public static final int ATTR_BACKGROUND_TINT = 16843883; // 0x101046b
+  }
+
+}
+
+package io.github.oppsgo.android.theme.resolver {
+
+  public class ContextResourceResolver implements io.github.oppsgo.android.theme.ResourceResolver {
+    ctor public ContextResourceResolver(android.content.Context);
+    ctor public ContextResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
+    method public int getColor(@ColorRes int);
+    method public android.content.res.ColorStateList? getColorStateList(@ColorRes int);
+    method protected android.content.Context getContext();
+    method public float getDimension(@DimenRes int);
+    method public int getDimensionPixelSize(@DimenRes int);
+    method public android.graphics.drawable.Drawable? getDrawable(@AnyRes int);
+    method public android.content.res.Resources! getResources();
+    method public io.github.oppsgo.android.theme.ThemeViewCompat getViewCompat();
+  }
+
+  public class DayNightResourceResolver extends io.github.oppsgo.android.theme.resolver.ContextResourceResolver {
+    ctor public DayNightResourceResolver(android.content.Context);
+    ctor public DayNightResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
+    method public static io.github.oppsgo.android.theme.resolver.DayNightResourceResolver followSystem(android.content.Context);
+    method public static boolean isSystemNight(android.content.Context);
+    method public static android.content.Context isolated(android.content.Context, boolean);
+    method public static io.github.oppsgo.android.theme.resolver.DayNightResourceResolver light(android.content.Context);
+    method public static io.github.oppsgo.android.theme.resolver.DayNightResourceResolver night(android.content.Context);
+    method public static android.content.res.Configuration nightConfig(android.content.Context, boolean);
+    method public static io.github.oppsgo.android.theme.resolver.DayNightResourceResolver of(android.content.Context, boolean);
+    method public static android.content.Context wrapContext(android.content.Context, android.content.res.Configuration);
+  }
+
+  public class ThemeViewCompatImpl implements io.github.oppsgo.android.theme.ThemeViewCompat {
+    ctor public ThemeViewCompatImpl();
+    method public void setBackgroundTintList(android.view.View, android.content.res.ColorStateList?);
+    method public void setButtonTintList(android.widget.CompoundButton, android.content.res.ColorStateList?);
+    method public void setCompoundDrawableTintList(android.widget.TextView, android.content.res.ColorStateList?);
+    method public void setImageTintList(android.widget.ImageView, android.content.res.ColorStateList?);
+  }
+
+}
+
+package io.github.oppsgo.android.theme.resource {
+
+  public class ColorRef extends io.github.oppsgo.android.theme.resource.ResourceRef<java.lang.Integer!> {
+    ctor protected ColorRef(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!>?);
+    method @ColorInt protected Integer! load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
+    method public static io.github.oppsgo.android.theme.resource.ColorRef of(@ColorRes int);
+    method public static io.github.oppsgo.android.theme.resource.ColorRef of(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!>);
+    method public static io.github.oppsgo.android.theme.resource.ColorRef of(io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!>);
+  }
+
+  public class ColorStateListRef extends io.github.oppsgo.android.theme.resource.ResourceRef<android.content.res.ColorStateList!> {
+    ctor protected ColorStateListRef(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!>?);
+    method protected android.content.res.ColorStateList? load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
+    method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(@ColorRes int);
+    method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!>);
+    method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!>);
+  }
+
+  public class DimenRef extends io.github.oppsgo.android.theme.resource.ResourceRef<java.lang.Integer!> {
+    ctor protected DimenRef(@DimenRes int, io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!>?);
+    method @Px protected Integer! load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
+    method public static io.github.oppsgo.android.theme.resource.DimenRef of(@DimenRes int);
+    method public static io.github.oppsgo.android.theme.resource.DimenRef of(@DimenRes int, io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!>);
+    method public static io.github.oppsgo.android.theme.resource.DimenRef of(io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!>);
+  }
+
+  public class DrawableRef extends io.github.oppsgo.android.theme.resource.ResourceRef<android.graphics.drawable.Drawable!> {
+    ctor protected DrawableRef(@DrawableRes int, io.github.oppsgo.android.theme.resource.ResourceValue<android.graphics.drawable.Drawable!>?);
+    method protected android.graphics.drawable.Drawable? load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
+    method public static io.github.oppsgo.android.theme.resource.DrawableRef of(@DrawableRes int);
+    method public static io.github.oppsgo.android.theme.resource.DrawableRef of(@DrawableRes int, io.github.oppsgo.android.theme.resource.ResourceValue<android.graphics.drawable.Drawable!>);
+    method public static io.github.oppsgo.android.theme.resource.DrawableRef of(io.github.oppsgo.android.theme.resource.ResourceValue<android.graphics.drawable.Drawable!>);
+  }
+
+  public abstract class ResourceRef<T> implements io.github.oppsgo.android.theme.resource.ResourceValue<T> {
+    ctor protected ResourceRef(@AnyRes int, io.github.oppsgo.android.theme.resource.ResourceValue<T>?);
+    method @AnyRes public int getResourceId();
+    method public boolean hasCustom();
+    method public boolean isEmpty();
+    method protected abstract T? load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
+    method public T? resolve(io.github.oppsgo.android.theme.ResourceResolver);
+  }
+
+  @java.lang.FunctionalInterface public interface ResourceValue<T> {
+    method public T? resolve(io.github.oppsgo.android.theme.ResourceResolver);
+  }
+
+}
+

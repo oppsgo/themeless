@@ -302,6 +302,8 @@ public class TextViewResourceBinding extends ViewResourceBinding {
             keepBounds(right);
             keepBounds(bottom);
             getView().setCompoundDrawables(left, top, right, bottom);
+        } else {
+            getView().setCompoundDrawablesRelative(null, null, null, null);
         }
     }
 

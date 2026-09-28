@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.metalava) apply false
 }
 
 group = "com.github.oppsgo"
-version = "0.6.1-SNAPSHOT"
+version = "0.6.2-SNAPSHOT"
 
 subprojects {
     group = rootProject.group

@@ -50,7 +50,7 @@ public class ContextResourceResolver implements ResourceResolver {
         // 纯 color 资源只看 Resources 的 Configuration；不要带 Theme，
         // 避免 Theme.AppCompat.DayNight 在系统暗色时干扰。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return res.getColor(id, null);
+            return res.getColor(id, getTheme());
         }
         return res.getColor(id);
     }
@@ -60,7 +60,7 @@ public class ContextResourceResolver implements ResourceResolver {
     public ColorStateList getColorStateList(@ColorRes int id) {
         Resources res = getResources();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return res.getColorStateList(id, null);
+            return res.getColorStateList(id, getTheme());
         }
         return res.getColorStateList(id);
     }

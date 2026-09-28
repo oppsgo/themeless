@@ -35,11 +35,15 @@ public final class ThemeAppCompat {
         tryRegister(ViewPagerResourceBinding::register);
     }
 
-    private static void tryRegister(@NonNull Runnable register) {
+    @FunctionalInterface
+    private interface RegisterAction {
+        void run() throws ClassNotFoundException;
+    }
+
+    private static void tryRegister(@NonNull RegisterAction register) {
         try {
             register.run();
-        } catch (Throwable ignored) {
-            // ClassNotFoundException / NoClassDefFoundError / ExceptionInInitializerError 等：
+        } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
             // 控件 jar 不在运行时 classpath 时跳过。
         }
     }

@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import io.github.oppsgo.android.theme.ResourceBindingFactory;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
@@ -24,7 +25,11 @@ import io.github.oppsgo.android.theme.binding.BaseViewGroupResourceBinding;
 public class ViewPager2ResourceBinding extends BaseViewGroupResourceBinding {
 
     public static void register() {
-        ThemeManager.get().registry().register(ViewPager2.class, ViewPager2ResourceBinding::new);
+        ResourceBindingFactory registry = ThemeManager.get().registry();
+        if (!registry.isRegistered(RecyclerView.class)) {
+            RecyclerViewResourceBinding.register();
+        }
+        registry.register(ViewPager2.class, ViewPager2ResourceBinding::new);
     }
 
     public ViewPager2ResourceBinding(@NonNull ViewPager2 view) {
