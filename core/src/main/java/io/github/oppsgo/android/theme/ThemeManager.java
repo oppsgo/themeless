@@ -186,25 +186,39 @@ public class ThemeManager {
      */
     @Nullable
     ThemeDelegate findDelegate(@Nullable Context context) {
-        Context current = context;
-        Set<Context> visited = new HashSet<>();
-        while (current != null) {
-            // 防环检查
-            if (visited.contains(current)) return null;
-            visited.add(current);
-
-            LayoutInflater.Factory2 factory2 = LayoutInflater.from(current).getFactory2();
+        Context slow = context;
+        Context fast = context;
+        // 防环检查
+        while (slow != null) {
+            LayoutInflater.Factory2 factory2 = LayoutInflater.from(slow).getFactory2();
             if (factory2 instanceof ThemeDelegate) {
                 return (ThemeDelegate) factory2;
             }
-            if (!(current instanceof ContextWrapper)) {
+            if (!(slow instanceof ContextWrapper)) {
                 return null;
             }
-            Context base = ((ContextWrapper) current).getBaseContext();
-            if (base == null || base == current) {
+            Context next = ((ContextWrapper) slow).getBaseContext();
+            if (next == null || next == slow) {
                 return null;
             }
-            current = base;
+            slow = next;
+
+            // fast 每次走两步；追上 slow 说明有环
+            for (int step = 0; step < 2 && fast != null; step++) {
+                if (!(fast instanceof ContextWrapper)) {
+                    fast = null;
+                    break;
+                }
+                Context fNext = ((ContextWrapper) fast).getBaseContext();
+                if (fNext == null || fNext == fast) {
+                    fast = null;
+                    break;
+                }
+                fast = fNext;
+            }
+            if (fast != null && fast == slow) {
+                return null;
+            }
         }
         return null;
     }
