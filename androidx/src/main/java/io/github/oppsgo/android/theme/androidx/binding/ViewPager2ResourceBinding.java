@@ -4,6 +4,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -41,7 +42,8 @@ public class ViewPager2ResourceBinding extends ViewGroupResourceBinding {
         view.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                refreshPageAt(position);
+                ResourceResolver resolver = ThemeManager.get().getResolver(view.getContext());
+                refreshInternal(resolver, true);
             }
         });
     }
@@ -59,23 +61,37 @@ public class ViewPager2ResourceBinding extends ViewGroupResourceBinding {
 
     @Override
     protected void invalidate(@NonNull ResourceResolver resolver) {
-        super.invalidate(resolver);
-        RecyclerView recyclerView = findRecyclerViewChild();
-        if (recyclerView != null) {
-            applyVisibleSelfOrBoundChildren(recyclerView, resolver);
-        }
+        refreshInternal(resolver, false);
     }
 
-    private void refreshPageAt(int position) {
+    private void refreshInternal(ResourceResolver resolver, boolean refresh) {
         RecyclerView recyclerView = findRecyclerViewChild();
-        if (recyclerView == null) {
-            return;
+        if (recyclerView == null || resolver == null) return;
+
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager instanceof LinearLayoutManager) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager) manager;
+            int start = layoutManager.findFirstVisibleItemPosition();
+            int end = layoutManager.findLastVisibleItemPosition();
+            // 前后多刷新一个，防止滑动过程中展示的还是原来的颜色
+            int min = Math.max(0, start - 1);
+            int max = Math.min(layoutManager.getChildCount() - 1, end + 1);
+
+            for (int i = min; i <= max; i++) {
+                View child = manager.getChildAt(i);
+                if (refresh) {
+                    refreshSelfOrBoundChildren(child);
+                } else {
+                    applySelfOrBoundChildren(child, resolver);
+                }
+            }
+        } else {
+            if (refresh) {
+                refreshSelfOrBoundChildren(recyclerView, 2);
+            } else {
+                applySelfOrBoundChildren(recyclerView, resolver, 2);
+            }
         }
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager == null) {
-            return;
-        }
-        refreshSelfOrBoundChildren(layoutManager.findViewByPosition(position));
     }
 
     @Nullable

@@ -99,7 +99,7 @@ public class ViewPagerResourceBindingTest {
         }
 
         @Override
-        public void apply(ResourceResolver resolver) {
+        public void apply(@NonNull ResourceResolver resolver) {
             applyCount++;
         }
     }

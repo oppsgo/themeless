@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/themeGridView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/skin_panel_bg"
+    android:clipToPadding="false"
+    android:horizontalSpacing="8dp"
+    android:numColumns="2"
+    android:overScrollMode="never"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:verticalSpacing="0dp" />

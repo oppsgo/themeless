@@ -66,49 +66,15 @@
         android:textColor="@color/skin_text_secondary"
         android:textSize="12sp" />
 
-    <FrameLayout
+    <!-- 包住内层 VP2，避免左右滑时被外层 demoPager 抢走 -->
+    <io.github.oppsgo.themeless.demo.NestedScrollableHost
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/themeRecycler"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/demoListPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/skin_panel_bg"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
-
-        <ListView
-            android:id="@+id/themeListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/skin_panel_bg"
-            android:clipToPadding="false"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp"
-            android:overScrollMode="never"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:visibility="gone" />
-
-        <GridView
-            android:id="@+id/themeGridView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/skin_panel_bg"
-            android:clipToPadding="false"
-            android:horizontalSpacing="8dp"
-            android:numColumns="2"
-            android:overScrollMode="never"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:verticalSpacing="0dp"
-            android:visibility="gone" />
-    </FrameLayout>
+            android:layout_height="match_parent" />
+    </io.github.oppsgo.themeless.demo.NestedScrollableHost>
 </LinearLayout>

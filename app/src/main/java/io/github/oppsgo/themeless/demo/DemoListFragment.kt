@@ -10,11 +10,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import io.github.oppsgo.themeless.R
 
 class DemoListFragment : Fragment() {
-
-    private var selectedSub = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,51 +25,77 @@ class DemoListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view.bindBg(R.id.demoListRoot, R.color.skin_panel_bg)
         view.bindBg(R.id.demoListSubTabs, R.color.skin_panel_bg)
-        view.bindBg(R.id.themeRecycler, R.color.skin_panel_bg)
-        view.bindBg(R.id.themeListView, R.color.skin_panel_bg)
-        view.bindBg(R.id.themeGridView, R.color.skin_panel_bg)
 
-        val recycler = view.findViewById<RecyclerView>(R.id.themeRecycler)
-        val listView = view.findViewById<ListView>(R.id.themeListView)
-        val gridView = view.findViewById<GridView>(R.id.themeGridView)
-        val panels = listOf(recycler, listView, gridView)
-
-        lateinit var rvAdapter: ThemeRowAdapter
-        rvAdapter = ThemeRowAdapter((0..11).toMutableList()) {
-            rvAdapter.appendMore()
-        }
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-        recycler.adapter = rvAdapter
-
-        lateinit var lvAdapter: ThemeAbsListAdapter
-        lvAdapter = ThemeAbsListAdapter(requireContext(), (0..11).toMutableList()) {
-            lvAdapter.appendMore()
-        }
-        listView.adapter = lvAdapter
-
-        lateinit var gvAdapter: ThemeAbsListAdapter
-        gvAdapter = ThemeAbsListAdapter(requireContext(), (0..11).toMutableList()) {
-            gvAdapter.appendMore()
-        }
-        gridView.adapter = gvAdapter
-
+        val subBar = view.findViewById<ViewGroup>(R.id.demoListSubTabs)
         val subTabs = listOf(
             view.findViewById<TextView>(R.id.demoListSubRv),
             view.findViewById<TextView>(R.id.demoListSubLv),
             view.findViewById<TextView>(R.id.demoListSubGv),
         )
-        val subBar = view.findViewById<ViewGroup>(R.id.demoListSubTabs)
-        fun showSub(index: Int) {
-            selectedSub = index
+        val pager = view.findViewById<ViewPager2>(R.id.demoListPager)
+        pager.offscreenPageLimit = 2
+        pager.adapter = DemoListPagesAdapter()
+
+        fun selectSub(index: Int) {
             subBar.tag = index
-            panels.forEachIndexed { i, panel ->
-                panel.visibility = if (i == index) View.VISIBLE else View.GONE
-            }
             requireActivity().refreshDemoTabColors()
         }
         subTabs.forEachIndexed { index, tab ->
-            tab.setOnClickListener { showSub(index) }
+            tab.setOnClickListener { pager.setCurrentItem(index, true) }
         }
-        showSub(0)
+        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                selectSub(position)
+            }
+        })
+        selectSub(pager.currentItem)
     }
+}
+
+private class DemoListPagesAdapter : RecyclerView.Adapter<DemoListPagesAdapter.PageHolder>() {
+
+    override fun getItemCount(): Int = 3
+
+    override fun getItemViewType(position: Int): Int = position
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val page = when (viewType) {
+            0 -> inflater.inflate(R.layout.page_demo_list_rv, parent, false).also { root ->
+                root.bindBg(R.id.themeRecycler, R.color.skin_panel_bg)
+                val recycler = root as RecyclerView
+                lateinit var adapter: ThemeRowAdapter
+                adapter = ThemeRowAdapter((0..11).toMutableList()) { adapter.appendMore() }
+                recycler.layoutManager = LinearLayoutManager(parent.context)
+                recycler.adapter = adapter
+            }
+            1 -> inflater.inflate(R.layout.page_demo_list_lv, parent, false).also { root ->
+                root.bindBg(R.id.themeListView, R.color.skin_panel_bg)
+                val listView = root as ListView
+                lateinit var adapter: ThemeAbsListAdapter
+                adapter = ThemeAbsListAdapter(parent.context, (0..11).toMutableList()) {
+                    adapter.appendMore()
+                }
+                listView.adapter = adapter
+            }
+            else -> inflater.inflate(R.layout.page_demo_list_gv, parent, false).also { root ->
+                root.bindBg(R.id.themeGridView, R.color.skin_panel_bg)
+                val gridView = root as GridView
+                lateinit var adapter: ThemeAbsListAdapter
+                adapter = ThemeAbsListAdapter(parent.context, (0..11).toMutableList()) {
+                    adapter.appendMore()
+                }
+                gridView.adapter = adapter
+            }
+        }
+        page.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+        )
+        return PageHolder(page)
+    }
+
+    override fun onBindViewHolder(holder: PageHolder, position: Int) = Unit
+
+    class PageHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

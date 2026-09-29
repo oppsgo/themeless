@@ -196,6 +196,37 @@ Support：`ThemeAppCompat.registerAvailable()` + `:appcompat-ktx` DayNight 扩�
 2. `ThemeManager.get().registry().register(YourView.class, YourBinding::new)`  
 3. 完全自写、不继承库内 Binding 时，属性列表与开关需自行实现
 
+## AbsListView 特殊情况
+
+`ListView` / `GridView` / `ExpandableListView` 由 `AbsListViewResourceBinding` 处理：换肤后 item 复用滑回来时补刷，避免仍是旧色。
+
+**默认行为**：inflate 时占用 `ViewGroup.setOnHierarchyChangeListener`，子 View 挂上时补刷该 child。`ViewGroup` 对该 listener 只有 setter、无 getter，直接对 View 再 `set` 会覆盖 Binding。
+
+**外部也要 hierarchy 回调时**：用 Binding 代理，勿直接对 View 设置；子项挂上时**先回调外部，再补刷**：
+
+```kotlin
+AbsListViewResourceBinding.of(list)
+    .setOnHierarchyChangeListener { parent, child -> /* 你的逻辑 */ }
+```
+
+**三方 SDK 已占用该槽位时**：构造传入 `hierarchy = false` 不占用：
+
+```kotlin
+AbsListViewResourceBinding(list, false).attach()
+// 或注册：registry.register(AbsListView::class.java) { AbsListViewResourceBinding(it, false) }
+```
+
+此时优先在 Adapter `getView` 里对 item / convertView 自行 `refresh()`（只碰正在绑定的那一项，最贴复用）。
+
+**可选自动补刷**（默认关）：未走 hierarchy、又希望自动补时再开 `setAutoRefresh(true)`。会在 layout 变化时遍历**当前可见子项**（`getChildCount`，不是 adapter 全量）；`refresh()` 有 modCount 短路，已是本轮主题的会直接跳过。一般不必开。
+
+| 方式 | 适用 |
+|------|------|
+| hierarchy（默认） | inflate 场景；子项挂上只刷一个 |
+| Binding 代理 `setOnHierarchyChangeListener` | 自己也要 hierarchy 回调 |
+| `hierarchy = false` + `getView` 里 `refresh` | 三方已占用槽位（推荐） |
+| `setAutoRefresh(true)` | 兜底；layout 时刷可见 child |
+
 ## Demo
 
 `:app` 结构：
