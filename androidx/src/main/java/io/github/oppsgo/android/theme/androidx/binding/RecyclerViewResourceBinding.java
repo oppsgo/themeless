@@ -4,6 +4,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
@@ -15,6 +16,8 @@ import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
  */
 public class RecyclerViewResourceBinding extends ViewGroupResourceBinding
         implements RecyclerView.OnChildAttachStateChangeListener {
+
+    static final int TRAVERSE_DEPTH_IN_VIEW_PAGER2 = 2;
 
     public static void register() {
         ThemeManager.get().registry().register(RecyclerView.class, RecyclerViewResourceBinding::new);
@@ -38,11 +41,25 @@ public class RecyclerViewResourceBinding extends ViewGroupResourceBinding
     }
 
     @Override
+    public int getTraverseDepth() {
+        return isInsideViewPager2() ? TRAVERSE_DEPTH_IN_VIEW_PAGER2 : super.getTraverseDepth();
+    }
+
+    @Override
     public void onChildViewAttachedToWindow(@NonNull View child) {
-        refreshSelfOrBoundChildren(child);
+        refreshTargetBindings(child, getTraverseDepth());
     }
 
     @Override
     public void onChildViewDetachedFromWindow(@NonNull View view) {
+    }
+
+    /** 是否作为 {@link ViewPager2} 内部的 RecyclerView。 */
+    private boolean isInsideViewPager2() {
+        try {
+            return getView().getParent() instanceof ViewPager2;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 }

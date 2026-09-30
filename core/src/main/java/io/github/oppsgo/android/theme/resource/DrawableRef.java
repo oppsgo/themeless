@@ -15,8 +15,20 @@ import io.github.oppsgo.android.theme.ResourceResolver;
  */
 public class DrawableRef extends ResourceRef<Drawable> {
 
+    /** 显式空 Drawable：resolve 恒为 null，用于清除已跟踪的 compound drawable 等。 */
+    private static final DrawableRef NONE = new DrawableRef(ResourceBinding.ID_NULL, resolver -> null);
+
     protected DrawableRef(@DrawableRes int resourceId, @Nullable ResourceValue<Drawable> custom) {
         super(resourceId, custom);
+    }
+
+    /**
+     * 标记「这里就是 null」：会写入 Binding，刷新时 {@link #resolve} 返回 null。
+     * 与属性未跟踪（{@code attributes} 里没有 {@link DrawableRef}）不同，后者表示沿用 View 上已有 Drawable。
+     */
+    @NonNull
+    public static DrawableRef none() {
+        return NONE;
     }
 
     @NonNull

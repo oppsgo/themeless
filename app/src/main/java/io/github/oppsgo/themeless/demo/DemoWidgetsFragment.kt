@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding
@@ -40,6 +41,8 @@ class DemoWidgetsFragment : Fragment() {
                 drawable
             },
         )
+
+        bindCompoundDrawableDemo(view)
 
         val dynamicBtn = view.findViewById<Button>(R.id.btnThemeDynamic)
         var useAlt = false
@@ -77,6 +80,38 @@ class DemoWidgetsFragment : Fragment() {
                         }
                     },
                 )
+        }
+    }
+
+    /**
+     * start 用 DrawableRef 跟肤；end 先手动挂上且不写入 Binding，切肤后应保留。
+     * 「清空 start」演示 [DrawableRef.none] 显式清空，不影响未跟踪的 end。
+     */
+    private fun bindCompoundDrawableDemo(view: View) {
+        val compound = view.findViewById<TextView>(R.id.themeCompoundMixed)
+        val fixedEnd = ContextCompat.getDrawable(requireContext(), R.drawable.ic_settings)?.mutate()?.also {
+            it.setTint(0xFF888888.toInt())
+        }
+        compound.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, fixedEnd, null)
+
+        val compoundBinding = TextViewResourceBinding.of(compound)
+            .attach() as TextViewResourceBinding
+        compoundBinding
+            .setTextColor(R.color.skin_text_primary)
+            .setCompoundDrawablesRelativeWithIntrinsicBounds(
+                DrawableRef.of(R.drawable.mail_star_fill),
+                null,
+                null,
+                null,
+            )
+
+        view.findViewById<Button>(R.id.btnThemeCompoundClearStart).setOnClickListener {
+            compoundBinding.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                DrawableRef.none(),
+                null,
+                null,
+                null,
+            )
         }
     }
 }

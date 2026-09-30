@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
-import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 
@@ -31,13 +30,13 @@ public class ViewPagerResourceBinding extends ViewGroupResourceBinding {
         view.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                refreshAttachedPages();
+                refreshChildBindings();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    refreshAttachedPages();
+                    refreshChildBindings();
                 }
             }
         });
@@ -54,30 +53,6 @@ public class ViewPagerResourceBinding extends ViewGroupResourceBinding {
         return of(view, ViewPagerResourceBinding.class, ViewPagerResourceBinding::new);
     }
 
-    @Override
-    protected void applyBoundChildren(@NonNull ResourceResolver resolver) {
-        ViewPager pager = getView();
-        int count = pager.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = pager.getChildAt(i);
-            if (isDecor(child)) {
-                continue;
-            }
-            applySelfOrBoundChildren(child, resolver);
-        }
-    }
-
-    private void refreshAttachedPages() {
-        ViewPager pager = getView();
-        int count = pager.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = pager.getChildAt(i);
-            if (isDecor(child)) {
-                continue;
-            }
-            refreshSelfOrBoundChildren(child);
-        }
-    }
 
     private boolean isDecor(@NonNull View child) {
         ViewGroup.LayoutParams lp = child.getLayoutParams();

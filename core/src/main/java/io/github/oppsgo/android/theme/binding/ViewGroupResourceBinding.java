@@ -1,6 +1,5 @@
 package io.github.oppsgo.android.theme.binding;
 
-import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -24,10 +23,25 @@ public class ViewGroupResourceBinding extends ViewResourceBinding {
         super(view);
     }
 
-    /** 已有本类或子类就返回；否则给一个不挂到 View 上的实例。 */
+    /**
+     * 已有本类或子类就返回；否则给一个不挂到 View 上的实例。
+     */
     @NonNull
     public static ViewGroupResourceBinding of(@NonNull ViewGroup view) {
         return of(view, ViewGroupResourceBinding.class, ViewGroupResourceBinding::new);
+    }
+
+    /**
+     * 遍历的深度
+     */
+    private int depth = 1;
+
+    public void setTraverseDepth(int depth) {
+        this.depth = Math.max(1, depth);
+    }
+
+    public int getTraverseDepth() {
+        return depth;
     }
 
     @NonNull
@@ -39,82 +53,75 @@ public class ViewGroupResourceBinding extends ViewResourceBinding {
     @Override
     protected void invalidate(@NonNull ResourceResolver resolver) {
         super.invalidate(resolver);
-        applyBoundChildren(resolver);
+        applyChildBindings(resolver);
     }
 
     /**
      * 对已挂 Binding 的直接子 View 逐个 {@link ResourceBinding#apply}。
      */
-    protected void applyBoundChildren(@NonNull ResourceResolver resolver) {
-        ThemeManager manager = ThemeManager.get();
-        ViewGroup group = getView();
-        int count = group.getChildCount();
-        for (int i = 0; i < count; i++) {
-            ResourceBinding binding = manager.find(group.getChildAt(i));
-            if (binding != null) {
-                binding.apply(resolver);
-            }
-        }
+    protected void applyChildBindings(@NonNull ResourceResolver resolver) {
+        applyChildBindings(resolver, getTraverseDepth());
+    }
+
+    protected void applyChildBindings(ResourceResolver resolver, int depth) {
+        updateChildBindings(resolver, false, depth);
+    }
+
+
+    protected void refreshChildBindings() {
+        refreshChildBindings(getTraverseDepth());
+    }
+
+    protected void refreshChildBindings(int depth) {
+        ResourceResolver resolver = ThemeManager.get().getResolver(view.getContext());
+        updateChildBindings(resolver, true, depth);
     }
 
     /**
-     * 自身有 Binding 则 apply（含禁用，由 Binding 自己决定）；
-     * 仅当自身没有 Binding 时，才下探直接子节点里已挂 Binding 的节点。
-     * 等价于 {@link #applySelfOrBoundChildren(View, ResourceResolver, int) depth = 1}。
+     * 按 {@code refresh} 对已挂 Binding 的子 View 做 {@link ResourceBinding#apply}
+     * 或 {@link ResourceBinding#refresh}；无 Binding 时下探到该子 ViewGroup，以 {@code depth - 1} 继续。
      */
-    protected static void applySelfOrBoundChildren(@Nullable View target, @NonNull ResourceResolver resolver) {
-        applySelfOrBoundChildren(target, resolver, 1);
+    protected void updateChildBindings(ResourceResolver resolver, boolean refresh, int depth) {
+        if (resolver == null || depth <= 0) return;
+        updateChildBindings(getView(), resolver, refresh, depth);
     }
 
-    /**
-     * @param depth 还可下探的层数：自身有 Binding 则 apply 并停止；
-     *              否则在直接子节点上查找 Binding；子节点无 Binding 时以 {@code depth - 1} 递归。
-     *              {@code depth <= 0} 时直接返回。
-     */
-    protected static void applySelfOrBoundChildren(@Nullable View target, @NonNull ResourceResolver resolver, int depth) {
-        if (target == null || depth <= 0) {
-            return;
-        }
+    protected void updateChildBindings(
+            @NonNull ViewGroup group,
+            ResourceResolver resolver,
+            boolean refresh,
+            int depth
+    ) {
+        if (resolver == null || depth <= 0) return;
         ThemeManager manager = ThemeManager.get();
-        ResourceBinding self = manager.find(target);
-        if (self != null) {
-            self.apply(resolver);
-            return;
-        }
-        if (!(target instanceof ViewGroup)) {
-            return;
-        }
-        ViewGroup group = (ViewGroup) target;
         int count = group.getChildCount();
         for (int i = 0; i < count; i++) {
             View child = group.getChildAt(i);
             ResourceBinding binding = manager.find(child);
             if (binding != null) {
-                binding.apply(resolver);
-            } else {
-                applySelfOrBoundChildren(child, resolver, depth - 1);
+                if (refresh) {
+                    binding.refresh();
+                } else {
+                    binding.apply(resolver);
+                }
+            } else if (child instanceof ViewGroup) {
+                updateChildBindings((ViewGroup) child, resolver, refresh, depth - 1);
             }
         }
+    }
+
+
+    protected void refreshTargetBindings(@Nullable View target) {
+        refreshTargetBindings(target, 1);
     }
 
     /**
      * 自身有 Binding 则 {@link ResourceBinding#refresh}；
      * 仅当自身没有 Binding 时，才对直接子节点里已挂 Binding 的 {@link ResourceBinding#refresh}。
-     * 等价于 {@link #refreshSelfOrBoundChildren(View, int) depth = 1}。
      */
-    protected void refreshSelfOrBoundChildren(@Nullable View target) {
-        refreshSelfOrBoundChildren(target, 1);
-    }
+    protected void refreshTargetBindings(@Nullable View target, int depth) {
+        if (target == null || target == getView() || depth <= 0) return;
 
-    /**
-     * @param depth 还可下探的层数：自身有 Binding 则 refresh 并停止；
-     *              否则在直接子节点上查找 Binding；子节点无 Binding 时以 {@code depth - 1} 递归。
-     *              {@code depth <= 0} 时直接返回。
-     */
-    protected void refreshSelfOrBoundChildren(@Nullable View target, int depth) {
-        if (target == null || depth <= 0) {
-            return;
-        }
         ThemeManager manager = ThemeManager.get();
         ResourceBinding self = manager.find(target);
         if (self != null) {
@@ -132,22 +139,7 @@ public class ViewGroupResourceBinding extends ViewResourceBinding {
             if (binding != null) {
                 binding.refresh();
             } else {
-                refreshSelfOrBoundChildren(child, depth - 1);
-            }
-        }
-    }
-
-    /**
-     * 遍历 {@code parent} 的直接子 View，只对局部可见的调用
-     * {@link #applySelfOrBoundChildren}。
-     */
-    protected void applyVisibleSelfOrBoundChildren(@NonNull ViewGroup parent, @NonNull ResourceResolver resolver) {
-        Rect visible = new Rect();
-        int count = parent.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = parent.getChildAt(i);
-            if (child.getLocalVisibleRect(visible)) {
-                applySelfOrBoundChildren(child, resolver);
+                refreshTargetBindings(child, depth - 1);
             }
         }
     }
