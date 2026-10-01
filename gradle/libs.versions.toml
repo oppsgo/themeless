@@ -20,6 +20,7 @@ androidxFragment = "1.8.5"
 androidxRecyclerview = "1.3.2"
 androidxViewpager = "1.0.0"
 androidxViewpager2 = "1.1.0"
+material = "1.12.0"
 # 旧版 Support Library（未迁移 AndroidX 的宿主使用 :appcompat）
 supportAppcompat = "28.0.0"
 supportRecyclerview = "28.0.0"
@@ -42,6 +43,7 @@ androidx-fragment = { group = "androidx.fragment", name = "fragment", version.re
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "androidxRecyclerview" }
 androidx-viewpager = { group = "androidx.viewpager", name = "viewpager", version.ref = "androidxViewpager" }
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "androidxViewpager2" }
+androidx-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 support-appcompat = { group = "com.android.support", name = "appcompat-v7", version.ref = "supportAppcompat" }
 support-recyclerview = { group = "com.android.support", name = "recyclerview-v7", version.ref = "supportRecyclerview" }
 support-v4 = { group = "com.android.support", name = "support-v4", version.ref = "supportV4" }

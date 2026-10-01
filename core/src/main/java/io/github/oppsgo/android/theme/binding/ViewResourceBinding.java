@@ -41,6 +41,7 @@ public class ViewResourceBinding implements ResourceBinding {
     public static final int ATTR_BACKGROUND = android.R.attr.background;
     public static final int ATTR_BACKGROUND_TINT = android.R.attr.backgroundTint;
 
+
     private static final SparseBooleanArray COLOR_RES_CACHE = new SparseBooleanArray();
 
     @NonNull
@@ -127,11 +128,15 @@ public class ViewResourceBinding implements ResourceBinding {
         return this;
     }
 
-    /** 挂载成功后调用；容器 Binding 在此注册监听。 */
+    /**
+     * 挂载成功后调用；容器 Binding 在此注册监听。
+     */
     protected void onAttached() {
     }
 
-    /** 卸载前调用；容器 Binding 在此移除监听。 */
+    /**
+     * 卸载前调用；容器 Binding 在此移除监听。
+     */
     protected void onDetached() {
     }
 
@@ -177,6 +182,8 @@ public class ViewResourceBinding implements ResourceBinding {
     @Override
     public ViewResourceBinding bind(@Nullable AttributeSet set) {
         if (set == null) return this;
+        bindThemeEnable(set);
+
         int[] attrs = getViewStyleable();
         Arrays.sort(attrs);
 
@@ -194,6 +201,17 @@ public class ViewResourceBinding implements ResourceBinding {
             }
         }
         return this;
+    }
+
+    /**
+     * 读 {@link ResourceBinding#ATTR_THEME_ATTRIBUTE_ENABLE}；未写出则保持当前 {@link #isEnable()}（默认 true）。
+     */
+    private void bindThemeEnable(@NonNull AttributeSet set) {
+        try (TypedArray ta = view.getContext().obtainStyledAttributes(set, new int[]{ATTR_THEME_ATTRIBUTE_ENABLE})) {
+            if (ta.hasValue(0)) {
+                setEnable(ta.getBoolean(0, true));
+            }
+        }
     }
 
     /**
@@ -317,6 +335,36 @@ public class ViewResourceBinding implements ResourceBinding {
         }
     }
 
+    @NonNull
+    public ViewResourceBinding setBackground(ResourceRef<?> background) {
+        putAndUpdate(ATTR_BACKGROUND, background);
+        return this;
+    }
+
+    @NonNull
+    public ViewResourceBinding setBackground(@AnyRes int background) {
+        if (background == ID_NULL) {
+            unbind(ATTR_BACKGROUND);
+            return this;
+        }
+        return setBackground(isPureColor(background) ? ColorRef.of(background) : DrawableRef.of(background));
+    }
+
+    @NonNull
+    public ViewResourceBinding setBackgroundTint(ResourceRef<?> tint) {
+        putAndUpdate(ATTR_BACKGROUND_TINT, tint);
+        return this;
+    }
+
+    @NonNull
+    public ViewResourceBinding setBackgroundTint(@ColorRes int tint) {
+        if (tint == ID_NULL) {
+            unbind(ATTR_BACKGROUND_TINT);
+            return this;
+        }
+        return setBackgroundTint(createColorResource(tint));
+    }
+
     /**
      * 按 attr 把已解析的 {@link ResourceRef} 写回 View。子类按自己的属性补充分支。
      */
@@ -341,6 +389,22 @@ public class ViewResourceBinding implements ResourceBinding {
             ColorStateList tint = resolveTint(resolver, value);
             resolver.getViewCompat().setBackgroundTintList(view, tint);
         }
+    }
+
+    @Nullable
+    protected Integer resolveColorInt(
+            @NonNull ResourceResolver resolver,
+            @Nullable ResourceRef<?> value
+    ) {
+        if (value == null || value.isEmpty()) return null;
+        if (value instanceof ColorRef) {
+            return ((ColorRef) value).resolve(resolver);
+        }
+        if (value instanceof ColorStateListRef) {
+            ColorStateList csl = ((ColorStateListRef) value).resolve(resolver);
+            return csl == null ? null : csl.getDefaultColor();
+        }
+        return null;
     }
 
     @Nullable
@@ -389,35 +453,5 @@ public class ViewResourceBinding implements ResourceBinding {
         // id 无效或不是资源 ID，视为非纯颜色
         COLOR_RES_CACHE.put(id, false);
         return false;
-    }
-
-    @NonNull
-    public ViewResourceBinding setBackground(ResourceRef<?> background) {
-        putAndUpdate(ATTR_BACKGROUND, background);
-        return this;
-    }
-
-    @NonNull
-    public ViewResourceBinding setBackground(@AnyRes int background) {
-        if (background == ID_NULL) {
-            unbind(ATTR_BACKGROUND);
-            return this;
-        }
-        return setBackground(isPureColor(background) ? ColorRef.of(background) : DrawableRef.of(background));
-    }
-
-    @NonNull
-    public ViewResourceBinding setBackgroundTint(ResourceRef<?> tint) {
-        putAndUpdate(ATTR_BACKGROUND_TINT, tint);
-        return this;
-    }
-
-    @NonNull
-    public ViewResourceBinding setBackgroundTint(@ColorRes int tint) {
-        if (tint == ID_NULL) {
-            unbind(ATTR_BACKGROUND_TINT);
-            return this;
-        }
-        return setBackgroundTint(createColorResource(tint));
     }
 }

@@ -14,6 +14,7 @@ package io.github.oppsgo.android.theme {
     method public io.github.oppsgo.android.theme.ResourceBinding setEnable(boolean);
     method public io.github.oppsgo.android.theme.ResourceBinding unbind(@AttrRes int);
     field public static final int ID_NULL = 0; // 0x0
+    field public static final int ATTR_THEME_ATTRIBUTE_ENABLE;
     field public static final int TAG_BINDING;
   }
 
@@ -314,6 +315,7 @@ package io.github.oppsgo.android.theme.resource {
     method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(@ColorRes int);
     method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!>);
     method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!>);
+    method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(int[][]!, io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!>!...);
   }
 
   public class DimenRef extends io.github.oppsgo.android.theme.resource.ResourceRef<java.lang.Integer!> {

@@ -1,7 +1,6 @@
 package io.github.oppsgo.themeless.demo
 
 import android.app.Activity
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -9,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.themeless.R
 
 /**
- * 二级演示页：标题栏切肤 + 按功能划分的 Tab（控件 / 列表 / 其它 / 浮层）。
+ * 二级演示页：标题栏切肤 + TabLayout（控件 / 列表 / 其它 / 浮层）+ ViewPager2。
  */
 internal fun FragmentActivity.setupThemeDemoHost(@StringRes subtitle: Int) {
     setContentView(R.layout.activity_theme_demo)
@@ -36,23 +37,17 @@ internal fun FragmentActivity.setupThemeDemoHost(@StringRes subtitle: Int) {
     pager.adapter = ThemeDemoPagerAdapter(this)
     pager.offscreenPageLimit = 3
 
-    val tabBar = findViewById<ViewGroup>(R.id.demoTabBar)
-    val tabs = listOf(
-        findViewById<TextView>(R.id.demoTabWidgets),
-        findViewById<TextView>(R.id.demoTabList),
-        findViewById<TextView>(R.id.demoTabExtras),
-        findViewById<TextView>(R.id.demoTabOverlays),
+    val tabLayout = findViewById<TabLayout>(R.id.demoTabBar)
+    val titles = intArrayOf(
+        R.string.demo_tab_widgets,
+        R.string.demo_tab_list,
+        R.string.demo_tab_extras,
+        R.string.demo_tab_overlays,
     )
-    tabs.forEachIndexed { index, tab ->
-        tab.setOnClickListener { pager.setCurrentItem(index, true) }
-    }
-    pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            tabBar.tag = position
-            refreshDemoTabColors()
-        }
-    })
-    tabBar.tag = pager.currentItem
+    TabLayoutMediator(tabLayout, pager) { tab, position ->
+        tab.setText(titles[position])
+    }.attach()
+
     restoreDemoTheme()
 }
 

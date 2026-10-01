@@ -103,7 +103,7 @@ AppCompat（把 `AppCompatDelegate` 当作 Factory2 传入；控件 Binding 须�
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     ThemeManager.get().install(this, delegate as? LayoutInflater.Factory2)
-    // 按 classpath 尽力登记（无 ViewPager2 等依赖则自动跳过）
+    // 按 classpath 尽力登记（无 ViewPager2 / Material TabLayout 等依赖则自动跳过）
     ThemeAndroidX.registerAvailable()
     super.onCreate(savedInstanceState)
 }
@@ -122,7 +122,8 @@ ThemeManager.get().apply(this, DayNightResourceResolver.night(this))
 // AppCompat：AppCompatDayNightResourceResolver.light / night / followSystem / of
 ```
 
-布局使用资源引用（如 `@color/skin_page_bg`），inflate 时记入 Binding；`apply` 后按当前 Resolver 写回。
+布局使用资源引用（如 `@color/skin_page_bg`），inflate 时记入 Binding；`apply` 后按当前 Resolver 写回。  
+某个 View 不参与换肤时可写 `app:themeAttributeEnable="false"`（对应 `ResourceBinding.setEnable`；仍会记录属性，只是 `apply` / `refresh` 不写回）。
 
 ## 日夜与 Force Dark
 
@@ -188,6 +189,7 @@ applyAppCompatDayNight(dark = true)
 appCompatTextView.theme { setTextColor(R.color.skin_text_primary) } // 走 core-ktx TextView 重载
 viewPager.themeAs<ViewPagerResourceBinding> { }
 viewPager2.themeAs<ViewPager2ResourceBinding> { }
+tabLayout.themeAs<TabLayoutResourceBinding> { }
 ```
 
 Support：`ThemeAppCompat.registerAvailable()` + `:appcompat-ktx` DayNight 扩展（无 `AppCompatToggleButton`）。

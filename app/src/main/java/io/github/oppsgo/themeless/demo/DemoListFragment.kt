@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.ListView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import io.github.oppsgo.themeless.R
 
 class DemoListFragment : Fragment() {
@@ -26,29 +27,19 @@ class DemoListFragment : Fragment() {
         view.bindBg(R.id.demoListRoot, R.color.skin_panel_bg)
         view.bindBg(R.id.demoListSubTabs, R.color.skin_panel_bg)
 
-        val subBar = view.findViewById<ViewGroup>(R.id.demoListSubTabs)
-        val subTabs = listOf(
-            view.findViewById<TextView>(R.id.demoListSubRv),
-            view.findViewById<TextView>(R.id.demoListSubLv),
-            view.findViewById<TextView>(R.id.demoListSubGv),
-        )
+        val tabLayout = view.findViewById<TabLayout>(R.id.demoListSubTabs)
         val pager = view.findViewById<ViewPager2>(R.id.demoListPager)
         pager.offscreenPageLimit = 2
         pager.adapter = DemoListPagesAdapter()
 
-        fun selectSub(index: Int) {
-            subBar.tag = index
-            requireActivity().refreshDemoTabColors()
-        }
-        subTabs.forEachIndexed { index, tab ->
-            tab.setOnClickListener { pager.setCurrentItem(index, true) }
-        }
-        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                selectSub(position)
-            }
-        })
-        selectSub(pager.currentItem)
+        val titles = intArrayOf(
+            R.string.demo_list_sub_rv,
+            R.string.demo_list_sub_lv,
+            R.string.demo_list_sub_gv,
+        )
+        TabLayoutMediator(tabLayout, pager) { tab, position ->
+            tab.setText(titles[position])
+        }.attach()
     }
 }
 

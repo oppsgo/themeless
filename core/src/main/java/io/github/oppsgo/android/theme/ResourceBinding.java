@@ -30,6 +30,11 @@ public interface ResourceBinding {
 
     int TAG_BINDING = R.id.theme_attribute_binding_tag;
 
+    /**
+     * {@code app:themeAttributeEnable} → {@link #setEnable(boolean)}
+     */
+    int ATTR_THEME_ATTRIBUTE_ENABLE = R.attr.themeAttributeEnable;
+
     @NonNull
     View getView();
 
@@ -51,6 +56,7 @@ public interface ResourceBinding {
 
     /**
      * 关闭后 {@link #refresh()} 和 {@link #apply} 都不再改这个 View。
+     * 布局可用 {@code app:themeAttributeEnable}（由 {@link io.github.oppsgo.android.theme.binding.ViewResourceBinding#bind} 解析）。
      */
     @NonNull
     ResourceBinding setEnable(boolean enable);

@@ -7,16 +7,13 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.RecyclerView
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.androidx.ThemeAndroidX
 import io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver
@@ -245,81 +242,14 @@ private fun Activity.syncActivityNightMode(dark: Boolean?): Boolean {
 }
 
 private fun Activity.paintDemoSurfaces(label: String, page: Int, panel: Int, card: Int) {
-    fun bg(id: Int, color: Int) {
-        val v = findViewById<View>(id) ?: return
-        v.setBackgroundColor(color)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            v.backgroundTintList = null
-        }
-    }
-    window.decorView.setBackgroundColor(page)
-    bg(R.id.mainRoot, page)
-    bg(R.id.homeRoot, page)
-    bg(R.id.mainTitleBar, panel)
-    bg(R.id.settingsPageRoot, page)
-    bg(R.id.settingsTitleBar, panel)
-    bg(R.id.settingsRoot, page)
-    bg(R.id.themeRoot, page)
-    bg(R.id.themeTitleBar, panel)
-    bg(R.id.demoPager, page)
-    bg(R.id.demoWidgetsRoot, page)
-    bg(R.id.demoListRoot, panel)
-    bg(R.id.demoOverlaysRoot, page)
-    findViewById<RecyclerView>(R.id.themeRecycler)?.let { rv ->
-        rv.setBackgroundColor(panel)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            rv.backgroundTintList = null
-        }
-        for (i in 0 until rv.childCount) {
-            rv.getChildAt(i)?.setBackgroundColor(card)
-        }
-        rv.adapter?.notifyDataSetChanged()
-    }
     syncStatusBarIconAppearance()
     findViewById<TextView>(R.id.mainSubtitle)?.text =
         getString(R.string.main_shell_subtitle_format, ThemeDemoPage.themeModeLabel(this))
     findViewById<TextView>(R.id.themeTitle)?.text =
         getString(R.string.theme_demo_title_format, label)
-    refreshChromeTextColors()
-    refreshDemoTabColors()
 }
 
 internal fun Activity.refreshChromeTextColors() {
-    val resolver = ThemeManager.get().getResolver(this) ?: return
-    val primary = resolver.getColor(R.color.skin_text_primary)
-    val secondary = resolver.getColor(R.color.skin_text_secondary)
-    val accent = resolver.getColor(R.color.skin_accent)
-    findViewById<TextView>(R.id.mainTitle)?.setTextColor(primary)
-    findViewById<TextView>(R.id.mainSubtitle)?.setTextColor(secondary)
-    findViewById<ImageButton>(R.id.btnOpenSettings)?.imageTintList =
-        android.content.res.ColorStateList.valueOf(accent)
-    findViewById<TextView>(R.id.settingsTitle)?.setTextColor(primary)
-    findViewById<TextView>(R.id.themeTitle)?.setTextColor(primary)
-    findViewById<TextView>(R.id.themeSubtitle)?.setTextColor(secondary)
-}
-
-internal fun Activity.refreshDemoTabColors() {
-    val resolver = ThemeManager.get().getResolver(this) ?: return
-    val secondary = resolver.getColor(R.color.skin_text_secondary)
-    val accent = resolver.getColor(R.color.skin_accent)
-    val selected = findViewById<ViewGroup>(R.id.demoTabBar)?.tag as? Int ?: 0
-    listOf(
-        R.id.demoTabWidgets to 0,
-        R.id.demoTabList to 1,
-        R.id.demoTabExtras to 2,
-        R.id.demoTabOverlays to 3,
-    ).forEach { (id, index) ->
-        findViewById<TextView>(id)?.setTextColor(if (index == selected) accent else secondary)
-    }
-    val listSubBar = findViewById<ViewGroup>(R.id.demoListSubTabs) ?: return
-    val listSelected = listSubBar.tag as? Int ?: 0
-    listOf(
-        R.id.demoListSubRv to 0,
-        R.id.demoListSubLv to 1,
-        R.id.demoListSubGv to 2,
-    ).forEach { (id, index) ->
-        findViewById<TextView>(id)?.setTextColor(if (index == listSelected) accent else secondary)
-    }
 }
 
 private fun Int.hex(): String = Integer.toHexString(this)

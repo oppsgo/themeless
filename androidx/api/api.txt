@@ -27,6 +27,15 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_TINT_COMPAT;
   }
 
+  public class AppCompatImageButtonResourceBinding extends io.github.oppsgo.android.theme.binding.ImageViewResourceBinding {
+    ctor public AppCompatImageButtonResourceBinding(androidx.appcompat.widget.AppCompatImageButton);
+    method public static io.github.oppsgo.android.theme.androidx.binding.AppCompatImageButtonResourceBinding of(androidx.appcompat.widget.AppCompatImageButton);
+    method public static void register();
+    field public static final int ATTR_BACKGROUND_TINT_COMPAT;
+    field public static final int ATTR_SRC_COMPAT;
+    field public static final int ATTR_TINT_COMPAT;
+  }
+
   public class AppCompatTextViewResourceBinding extends io.github.oppsgo.android.theme.binding.TextViewResourceBinding {
     ctor public AppCompatTextViewResourceBinding(androidx.appcompat.widget.AppCompatTextView);
     method public static io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewResourceBinding of(androidx.appcompat.widget.AppCompatTextView);
@@ -60,6 +69,28 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_THUMB_TINT_COMPAT;
     field public static final int ATTR_TRACK_COMPAT;
     field public static final int ATTR_TRACK_TINT_COMPAT;
+  }
+
+  public class TabLayoutResourceBinding extends io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding {
+    ctor public TabLayoutResourceBinding(com.google.android.material.tabs.TabLayout);
+    method public com.google.android.material.tabs.TabLayout getView();
+    method public static io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding of(com.google.android.material.tabs.TabLayout);
+    method public static void register();
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding bind(android.util.AttributeSet?);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setSelectedTabIndicator(@DrawableRes int);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setSelectedTabIndicator(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setSelectedTabIndicatorColor(@ColorRes int);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setSelectedTabIndicatorColor(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setTabRippleColor(@ColorRes int);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setTabRippleColor(io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setTabTextColors(@ColorRes int, @ColorRes int);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setTabTextColors(io.github.oppsgo.android.theme.resource.ColorRef!);
+    method public io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding setTabTextColors(io.github.oppsgo.android.theme.resource.ColorStateListRef!);
+    field public static final int ATTR_TAB_INDICATOR;
+    field public static final int ATTR_TAB_INDICATOR_COLOR;
+    field public static final int ATTR_TAB_RIPPLE_COLOR;
+    field public static final int ATTR_TAB_SELECTED_TEXT_COLOR;
+    field public static final int ATTR_TAB_TEXT_COLOR;
   }
 
   public class ViewPager2ResourceBinding extends io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding {

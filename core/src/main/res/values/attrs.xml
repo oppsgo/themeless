@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      对应 ResourceBinding#setEnable。
+      未写出时默认 true；false 时仍会 bind 资源表，但 apply / refresh 不写回 View。
+      与 theme_attribute_binding_tag 同属库内命名空间，降低与业务 attr 撞名风险。
+    -->
+    <attr name="themeAttributeEnable" format="boolean" />
+</resources>

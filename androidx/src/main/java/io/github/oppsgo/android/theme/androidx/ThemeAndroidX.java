@@ -1,12 +1,28 @@
 package io.github.oppsgo.android.theme.androidx;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.AppCompatToggleButton;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
+
+import io.github.oppsgo.android.theme.ResourceBindingFactory;
+import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.androidx.binding.AppCompatCompoundButtonResourceBinding;
+import io.github.oppsgo.android.theme.androidx.binding.AppCompatImageButtonResourceBinding;
 import io.github.oppsgo.android.theme.androidx.binding.AppCompatImageViewResourceBinding;
 import io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewResourceBinding;
 import io.github.oppsgo.android.theme.androidx.binding.RecyclerViewResourceBinding;
 import io.github.oppsgo.android.theme.androidx.binding.SwitchCompatResourceBinding;
+import io.github.oppsgo.android.theme.androidx.binding.TabLayoutResourceBinding;
 import io.github.oppsgo.android.theme.androidx.binding.ViewPager2ResourceBinding;
 import io.github.oppsgo.android.theme.androidx.binding.ViewPagerResourceBinding;
 
@@ -25,27 +41,29 @@ public final class ThemeAndroidX {
      * inflate 前调用：有对应控件依赖则 {@code register}，没有则静默跳过（幂等）。
      * <p>
      * 覆盖 AppCompat 文本/图片/CompoundButton、SwitchCompat、RecyclerView、
-     * ViewPager、ViewPager2。
+     * ViewPager、ViewPager2、Material TabLayout。
      */
     public static void registerAvailable() {
-        tryRegister(AppCompatTextViewResourceBinding::register);
-        tryRegister(AppCompatImageViewResourceBinding::register);
-        tryRegister(AppCompatCompoundButtonResourceBinding::register);
-        tryRegister(SwitchCompatResourceBinding::register);
-        tryRegister(RecyclerViewResourceBinding::register);
-        tryRegister(ViewPagerResourceBinding::register);
-        tryRegister(ViewPager2ResourceBinding::register);
+        ResourceBindingFactory registry = ThemeManager.get().registry();
+        tryRegister(() -> registry.register(AppCompatTextView.class, AppCompatTextViewResourceBinding::new));
+        tryRegister(() -> registry.register(AppCompatImageView.class, AppCompatImageViewResourceBinding::new));
+        tryRegister(() -> registry.register(AppCompatImageButton.class, AppCompatImageButtonResourceBinding::new));
+        tryRegister(() -> {
+            registry.register(AppCompatCheckBox.class, AppCompatCompoundButtonResourceBinding::new);
+            registry.register(AppCompatRadioButton.class, AppCompatCompoundButtonResourceBinding::new);
+            registry.register(AppCompatToggleButton.class, AppCompatCompoundButtonResourceBinding::new);
+        });
+        tryRegister(() -> registry.register(SwitchCompat.class, SwitchCompatResourceBinding::new));
+        tryRegister(() -> registry.register(RecyclerView.class, RecyclerViewResourceBinding::new));
+        tryRegister(() -> registry.register(ViewPager.class, ViewPagerResourceBinding::new));
+        tryRegister(() -> registry.register(ViewPager2.class, ViewPager2ResourceBinding::new));
+        tryRegister(() -> registry.register(TabLayout.class, TabLayoutResourceBinding::new));
     }
 
-    @FunctionalInterface
-    private interface RegisterAction {
-        void run() throws ClassNotFoundException;
-    }
-
-    private static void tryRegister(@NonNull RegisterAction register) {
+    private static void tryRegister(@NonNull Runnable register) {
         try {
             register.run();
-        } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
+        } catch (NoClassDefFoundError | ExceptionInInitializerError ignored) {
             // 控件 jar 不在运行时 classpath 时跳过。
         }
     }

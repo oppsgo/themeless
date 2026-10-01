@@ -28,10 +28,12 @@ dependencies {
     compileOnly(libs.androidx.recyclerview)
     compileOnly(libs.androidx.viewpager)
     compileOnly(libs.androidx.viewpager2)
+    compileOnly(libs.androidx.material)
 
     testImplementation(libs.robolectric)
     testImplementation(libs.junit)
     testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(libs.androidx.viewpager)
     testImplementation(libs.androidx.viewpager2)
+    testImplementation(libs.androidx.material)
 }
