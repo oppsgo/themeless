@@ -22,7 +22,9 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
+import io.github.oppsgo.android.theme.ResourceBinding;
 import io.github.oppsgo.android.theme.ResourceResolver;
+import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.ThemeViewCompat;
 
 /**
@@ -180,7 +182,7 @@ public class ViewGroupResourceBindingTest {
         CountingBinding child = attachCounting(new View(activity));
         parent.addView(child.getView());
 
-        ViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver, 1);
+        HostBinding.applySelfOrBoundChildren(parent, resolver, 1);
 
         assertEquals(1, self.applyCount);
         assertEquals(0, child.applyCount);
@@ -194,7 +196,7 @@ public class ViewGroupResourceBindingTest {
         mid.addView(leaf.getView());
         parent.addView(mid);
 
-        ViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver, 2);
+        HostBinding.applySelfOrBoundChildren(parent, resolver, 2);
 
         assertEquals(1, leaf.applyCount);
         assertEquals(0, leaf.refreshCount);
@@ -208,7 +210,7 @@ public class ViewGroupResourceBindingTest {
         mid.addView(leaf.getView());
         parent.addView(mid);
 
-        ViewGroupResourceBinding.applySelfOrBoundChildren(parent, resolver);
+        HostBinding.applySelfOrBoundChildren(parent, resolver);
 
         assertEquals(0, leaf.applyCount);
     }
@@ -216,8 +218,8 @@ public class ViewGroupResourceBindingTest {
     @Test
     public void apply_nullOrNonPositiveDepth_isNoOp() {
         CountingBinding self = attachCounting(new View(activity));
-        ViewGroupResourceBinding.applySelfOrBoundChildren(null, resolver, 2);
-        ViewGroupResourceBinding.applySelfOrBoundChildren(self.getView(), resolver, 0);
+        HostBinding.applySelfOrBoundChildren(null, resolver, 2);
+        HostBinding.applySelfOrBoundChildren(self.getView(), resolver, 0);
         assertEquals(0, self.applyCount);
     }
 
@@ -235,10 +237,51 @@ public class ViewGroupResourceBindingTest {
         return binding;
     }
 
-    /** 鏆撮湶 protected 閫掑綊 API 鐨勫涓?Binding銆?*/
+    /** 暴露 protected 递归 API，供旧测试名调用。 */
     private static final class HostBinding extends ViewGroupResourceBinding {
         HostBinding(@NonNull ViewGroup view) {
             super(view);
+        }
+
+        void refreshSelfOrBoundChildren(@Nullable View target) {
+            refreshTargetBindings(target);
+        }
+
+        void refreshSelfOrBoundChildren(@Nullable View target, int depth) {
+            refreshTargetBindings(target, depth);
+        }
+
+        static void applySelfOrBoundChildren(@Nullable View target, ResourceResolver resolver) {
+            applySelfOrBoundChildren(target, resolver, 1);
+        }
+
+        static void applySelfOrBoundChildren(
+                @Nullable View target,
+                ResourceResolver resolver,
+                int depth
+        ) {
+            if (target == null || resolver == null || depth <= 0) {
+                return;
+            }
+            ResourceBinding self = ThemeManager.get().find(target);
+            if (self != null) {
+                self.apply(resolver);
+                return;
+            }
+            if (!(target instanceof ViewGroup)) {
+                return;
+            }
+            ViewGroup group = (ViewGroup) target;
+            int count = group.getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = group.getChildAt(i);
+                ResourceBinding binding = ThemeManager.get().find(child);
+                if (binding != null) {
+                    binding.apply(resolver);
+                } else {
+                    applySelfOrBoundChildren(child, resolver, depth - 1);
+                }
+            }
         }
     }
 

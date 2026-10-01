@@ -236,8 +236,8 @@ public class ThemeManager {
      * 具体类型的 {@code setXxx} 请用对应 Binding 的 {@code of()}，例如
      * {@code TextViewResourceBinding.of(textView).setTextColor(...)}。
      * <p>
-     * 与 {@link #obtain} 的区别：obtain 会挂到 View 上供 inflate/refresh 使用；
-     * edit 不强制挂载。
+     * 与 {@link #obtain} / {@link #ensureAttach} 的区别：三者都不强制替换已有 Binding；
+     * edit / obtain 都不挂载，ensureAttach 会在尚无时 create + {@link ResourceBinding#attach()}。
      */
     @NonNull
     public ResourceBinding edit(@NonNull View view) {
@@ -249,11 +249,26 @@ public class ThemeManager {
     }
 
     /**
-     * 取或创建并挂到 View tag 上（inflate 同源）。
+     * 已挂载则返回；否则按注册表创建（不挂 tag、不装钩子）。
+     * inflate 路径为 {@code obtain(view).attach().bind(attrs)}；
+     * 需要「有则复用、无则挂上」且不替换时用 {@link #ensureAttach(View)}。
      */
     @NonNull
     public ResourceBinding obtain(@NonNull View view) {
         return registry.obtain(view);
+    }
+
+    /**
+     * 已挂载则返回已有 Binding（不替换）；否则 create 并 {@link ResourceBinding#attach()}。
+     * 语义接近旧版会自动挂 tag 的 obtain。
+     */
+    @NonNull
+    public ResourceBinding ensureAttach(@NonNull View view) {
+        ResourceBinding existing = registry.find(view);
+        if (existing != null) {
+            return existing;
+        }
+        return registry.create(view).attach();
     }
 
     /**

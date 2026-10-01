@@ -89,15 +89,17 @@ public final class ResourceBindingFactory {
         return null;
     }
 
+    /**
+     * 已挂载则返回；否则按注册表创建（不挂 tag、不装钩子）。
+     * 挂载请 {@link ResourceBinding#attach()} 或 {@link ThemeManager#ensureAttach(View)}。
+     */
     @NonNull
     public ResourceBinding obtain(@NonNull View view) {
         ResourceBinding existing = find(view);
         if (existing != null) {
             return existing;
         }
-        ResourceBinding binding = create(view);
-        view.setTag(TAG_BINDING, binding);
-        return binding;
+        return create(view);
     }
 
     /**

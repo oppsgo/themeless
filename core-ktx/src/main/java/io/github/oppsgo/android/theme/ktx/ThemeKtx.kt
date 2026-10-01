@@ -102,8 +102,17 @@ fun CompoundButton.edit(): CompoundButtonResourceBinding = CompoundButtonResourc
 
 fun Switch.edit(): SwitchResourceBinding = SwitchResourceBinding.of(this)
 
-/** 取或创建并挂 tag，等价于 [ThemeManager.obtain]。 */
+/**
+ * 已挂载则返回；否则按注册表创建（不挂 tag）。
+ * 等价于 [ThemeManager.obtain]。需要进换肤树时用 [ensureAttach] 或 [ResourceBinding.attach]。
+ */
 fun View.obtain(): ResourceBinding = ThemeManager.get().obtain(this)
+
+/**
+ * 已挂载则返回；否则 create 并 attach。
+ * 等价于 [ThemeManager.ensureAttach]（接近旧版会自动挂 tag 的 obtain）。
+ */
+fun View.ensureAttach(): ResourceBinding = ThemeManager.get().ensureAttach(this)
 
 /** 只查已挂载 Binding，等价于 [ThemeManager.find]。 */
 fun View.findBinding(): ResourceBinding? = ThemeManager.get().find(this)

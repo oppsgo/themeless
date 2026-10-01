@@ -17,9 +17,24 @@ import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
  * 滑页结束（{@link ViewPager#SCROLL_STATE_IDLE}）再补刷，覆盖
  * {@code onPageSelected} 在动画开始时就回调、此时目标页尚未可见的情况。
  * <p>
- * inflate 前调用 {@link #register()}。
+ * inflate 前调用 {@link #register()}。页变化监听在 {@link #attach()} 后安装。
  */
 public class ViewPagerResourceBinding extends ViewGroupResourceBinding {
+
+    private final ViewPager.OnPageChangeListener pageChangeListener =
+            new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    refreshChildBindings();
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    if (state == ViewPager.SCROLL_STATE_IDLE) {
+                        refreshChildBindings();
+                    }
+                }
+            };
 
     public static void register() {
         ThemeManager.get().registry().register(ViewPager.class, ViewPagerResourceBinding::new);
@@ -27,19 +42,6 @@ public class ViewPagerResourceBinding extends ViewGroupResourceBinding {
 
     public ViewPagerResourceBinding(@NonNull ViewPager view) {
         super(view);
-        view.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                refreshChildBindings();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    refreshChildBindings();
-                }
-            }
-        });
     }
 
     @NonNull
@@ -53,6 +55,17 @@ public class ViewPagerResourceBinding extends ViewGroupResourceBinding {
         return of(view, ViewPagerResourceBinding.class, ViewPagerResourceBinding::new);
     }
 
+    @Override
+    protected void onAttached() {
+        ViewPager pager = getView();
+        pager.removeOnPageChangeListener(pageChangeListener);
+        pager.addOnPageChangeListener(pageChangeListener);
+    }
+
+    @Override
+    protected void onDetached() {
+        getView().removeOnPageChangeListener(pageChangeListener);
+    }
 
     private boolean isDecor(@NonNull View child) {
         ViewGroup.LayoutParams lp = child.getLayoutParams();

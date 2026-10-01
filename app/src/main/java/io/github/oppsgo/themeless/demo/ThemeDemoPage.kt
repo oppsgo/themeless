@@ -100,7 +100,7 @@ enum class DemoThemeMode {
 internal fun Activity.bindBg(id: Int, color: Int) {
     val v = findViewById<View>(id) ?: return
     val ref = ColorRef.of(color)
-    when (val binding = ThemeManager.get().obtain(v)) {
+    when (val binding = ThemeManager.get().ensureAttach(v)) {
         is ViewResourceBinding -> binding.setBackground(ref)
         else -> binding.bind(android.R.attr.background, ref)
     }
@@ -109,7 +109,7 @@ internal fun Activity.bindBg(id: Int, color: Int) {
 internal fun View.bindBg(id: Int, color: Int) {
     val v = findViewById<View>(id) ?: return
     val ref = ColorRef.of(color)
-    when (val binding = ThemeManager.get().obtain(v)) {
+    when (val binding = ThemeManager.get().ensureAttach(v)) {
         is ViewResourceBinding -> binding.setBackground(ref)
         else -> binding.bind(android.R.attr.background, ref)
     }

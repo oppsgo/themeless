@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
  * {@link AbsListView}（ListView / GridView / ExpandableListView）：
  * item 复用后重新挂上时补刷，避免换肤后滑回来仍是旧色。
  * <p>
- * 默认通过 {@link ViewGroup#setOnHierarchyChangeListener} 监听子 View 挂上（inflate 场景）。
+ * 默认在 {@link #attach()} 后通过 {@link ViewGroup#setOnHierarchyChangeListener} 监听子 View 挂上。
  * 外部若也需要该回调，请用 {@link #setOnHierarchyChangeListener} 代理，勿直接对 View 设置。
  * <p>
  * 构造时传入 {@code false} 可跳过占用该槽位；需要自动补刷时可再
@@ -20,6 +20,8 @@ import androidx.annotation.Nullable;
  */
 public class AbsListViewResourceBinding extends ViewGroupResourceBinding
         implements ViewGroup.OnHierarchyChangeListener, View.OnLayoutChangeListener {
+
+    private final boolean hierarchy;
 
     @Nullable
     private ViewGroup.OnHierarchyChangeListener onHierarchyChangeListener;
@@ -31,14 +33,12 @@ public class AbsListViewResourceBinding extends ViewGroupResourceBinding
     }
 
     /**
-     * @param hierarchy {@code true}（默认）时占用并监听 hierarchy 变化；
+     * @param hierarchy {@code true}（默认）时在 attach 后占用并监听 hierarchy 变化；
      *                  {@code false} 不占用，由外部自行处理或配合 {@link #setAutoRefresh}。
      */
     public AbsListViewResourceBinding(@NonNull AbsListView view, boolean hierarchy) {
         super(view);
-        if (hierarchy) {
-            view.setOnHierarchyChangeListener(this);
-        }
+        this.hierarchy = hierarchy;
     }
 
     @NonNull
@@ -52,13 +52,35 @@ public class AbsListViewResourceBinding extends ViewGroupResourceBinding
         return (AbsListView) view;
     }
 
+    @Override
+    protected void onAttached() {
+        if (hierarchy || onHierarchyChangeListener != null) {
+            getView().setOnHierarchyChangeListener(this);
+        }
+        if (autoRefresh) {
+            getView().addOnLayoutChangeListener(this);
+        }
+    }
+
+    @Override
+    protected void onDetached() {
+        AbsListView list = getView();
+        if (hierarchy || onHierarchyChangeListener != null) {
+            list.setOnHierarchyChangeListener(null);
+        }
+        list.removeOnLayoutChangeListener(this);
+    }
+
     /**
      * 代理 {@link ViewGroup#setOnHierarchyChangeListener}：本 Binding 占用 View 槽位并转发。
      * 子项挂上时先回调外部，再补刷（外部可能要先做其它操作）。
+     * 已 attach 时立刻写入 View；未 attach 时记下，等 {@link #attach()} 再装。
      */
     public AbsListViewResourceBinding setOnHierarchyChangeListener(@Nullable ViewGroup.OnHierarchyChangeListener listener) {
         this.onHierarchyChangeListener = listener;
-        getView().setOnHierarchyChangeListener(this);
+        if (isAttached()) {
+            getView().setOnHierarchyChangeListener(this);
+        }
         return this;
     }
 
@@ -72,6 +94,9 @@ public class AbsListViewResourceBinding extends ViewGroupResourceBinding
             return this;
         }
         this.autoRefresh = autoRefresh;
+        if (!isAttached()) {
+            return this;
+        }
         AbsListView list = getView();
         list.removeOnLayoutChangeListener(this);
         if (autoRefresh) {

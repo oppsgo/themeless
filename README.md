@@ -151,7 +151,9 @@ ThemeManager.get().apply(this, DayNightResourceResolver.night(this))
 | `ThemeManager.setRefreshOnInflate` | 新 inflate 的 View 立刻刷一遍（Dialog / Popup 常用） |
 | `ThemeManager.refresh` | 仅刷新，不换 Resolver |
 | `ThemeManager.registry` | Binding 注册表 |
-| `ThemeManager.edit` / `obtain` / `find` | 取 Binding（临时 / 挂 tag / 只查） |
+| `ThemeManager.edit` / `obtain` / `find` | 取 Binding（临时 / 取或建不挂 / 只查） |
+| `ThemeManager.ensureAttach` | 有则复用，无则 create + `attach`（接近旧 obtain） |
+| `ResourceBinding.attach` / `detach` | 挂载（可替换旧 Binding）/ 卸载容器钩子与 tag |
 | `TextViewResourceBinding.setDefaultTrackTextSize` | **全局**：inflate 是否跟踪 `android:textSize`（默认关；须在 inflate 前设） |
 | `TextViewResourceBinding.setTrackTextSize` | **实例**开关 |
 | `TextViewResourceBinding.of(view).setTextColor(…)` | 手动绑定并立刻写 View |
@@ -200,12 +202,13 @@ Support：`ThemeAppCompat.registerAvailable()` + `:appcompat-ktx` DayNight 扩�
 
 `ListView` / `GridView` / `ExpandableListView` 由 `AbsListViewResourceBinding` 处理：换肤后 item 复用滑回来时补刷，避免仍是旧色。
 
-**默认行为**：inflate 时占用 `ViewGroup.setOnHierarchyChangeListener`，子 View 挂上时补刷该 child。`ViewGroup` 对该 listener 只有 setter、无 getter，直接对 View 再 `set` 会覆盖 Binding。
+**默认行为**：inflate（`obtain` + `attach`）后占用 `ViewGroup.setOnHierarchyChangeListener`，子 View 挂上时补刷该 child。`ViewGroup` 对该 listener 只有 setter、无 getter，直接对 View 再 `set` 会覆盖 Binding。
 
-**外部也要 hierarchy 回调时**：用 Binding 代理，勿直接对 View 设置；子项挂上时**先回调外部，再补刷**：
+**外部也要 hierarchy 回调时**：用 Binding 代理，勿直接对 View 设置；须先 `attach`；子项挂上时**先回调外部，再补刷**：
 
 ```kotlin
 AbsListViewResourceBinding.of(list)
+    .attach()
     .setOnHierarchyChangeListener { parent, child -> /* 你的逻辑 */ }
 ```
 

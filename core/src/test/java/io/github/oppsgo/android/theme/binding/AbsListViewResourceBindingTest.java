@@ -32,16 +32,19 @@ public class AbsListViewResourceBindingTest {
     }
 
     @Test
-    public void defaultConstructor_setsHierarchyListener() {
+    public void defaultConstructor_doesNotSetHierarchyListenerUntilAttach() {
         TrackingListView list = new TrackingListView(activity);
         AbsListViewResourceBinding binding = new AbsListViewResourceBinding(list);
+        assertEquals(null, list.installed);
+        binding.attach();
         assertEquals(binding, list.installed);
     }
 
     @Test
     public void constructorFalse_doesNotSetHierarchyListener() {
         TrackingListView list = new TrackingListView(activity);
-        new AbsListViewResourceBinding(list, false);
+        AbsListViewResourceBinding binding = new AbsListViewResourceBinding(list, false);
+        binding.attach();
         assertEquals(null, list.installed);
     }
 
@@ -49,6 +52,7 @@ public class AbsListViewResourceBindingTest {
     public void setOnHierarchyChangeListener_forwardsBeforeRefresh() {
         ListView list = new ListView(activity);
         AbsListViewResourceBinding binding = new AbsListViewResourceBinding(list);
+        binding.attach();
         AtomicInteger order = new AtomicInteger();
         AtomicInteger externalAt = new AtomicInteger();
         AtomicInteger refreshAt = new AtomicInteger();

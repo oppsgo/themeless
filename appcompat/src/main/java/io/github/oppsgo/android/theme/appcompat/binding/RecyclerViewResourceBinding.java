@@ -11,6 +11,7 @@ import io.github.oppsgo.android.theme.binding.ViewGroupResourceBinding;
 /**
  * Support Library（recyclerview-v7）版。
  * 接入方有 RecyclerView 时，在 inflate 前调用 {@link #register()}。
+ * 子项补刷监听在 {@link #attach()} 后安装。
  */
 public class RecyclerViewResourceBinding extends ViewGroupResourceBinding
         implements RecyclerView.OnChildAttachStateChangeListener {
@@ -21,8 +22,6 @@ public class RecyclerViewResourceBinding extends ViewGroupResourceBinding
 
     public RecyclerViewResourceBinding(@NonNull RecyclerView view) {
         super(view);
-        view.removeOnChildAttachStateChangeListener(this);
-        view.addOnChildAttachStateChangeListener(this);
     }
 
     @NonNull
@@ -34,6 +33,18 @@ public class RecyclerViewResourceBinding extends ViewGroupResourceBinding
     @NonNull
     public static RecyclerViewResourceBinding of(@NonNull RecyclerView view) {
         return of(view, RecyclerViewResourceBinding.class, RecyclerViewResourceBinding::new);
+    }
+
+    @Override
+    protected void onAttached() {
+        RecyclerView rv = getView();
+        rv.removeOnChildAttachStateChangeListener(this);
+        rv.addOnChildAttachStateChangeListener(this);
+    }
+
+    @Override
+    protected void onDetached() {
+        getView().removeOnChildAttachStateChangeListener(this);
     }
 
     @Override

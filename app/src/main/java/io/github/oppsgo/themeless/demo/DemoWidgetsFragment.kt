@@ -32,7 +32,7 @@ class DemoWidgetsFragment : Fragment() {
         view.bindBg(R.id.demoWidgetsRoot, R.color.skin_page_bg)
 
         val icon = view.findViewById<ImageView>(R.id.themeSizedIcon)
-        val binding = ThemeManager.get().obtain(icon) as ImageViewResourceBinding
+        val binding = ThemeManager.get().ensureAttach(icon) as ImageViewResourceBinding
         val size = (72 * resources.displayMetrics.density).toInt()
         binding.setImage(
             DrawableRef.of(R.drawable.mail_star_fill) { resolver ->

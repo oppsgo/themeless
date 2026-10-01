@@ -27,12 +27,12 @@ internal class ThemeRowAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_theme_row, parent, false)
-        val binding = ThemeManager.get().obtain(view)
+        val binding = ThemeManager.get().ensureAttach(view)
         if (binding is ViewResourceBinding) {
             binding.setBackground(ColorRef.of(R.color.skin_card_bg))
         }
         view.findViewById<View>(R.id.itemAccent)?.let { accent ->
-            val accentBinding = ThemeManager.get().obtain(accent)
+            val accentBinding = ThemeManager.get().ensureAttach(accent)
             if (accentBinding is ViewResourceBinding) {
                 accentBinding.setBackground(ColorRef.of(R.color.skin_accent))
             }

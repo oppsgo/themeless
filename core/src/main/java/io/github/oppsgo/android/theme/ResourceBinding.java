@@ -76,32 +76,46 @@ public interface ResourceBinding {
     int getModCount();
 
     /**
-     * 是否已挂在 View 的 tag 上（{@link ThemeManager#obtain} / inflate）。
+     * 是否已挂在 View 的 tag 上（经 {@link #attach} / {@link ThemeManager#ensureAttach} / inflate）。
      */
     default boolean isAttached() {
         return ThemeManager.get().find(getView()) == this;
     }
 
     /**
-     * 确保拿到「挂在 View 上」的那份 Binding。
+     * 把本实例挂到 View 上（装容器钩子）。
      * <ul>
-     *   <li>已是本实例 → 返回 this</li>
-     *   <li>View 上已有别的 Binding（inflate / obtain / 用户自写 / 代理）→ <b>绝不覆盖</b>，返回已挂载的那份</li>
-     *   <li>尚无 → 把 this 挂上去</li>
+     *   <li>已是本实例（{@link #isAttached}）→ 不重复挂载，返回 this</li>
+     *   <li>View 上已有别的 Binding → 先对其 {@link #detach}，再挂 this</li>
+     *   <li>尚无 → 挂上 this</li>
      * </ul>
-     * 日常请优先 {@link ThemeManager#edit(View)} / 各 Binding 的 {@code of()}；不要先 {@code new} 再 attach。
+     * 不替换已有 Binding 时请用 {@link ThemeManager#ensureAttach(View)}。
+     * {@link ThemeManager#obtain} 只取/建实例，不会挂载。
      */
     @NonNull
     default ResourceBinding attach() {
-        View view = getView();
-        ResourceBinding existing = ThemeManager.get().find(view);
-        if (existing == this) {
+        if (isAttached()) {
             return this;
         }
+        View view = getView();
+        ResourceBinding existing = ThemeManager.get().find(view);
         if (existing != null) {
-            return existing;
+            existing.detach();
         }
         view.setTag(ResourceBinding.TAG_BINDING, this);
+        return this;
+    }
+
+    /**
+     * 卸下本实例：清 tag。未挂载时为空操作。
+     * 库内 {@link io.github.oppsgo.android.theme.binding.ViewResourceBinding} 还会卸容器钩子。
+     */
+    @NonNull
+    default ResourceBinding detach() {
+        if (!isAttached()) {
+            return this;
+        }
+        getView().setTag(ResourceBinding.TAG_BINDING, null);
         return this;
     }
 }

@@ -104,6 +104,7 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
     protected void attachViewBind(@Nullable View view, @Nullable AttributeSet attrs) {
         if (view == null) return;
         ResourceBinding binding = ThemeManager.get().obtain(view);
+        binding.attach();
         binding.bind(attrs);
         if (refreshOnInflate) {
             binding.refresh();

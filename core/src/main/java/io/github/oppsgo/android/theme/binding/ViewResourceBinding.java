@@ -95,6 +95,46 @@ public class ViewResourceBinding implements ResourceBinding {
         return of(view, ViewResourceBinding.class, ViewResourceBinding::new);
     }
 
+    /**
+     * 挂到 View：已挂载则幂等；有其它 Binding 则先 {@link #detach} 再挂本实例并 {@link #onAttached()}。
+     */
+    @NonNull
+    @Override
+    public ViewResourceBinding attach() {
+        if (isAttached()) {
+            return this;
+        }
+        ResourceBinding existing = ThemeManager.get().find(view);
+        if (existing != null) {
+            existing.detach();
+        }
+        view.setTag(ResourceBinding.TAG_BINDING, this);
+        onAttached();
+        return this;
+    }
+
+    /**
+     * 卸下：{@link #onDetached()} 后清 tag。未挂载时为空操作。
+     */
+    @NonNull
+    @Override
+    public ViewResourceBinding detach() {
+        if (!isAttached()) {
+            return this;
+        }
+        onDetached();
+        view.setTag(ResourceBinding.TAG_BINDING, null);
+        return this;
+    }
+
+    /** 挂载成功后调用；容器 Binding 在此注册监听。 */
+    protected void onAttached() {
+    }
+
+    /** 卸载前调用；容器 Binding 在此移除监听。 */
+    protected void onDetached() {
+    }
+
     @Override
     @NonNull
     public View getView() {
