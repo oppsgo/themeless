@@ -24,8 +24,6 @@ class DemoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.bindBg(R.id.demoListRoot, R.color.skin_panel_bg)
-        view.bindBg(R.id.demoListSubTabs, R.color.skin_panel_bg)
 
         val tabLayout = view.findViewById<TabLayout>(R.id.demoListSubTabs)
         val pager = view.findViewById<ViewPager2>(R.id.demoListPager)

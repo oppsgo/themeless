@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/theme_demo_subtitle"
-            android:textColor="@color/skin_text_secondary"
+            android:textColor="?attr/color_theme_secondary"
             android:textSize="13sp" />
 
         <LinearLayout
@@ -90,11 +90,11 @@
             android:layout_marginTop="8dp"
             android:background="@color/skin_panel_bg"
             app:tabGravity="fill"
-            app:tabIndicatorColor="@color/skin_accent"
+            app:tabIndicatorColor="?attr/color_theme"
             app:tabMode="fixed"
-            app:tabRippleColor="@color/skin_accent"
-            app:tabSelectedTextColor="@color/skin_accent"
-            app:tabTextColor="@color/skin_text_secondary" />
+            app:tabRippleColor="?attr/color_theme"
+            app:tabSelectedTextColor="?attr/color_theme"
+            app:tabTextColor="?attr/color_theme_secondary" />
     </LinearLayout>
 
     <View

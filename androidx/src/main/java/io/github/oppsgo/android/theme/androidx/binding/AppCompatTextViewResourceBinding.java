@@ -1,5 +1,7 @@
 package io.github.oppsgo.android.theme.androidx.binding;
 
+import android.widget.TextView;
+
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -29,7 +31,7 @@ public class AppCompatTextViewResourceBinding extends TextViewResourceBinding {
         ThemeManager.get().registry().register(AppCompatTextView.class, AppCompatTextViewResourceBinding::new);
     }
 
-    public AppCompatTextViewResourceBinding(@NonNull AppCompatTextView view) {
+    public AppCompatTextViewResourceBinding(@NonNull TextView view) {
         super(view);
     }
 

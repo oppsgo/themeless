@@ -1,18 +1,21 @@
 package io.github.oppsgo.android.theme.appcompat.binding;
 
+import android.support.v7.appcompat.R;
 import android.support.v7.widget.AppCompatImageView;
+import android.widget.ImageView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding;
-import android.support.v7.appcompat.R;
+import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
 
 /**
  * Support Library（appcompat-v7）版：读 {@code app:srcCompat} / {@code app:tint} / {@code app:backgroundTint}。
  * tint 写入由 {@link io.github.oppsgo.android.theme.ResourceResolver#getViewCompat()} 提供。
+ * <p>
+ * 构造取平台 {@link ImageView}，便于 ImageButton 与 {@link AppCompatImageView} 共用登记。
  */
 public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding {
 
@@ -24,7 +27,7 @@ public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding 
         ThemeManager.get().registry().register(AppCompatImageView.class, AppCompatImageViewResourceBinding::new);
     }
 
-    public AppCompatImageViewResourceBinding(@NonNull AppCompatImageView view) {
+    public AppCompatImageViewResourceBinding(@NonNull ImageView view) {
         super(view);
     }
 

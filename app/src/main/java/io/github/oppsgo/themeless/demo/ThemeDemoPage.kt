@@ -17,10 +17,10 @@ import androidx.fragment.app.FragmentManager
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.androidx.ThemeAndroidX
 import io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver
-import io.github.oppsgo.android.theme.binding.ViewResourceBinding
 import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver
-import io.github.oppsgo.android.theme.resource.ColorRef
 import io.github.oppsgo.themeless.R
+import io.github.oppsgo.themeless.demo.ThemeDemoPage.dayNightMode
+import io.github.oppsgo.themeless.demo.ThemeDemoPage.demoThemeMode
 
 private const val DEMO_TAG = "ThemelessDemo"
 
@@ -41,7 +41,7 @@ object ThemeDemoPage {
         private set
 
     fun init() {
-        ThemeAndroidX.registerAvailable()
+
     }
 
     fun restorePersisted(context: Context) {
@@ -95,39 +95,9 @@ enum class DemoThemeMode {
 }
 
 internal fun Activity.bindBg(id: Int, color: Int) {
-    val v = findViewById<View>(id) ?: return
-    val ref = ColorRef.of(color)
-    when (val binding = ThemeManager.get().ensureAttach(v)) {
-        is ViewResourceBinding -> binding.setBackground(ref)
-        else -> binding.bind(android.R.attr.background, ref)
-    }
 }
 
 internal fun View.bindBg(id: Int, color: Int) {
-    val v = findViewById<View>(id) ?: return
-    val ref = ColorRef.of(color)
-    when (val binding = ThemeManager.get().ensureAttach(v)) {
-        is ViewResourceBinding -> binding.setBackground(ref)
-        else -> binding.bind(android.R.attr.background, ref)
-    }
-}
-
-internal fun Activity.ensureHomeBackgroundBindings() {
-    bindBg(R.id.mainRoot, R.color.skin_page_bg)
-    bindBg(R.id.mainTitleBar, R.color.skin_panel_bg)
-    bindBg(R.id.homeRoot, R.color.skin_page_bg)
-}
-
-internal fun Activity.ensureSettingsBackgroundBindings() {
-    bindBg(R.id.settingsPageRoot, R.color.skin_page_bg)
-    bindBg(R.id.settingsTitleBar, R.color.skin_panel_bg)
-    bindBg(R.id.settingsRoot, R.color.skin_page_bg)
-}
-
-internal fun Activity.ensureDemoShellBackgroundBindings() {
-    bindBg(R.id.themeRoot, R.color.skin_page_bg)
-    bindBg(R.id.themeTitleBar, R.color.skin_panel_bg)
-    bindBg(R.id.demoPager, R.color.skin_page_bg)
 }
 
 private var restoringDemoTheme = false
@@ -229,16 +199,16 @@ private fun Activity.syncActivityNightMode(dark: Boolean?): Boolean {
         val mode = ThemeDemoPage.getDefaultNightMode()
         if (delegate.localNightMode != mode) {
             delegate.localNightMode = mode
-            return true
         }
+        // Demo Activity 声明了 configChanges=uiMode，改 localNightMode 不会重建，
+        // 不能再靠「return true 跳过 apply、等 onCreate」；必须继续走 ThemeManager.apply。
         return false
     }
     val mode = delegate.localNightMode
-    if (mode == AppCompatDelegate.MODE_NIGHT_YES || mode != AppCompatDelegate.MODE_NIGHT_NO) {
-        return false
+    if (mode != AppCompatDelegate.MODE_NIGHT_YES && mode == AppCompatDelegate.MODE_NIGHT_NO) {
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
     }
-    delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-    return true
+    return false
 }
 
 private fun Activity.paintDemoSurfaces(label: String, page: Int, panel: Int, card: Int) {

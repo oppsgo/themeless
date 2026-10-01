@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Demo：验证布局写 ?attr/xxx 时 Binding / inflate 是否正常 -->
+    <attr name="color_theme" format="color|reference" />
+    <attr name="color_theme_secondary" format="color|reference" />
+</resources>

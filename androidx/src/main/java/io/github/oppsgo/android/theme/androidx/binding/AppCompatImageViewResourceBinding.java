@@ -1,13 +1,15 @@
 package io.github.oppsgo.android.theme.androidx.binding;
 
+import android.widget.ImageView;
+
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.R;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding;
-import androidx.appcompat.R;
+import io.github.oppsgo.android.theme.binding.ViewResourceBinding;
 
 /**
  * 读 {@code app:srcCompat} / {@code app:tint} / {@code app:backgroundTint}，
@@ -17,22 +19,26 @@ import androidx.appcompat.R;
 public class AppCompatImageViewResourceBinding extends ImageViewResourceBinding {
 
     public static final int ATTR_SRC_COMPAT = R.attr.srcCompat;
-    /** {@code app:tint}，和 {@link ImageViewResourceBinding#ATTR_TINT}（{@code android:tint}）不是同一个 id。 */
+    /**
+     * {@code app:tint}，和 {@link ImageViewResourceBinding#ATTR_TINT}（{@code android:tint}）不是同一个 id。
+     */
     public static final int ATTR_TINT_COMPAT = R.attr.tint;
-    /** {@code app:backgroundTint}，和 {@link ViewResourceBinding#ATTR_BACKGROUND_TINT} 不是同一个 id。 */
+    /**
+     * {@code app:backgroundTint}，和 {@link ViewResourceBinding#ATTR_BACKGROUND_TINT} 不是同一个 id。
+     */
     public static final int ATTR_BACKGROUND_TINT_COMPAT = R.attr.backgroundTint;
 
     public static void register() {
         ThemeManager.get().registry().register(AppCompatImageView.class, AppCompatImageViewResourceBinding::new);
     }
 
-    public AppCompatImageViewResourceBinding(@NonNull AppCompatImageView view) {
-        super(view);
-    }
-
     @NonNull
     public static AppCompatImageViewResourceBinding of(@NonNull AppCompatImageView view) {
         return of(view, AppCompatImageViewResourceBinding.class, AppCompatImageViewResourceBinding::new);
+    }
+
+    public AppCompatImageViewResourceBinding(@NonNull ImageView view) {
+        super(view);
     }
 
     @Override

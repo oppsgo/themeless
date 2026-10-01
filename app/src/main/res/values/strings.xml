@@ -32,6 +32,9 @@
     <string name="settings_host_hint">影响 AppCompat chrome，以及「跟随」皮肤选 values / values-night 的语义。与皮肤色板是两条线。</string>
     <string name="settings_persist_note">本页修改会写入本地并作用于全应用。演示页里的亮/暗/晴空蓝只改当前演示页，不写本地、不带回首页。</string>
 
+    <string name="theme_demo_attr_ref_title">主题 attr 颜色探测</string>
+    <string name="theme_demo_attr_ref_hint">底用 color_theme（accent），字用 color_theme_secondary（现为 text_primary，亮/暗反差大）。切肤时应两处一起变。</string>
+
     <string name="demo_tab_widgets">控件</string>
     <string name="demo_tab_list">列表</string>
     <string name="demo_tab_extras">其它</string>

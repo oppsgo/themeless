@@ -1,6 +1,5 @@
 package io.github.oppsgo.themeless.demo
 
-import android.app.Activity
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -20,7 +19,6 @@ internal fun FragmentActivity.setupThemeDemoHost(@StringRes subtitle: Int) {
     setContentView(R.layout.activity_theme_demo)
     setupImmersiveTitleBar()
     ThemeManager.get().setRefreshOnInflate(this, true)
-    ensureDemoShellBackgroundBindings()
     findViewById<TextView>(R.id.themeSubtitle).setText(subtitle)
 
     findViewById<Button>(R.id.btnLight).setOnClickListener {
@@ -60,9 +58,4 @@ private class ThemeDemoPagerAdapter(activity: FragmentActivity) : FragmentStateA
         2 -> DemoExtrasFragment()
         else -> DemoOverlaysFragment()
     }
-}
-
-/** 兼容旧 Lab Activity 入口名。 */
-internal fun Activity.showThemeDemo(@StringRes subtitle: Int) {
-    (this as FragmentActivity).setupThemeDemoHost(subtitle)
 }

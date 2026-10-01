@@ -30,11 +30,6 @@ class ViewPager2StressActivity : FragmentActivity() {
         setContentView(R.layout.activity_viewpager2_stress)
         setupImmersiveTitleBar()
         ThemeManager.get().setRefreshOnInflate(this, true)
-        bindBg(R.id.vp2StressRoot, R.color.skin_page_bg)
-        bindBg(R.id.vp2StressTitleBar, R.color.skin_panel_bg)
-        bindBg(R.id.vp2StressTabScroll, R.color.skin_panel_bg)
-        bindBg(R.id.vp2StressBody, R.color.skin_page_bg)
-        bindBg(R.id.vp2StressPager, R.color.skin_page_bg)
 
         val pager = findViewById<ViewPager2>(R.id.vp2StressPager)
         val banner = findViewById<ViewPager2>(R.id.vp2StressBanner)

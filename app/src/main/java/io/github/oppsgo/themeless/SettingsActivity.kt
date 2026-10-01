@@ -1,5 +1,6 @@
 package io.github.oppsgo.themeless
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
@@ -16,12 +17,11 @@ import io.github.oppsgo.themeless.demo.applyCustomTheme
 import io.github.oppsgo.themeless.demo.applyHostNightMode
 import io.github.oppsgo.themeless.demo.applyThemeNight
 import io.github.oppsgo.themeless.demo.applyThemeResources
-import io.github.oppsgo.themeless.demo.ensureSettingsBackgroundBindings
 import io.github.oppsgo.themeless.demo.refreshChromeTextColors
 import io.github.oppsgo.themeless.demo.restoreDemoTheme
 import io.github.oppsgo.themeless.demo.setupImmersiveTitleBar
 
-/** 皮肤与宿主日夜设置；变更会写入 SharedPreferences。 */
+/** 皮肤与宿主日夜设置；变更会写入 SharedPreferences，并 [setResult] 通知首页补刷。 */
 class SettingsActivity : AppCompatActivity() {
 
     private var bindingUi = false
@@ -37,7 +37,6 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         setupImmersiveTitleBar()
         ThemeManager.get().setRefreshOnInflate(this, true)
-        ensureSettingsBackgroundBindings()
 
         restoreDemoTheme()
         syncFromState()
@@ -51,6 +50,7 @@ class SettingsActivity : AppCompatActivity() {
                     R.id.settingsSkinDark -> applyThemeNight(dark = true, persist = true)
                     R.id.settingsSkinCustom -> applyCustomTheme(persist = true)
                 }
+                markThemeChanged()
             }
 
         findViewById<RadioGroup>(R.id.settingsHostGroup)
@@ -63,6 +63,7 @@ class SettingsActivity : AppCompatActivity() {
                 }
                 applyHostNightMode(mode)
                 syncFromState()
+                markThemeChanged()
             }
     }
 
@@ -77,6 +78,10 @@ class SettingsActivity : AppCompatActivity() {
         if (ThemeDemoPage.demoThemeMode == DemoThemeMode.FOLLOW_SYSTEM) {
             restoreDemoTheme()
         }
+    }
+
+    private fun markThemeChanged() {
+        setResult(Activity.RESULT_OK)
     }
 
     private fun syncFromState() {

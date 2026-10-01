@@ -7,6 +7,9 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowBackground">@color/skin_page_bg</item>
+        <item name="color_theme">@color/skin_accent</item>
+        <!-- 用 primary 而不是 secondary：灰阶肤差太小，演示时容易误判「没跟肤」 -->
+        <item name="color_theme_secondary">@color/skin_text_primary</item>
         <item name="android:buttonStyle">@style/Widget.Themeless.Button</item>
         <item name="buttonStyle">@style/Widget.Themeless.Button</item>
     </style>

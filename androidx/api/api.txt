@@ -19,7 +19,7 @@ package io.github.oppsgo.android.theme.androidx.binding {
   }
 
   public class AppCompatImageViewResourceBinding extends io.github.oppsgo.android.theme.binding.ImageViewResourceBinding {
-    ctor public AppCompatImageViewResourceBinding(androidx.appcompat.widget.AppCompatImageView);
+    ctor public AppCompatImageViewResourceBinding(android.widget.ImageView);
     method public static io.github.oppsgo.android.theme.androidx.binding.AppCompatImageViewResourceBinding of(androidx.appcompat.widget.AppCompatImageView);
     method public static void register();
     field public static final int ATTR_BACKGROUND_TINT_COMPAT;
@@ -27,17 +27,8 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_TINT_COMPAT;
   }
 
-  public class AppCompatImageButtonResourceBinding extends io.github.oppsgo.android.theme.binding.ImageViewResourceBinding {
-    ctor public AppCompatImageButtonResourceBinding(androidx.appcompat.widget.AppCompatImageButton);
-    method public static io.github.oppsgo.android.theme.androidx.binding.AppCompatImageButtonResourceBinding of(androidx.appcompat.widget.AppCompatImageButton);
-    method public static void register();
-    field public static final int ATTR_BACKGROUND_TINT_COMPAT;
-    field public static final int ATTR_SRC_COMPAT;
-    field public static final int ATTR_TINT_COMPAT;
-  }
-
   public class AppCompatTextViewResourceBinding extends io.github.oppsgo.android.theme.binding.TextViewResourceBinding {
-    ctor public AppCompatTextViewResourceBinding(androidx.appcompat.widget.AppCompatTextView);
+    ctor public AppCompatTextViewResourceBinding(android.widget.TextView);
     method public static io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewResourceBinding of(androidx.appcompat.widget.AppCompatTextView);
     method public static void register();
     field public static final int ATTR_BACKGROUND_TINT_COMPAT;

@@ -20,7 +20,6 @@ class DemoExtrasFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.bindBg(R.id.demoExtrasRoot, R.color.skin_page_bg)
 
         val seek = view.findViewById<SeekBar>(R.id.demoSeekBar)
         val value = view.findViewById<TextView>(R.id.demoSeekValue)
