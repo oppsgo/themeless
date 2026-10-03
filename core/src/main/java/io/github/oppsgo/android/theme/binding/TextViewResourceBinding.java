@@ -24,8 +24,9 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
 /**
  * {@link TextView} 绑定。文字颜色按资源类型分成 {@link ColorRef} 和 {@link ColorStateListRef}。
  * <p>
- * compound drawable：属性上有 {@link DrawableRef} 则按 resolve 写入（{@link DrawableRef#none()} /
- * resolve 为 null 表示显式清空）；无 DrawableRef 则沿用 View 上已有 Drawable，刷新不会清掉未跟踪的方向。
+ * compound drawable：与平台 API 一样整组写入四个方向。属性上有 {@link DrawableRef} 则按 resolve
+ * 写入（{@link DrawableRef#none()} / resolve 为 null 表示该方向为空）；未跟踪的方向视为 null，
+ * 不会保留 View 上旧的 Drawable。四个方向都未跟踪时不改 compound drawable。
  * 尺寸沿用 {@code Drawable.setBounds}，没设过才用 intrinsic。
  */
 public class TextViewResourceBinding extends ViewResourceBinding {
@@ -231,17 +232,17 @@ public class TextViewResourceBinding extends ViewResourceBinding {
     }
 
     /**
-     * @param left / top / right / bottom 为 null 表示该方向不跟踪（刷新时沿用已有）；
-     *             {@link DrawableRef#none()} 或 resolve 为 null 表示显式清空。
+     * @param left / top / right / bottom 为 null 时按 {@link DrawableRef#none()} 写入（该方向为空）；
+     *             与平台 API 一样一次覆盖四个方向。
      */
     @NonNull
     public TextViewResourceBinding setCompoundDrawablesWithIntrinsicBounds(
             @Nullable DrawableRef left, @Nullable DrawableRef top,
             @Nullable DrawableRef right, @Nullable DrawableRef bottom) {
-        putAttr(ATTR_DRAWABLE_LEFT, left);
-        putAttr(ATTR_DRAWABLE_TOP, top);
-        putAttr(ATTR_DRAWABLE_RIGHT, right);
-        putAttr(ATTR_DRAWABLE_BOTTOM, bottom);
+        putAttr(ATTR_DRAWABLE_LEFT, drawableOrNone(left));
+        putAttr(ATTR_DRAWABLE_TOP, drawableOrNone(top));
+        putAttr(ATTR_DRAWABLE_RIGHT, drawableOrNone(right));
+        putAttr(ATTR_DRAWABLE_BOTTOM, drawableOrNone(bottom));
         attributes.delete(ATTR_DRAWABLE_START);
         attributes.delete(ATTR_DRAWABLE_END);
         applyCompoundDrawablesNow();
@@ -258,17 +259,17 @@ public class TextViewResourceBinding extends ViewResourceBinding {
     }
 
     /**
-     * @param start / top / end / bottom 为 null 表示该方向不跟踪（刷新时沿用已有）；
-     *             {@link DrawableRef#none()} 或 resolve 为 null 表示显式清空。
+     * @param start / top / end / bottom 为 null 时按 {@link DrawableRef#none()} 写入（该方向为空）；
+     *             与平台 API 一样一次覆盖四个方向。
      */
     @NonNull
     public TextViewResourceBinding setCompoundDrawablesRelativeWithIntrinsicBounds(
             @Nullable DrawableRef start, @Nullable DrawableRef top,
             @Nullable DrawableRef end, @Nullable DrawableRef bottom) {
-        putAttr(ATTR_DRAWABLE_START, start);
-        putAttr(ATTR_DRAWABLE_TOP, top);
-        putAttr(ATTR_DRAWABLE_END, end);
-        putAttr(ATTR_DRAWABLE_BOTTOM, bottom);
+        putAttr(ATTR_DRAWABLE_START, drawableOrNone(start));
+        putAttr(ATTR_DRAWABLE_TOP, drawableOrNone(top));
+        putAttr(ATTR_DRAWABLE_END, drawableOrNone(end));
+        putAttr(ATTR_DRAWABLE_BOTTOM, drawableOrNone(bottom));
         attributes.delete(ATTR_DRAWABLE_LEFT);
         attributes.delete(ATTR_DRAWABLE_RIGHT);
         applyCompoundDrawablesNow();
@@ -277,6 +278,11 @@ public class TextViewResourceBinding extends ViewResourceBinding {
 
     private DrawableRef drawableOrNull(@DrawableRes int resId) {
         return resId == ID_NULL ? DrawableRef.none() : DrawableRef.of(resId);
+    }
+
+    @NonNull
+    private static DrawableRef drawableOrNone(@Nullable DrawableRef ref) {
+        return ref != null ? ref : DrawableRef.none();
     }
 
     private void applyCompoundDrawablesNow() {
@@ -293,8 +299,7 @@ public class TextViewResourceBinding extends ViewResourceBinding {
     }
 
     /**
-     * 有 {@link DrawableRef} 则按 resolve 结果写入（含显式 null）；
-     * 属性未跟踪（无 DrawableRef）则沿用 View 上现有 Drawable。
+     * 有任一方向的 {@link DrawableRef} 时整组写入；未跟踪的方向为 null。
      * 四个方向都未跟踪时不改 compound drawable。
      */
     private void applyCompoundDrawables(@NonNull ResourceResolver resolver) {
@@ -309,23 +314,20 @@ public class TextViewResourceBinding extends ViewResourceBinding {
         }
 
         TextView textView = getView();
-        Drawable[] absolute = textView.getCompoundDrawables();
-        Drawable[] relative = textView.getCompoundDrawablesRelative();
-
-        Drawable top = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_TOP, absolute[1]);
-        Drawable bottom = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_BOTTOM, absolute[3]);
+        Drawable top = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_TOP);
+        Drawable bottom = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_BOTTOM);
 
         if (trackStart || trackEnd) {
-            Drawable start = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_START, relative[0]);
-            Drawable end = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_END, relative[2]);
+            Drawable start = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_START);
+            Drawable end = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_END);
             keepBounds(start);
             keepBounds(top);
             keepBounds(end);
             keepBounds(bottom);
             textView.setCompoundDrawablesRelative(start, top, end, bottom);
         } else {
-            Drawable left = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_LEFT, absolute[0]);
-            Drawable right = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_RIGHT, absolute[2]);
+            Drawable left = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_LEFT);
+            Drawable right = resolveCompoundDrawable(resolver, ATTR_DRAWABLE_RIGHT);
             keepBounds(left);
             keepBounds(top);
             keepBounds(right);
@@ -335,17 +337,16 @@ public class TextViewResourceBinding extends ViewResourceBinding {
     }
 
     /**
-     * {@link DrawableRef} 存在则用 resolve（可为 null）；否则复用 {@code fallback}。
+     * {@link DrawableRef} 存在则用 resolve（可为 null）；未跟踪则为 null。
      */
     @Nullable
     private Drawable resolveCompoundDrawable(
             @NonNull ResourceResolver resolver,
-            @AttrRes int attr,
-            @Nullable Drawable fallback
+            @AttrRes int attr
     ) {
         ResourceRef<?> value = attributes.get(attr);
         if (!(value instanceof DrawableRef)) {
-            return fallback;
+            return null;
         }
         return ((DrawableRef) value).resolve(resolver);
     }

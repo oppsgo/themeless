@@ -24,7 +24,7 @@ public class DrawableRef extends ResourceRef<Drawable> {
 
     /**
      * 标记「这里就是 null」：会写入 Binding，刷新时 {@link #resolve} 返回 null。
-     * 与属性未跟踪（{@code attributes} 里没有 {@link DrawableRef}）不同，后者表示沿用 View 上已有 Drawable。
+     * 用于 compound drawable 等需要显式占位空方向的场景（与传入 {@code null} 等价）。
      */
     @NonNull
     public static DrawableRef none() {

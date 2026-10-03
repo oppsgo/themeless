@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.binding.ImageViewResourceBinding
@@ -84,15 +83,11 @@ class DemoWidgetsFragment : Fragment() {
     }
 
     /**
-     * start 用 DrawableRef 跟肤；end 先手动挂上且不写入 Binding，切肤后应保留。
-     * 「清空 start」演示 [DrawableRef.none] 显式清空，不影响未跟踪的 end。
+     * start / end 都写入 Binding 跟肤；「清空 start」用 [DrawableRef.none] 只清 start，end 仍保留。
      */
     private fun bindCompoundDrawableDemo(view: View) {
         val compound = view.findViewById<TextView>(R.id.themeCompoundMixed)
-        val fixedEnd = ContextCompat.getDrawable(requireContext(), R.drawable.ic_settings)?.mutate()?.also {
-            it.setTint(0xFF888888.toInt())
-        }
-        compound.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, fixedEnd, null)
+        val endRef = DrawableRef.of(R.drawable.ic_settings)
 
         val compoundBinding = TextViewResourceBinding.of(compound)
             .attach() as TextViewResourceBinding
@@ -101,7 +96,7 @@ class DemoWidgetsFragment : Fragment() {
             .setCompoundDrawablesRelativeWithIntrinsicBounds(
                 DrawableRef.of(R.drawable.mail_star_fill),
                 null,
-                null,
+                endRef,
                 null,
             )
 
@@ -109,7 +104,7 @@ class DemoWidgetsFragment : Fragment() {
             compoundBinding.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 DrawableRef.none(),
                 null,
-                null,
+                endRef,
                 null,
             )
         }

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.github.oppsgo"
-version = "0.7.5-SNAPSHOT"
+version = "0.7.6-SNAPSHOT"
 
 subprojects {
     group = rootProject.group

@@ -7,7 +7,6 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -40,9 +39,6 @@ public class ViewResourceBinding implements ResourceBinding {
 
     public static final int ATTR_BACKGROUND = android.R.attr.background;
     public static final int ATTR_BACKGROUND_TINT = android.R.attr.backgroundTint;
-
-
-    private static final SparseBooleanArray COLOR_RES_CACHE = new SparseBooleanArray();
 
     @NonNull
     protected final View view;
@@ -428,30 +424,22 @@ public class ViewResourceBinding implements ResourceBinding {
 
     /**
      * 资源既可以是颜色也可以是图片时，靠 {@link TypedValue} 的类型区分。
+     * 不缓存：只在 bind / setXxx 时调用，直接读当前资源表可避免外挂 APK 换肤时串台。
      */
     public boolean isPureColor(@ColorRes int id) {
         if (id == ID_NULL) return false;
-        // 命中缓存直接返回
-        int index = COLOR_RES_CACHE.indexOfKey(id);
-        if (index >= 0) {
-            return COLOR_RES_CACHE.valueAt(index);
-        }
 
-        Resources resources = view.getContext().getResources();
+        ResourceResolver resolver = currentResolver();
+        Resources resources = resolver != null
+                ? resolver.getResources()
+                : view.getContext().getResources();
         try {
             TypedValue tv = new TypedValue();
-            // 首次查询：调用 Resources.getValue 解析资源表
             resources.getValue(id, tv, true);
-            // 写入缓存 (id -> isColor 的映射在 App 生命周期内不变)
-            boolean isColor = tv.type >= TypedValue.TYPE_FIRST_COLOR_INT && tv.type <= TypedValue.TYPE_LAST_COLOR_INT;
-            COLOR_RES_CACHE.put(id, isColor);
-            return isColor;
+            return tv.type >= TypedValue.TYPE_FIRST_COLOR_INT
+                    && tv.type <= TypedValue.TYPE_LAST_COLOR_INT;
         } catch (Resources.NotFoundException ignored) {
-
+            return false;
         }
-
-        // id 无效或不是资源 ID，视为非纯颜色
-        COLOR_RES_CACHE.put(id, false);
-        return false;
     }
 }

@@ -75,8 +75,8 @@
     <string name="theme_demo_list_subtitle">主色 / 次要色 / 卡片底会跟肤</string>
     <string name="theme_demo_compound_hint">AppCompat CompoundButton / SwitchCompat · buttonTint / thumbTint 跟肤</string>
     <string name="theme_demo_compound_drawable_title">Compound drawable 混用</string>
-    <string name="theme_demo_compound_drawable_hint">start 跟肤（mail_star）；end 手动设置且未跟踪，切肤后应仍在。点下方可 none 清空 start。</string>
-    <string name="theme_demo_compound_drawable_label">跟肤 ★ · 固定 ⚙</string>
+    <string name="theme_demo_compound_drawable_hint">start / end 都跟肤（★ / ⚙）。点下方用 none() 清空 start，end 仍保留。</string>
+    <string name="theme_demo_compound_drawable_label">跟肤 ★ · 跟肤 ⚙</string>
     <string name="theme_demo_compound_drawable_clear_start">用 DrawableRef.none() 清空 start</string>
     <string name="theme_demo_checkbox">CheckBox</string>
     <string name="theme_demo_radio_a">Radio A</string>
