@@ -301,7 +301,7 @@ public class ViewResourceBinding implements ResourceBinding {
     @Override
     public void refresh() {
         int current = ThemeManager.get().getModCount(view.getContext());
-        if (current != ThemeManager.MOD_COUNT_NONE && this.modCount == current) {
+        if (current != ThemeManager.MOD_COUNT_NONE && getModCount() == current) {
             return;
         }
         ResourceResolver resolver = ThemeManager.get().getResolver(view.getContext());
