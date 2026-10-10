@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/demoListRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/skin_panel_bg"
+    android:orientation="vertical">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/demoListSubTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/skin_panel_bg"
+        android:paddingHorizontal="8dp"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/skin_accent"
+        app:tabMode="fixed"
+        app:tabRippleColor="@color/skin_accent"
+        app:tabSelectedTextColor="@color/skin_accent"
+        app:tabTextColor="@color/skin_text_secondary" />
+
+    <TextView
+        android:id="@+id/demoListHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="4dp"
+        android:text="@string/theme_demo_list_hint"
+        android:textColor="@color/skin_text_secondary"
+        android:textSize="12sp" />
+
+    <!-- 包住内层 VP2，避免左右滑时被外层 demoPager 抢走 -->
+    <io.github.oppsgo.themeless.demo.NestedScrollableHost
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/demoListPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </io.github.oppsgo.themeless.demo.NestedScrollableHost>
+</LinearLayout>

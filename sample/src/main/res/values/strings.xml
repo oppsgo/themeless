@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Themeless</string>
+    <string name="action_settings">设置</string>
+    <string name="action_back">返回</string>
+
+    <string name="main_shell_subtitle_placeholder">当前皮肤：—</string>
+    <string name="main_shell_subtitle_format">当前皮肤：%1$s</string>
+
+    <string name="home_headline">运行时换肤，不必重建 Activity</string>
+    <string name="home_body">Themeless 在 inflate 时记录资源 id，apply 时按 ResourceResolver 写回 View。右上角「设置」可改皮肤并持久保存；演示页内切肤只作用于当前页，返回后不影响首页。</string>
+    <string name="home_skin_status_format">当前皮肤：%1$s（以设置页保存为准）</string>
+    <string name="home_lab_section">二级演示</string>
+    <string name="home_lab_hint">对照两种安装方式。进入后按「控件 / 列表 / 其它 / 浮层」分 Tab，不再挤在一页。</string>
+
+    <string name="main_night_follow">跟随系统</string>
+    <string name="main_night_light">强制亮色</string>
+    <string name="main_night_dark">强制暗色</string>
+    <string name="main_entry_theme_title">主题（FragmentActivity）</string>
+    <string name="main_entry_theme_subtitle">不传 Factory2，走默认系统 View 创建</string>
+    <string name="main_entry_theme_appcompat_title">主题（AppCompatActivity）</string>
+    <string name="main_entry_theme_appcompat_subtitle">install 时传入 AppCompatDelegate</string>
+
+    <string name="theme_mode_follow">跟随（按宿主日夜语义）</string>
+    <string name="theme_mode_light">亮色</string>
+    <string name="theme_mode_dark">暗色</string>
+    <string name="theme_mode_custom">晴空蓝</string>
+
+    <string name="settings_skin_title">皮肤</string>
+    <string name="settings_skin_hint">由 ThemeManager.apply + ResourceResolver 绘制。浅色/自定义在系统夜间时保持夜间宿主，避免 Force Dark。</string>
+    <string name="settings_host_title">宿主日夜（DefaultNightMode）</string>
+    <string name="settings_host_hint">影响 AppCompat chrome，以及「跟随」皮肤选 values / values-night 的语义。与皮肤色板是两条线。</string>
+    <string name="settings_persist_note">本页修改会写入本地并作用于全应用。演示页里的亮/暗/晴空蓝只改当前演示页，不写本地、不带回首页。</string>
+
+    <string name="theme_demo_attr_ref_title">主题 attr 颜色探测</string>
+    <string name="theme_demo_attr_ref_hint">底用 color_theme（accent），字用 color_theme_secondary（现为 text_primary，亮/暗反差大）。切肤时应两处一起变。</string>
+
+    <string name="demo_tab_widgets">控件</string>
+    <string name="demo_tab_list">列表</string>
+    <string name="demo_tab_extras">其它</string>
+    <string name="demo_tab_overlays">浮层</string>
+    <string name="demo_list_sub_rv">RecyclerView</string>
+    <string name="demo_list_sub_lv">ListView</string>
+    <string name="demo_list_sub_gv">GridView</string>
+    <string name="demo_widgets_hint">顶部切肤只作用于当前演示页，离开即丢弃；要保存请回首页右上角「设置」。</string>
+    <string name="demo_extras_hint">ProgressBar / SeekBar 的 tint 与 drawable 跟肤；顶部切肤后应一起变。</string>
+    <string name="demo_extras_progress_title">ProgressBar</string>
+    <string name="demo_extras_progress_hint">横向进度 + 不确定转圈 · progressTint / indeterminateTint</string>
+    <string name="demo_extras_seek_title">SeekBar</string>
+    <string name="demo_extras_seek_hint">progressTint / thumbTint 跟肤</string>
+    <string name="demo_extras_seek_value_format">进度 %1$d</string>
+    <string name="demo_overlays_hint">先弹出 Dialog / Popup，再点顶部切肤，浮层应一起变。</string>
+
+    <string name="theme_demo_title">主题演示</string>
+    <string name="theme_demo_title_format">换肤 %1$s</string>
+    <string name="theme_demo_subtitle">非 AppCompat · 按功能分 Tab</string>
+    <string name="theme_demo_appcompat_subtitle">AppCompat + Delegate · 按功能分 Tab</string>
+    <string name="theme_demo_original">原始尺寸</string>
+    <string name="theme_demo_resized">DrawableRef 放大</string>
+    <string name="theme_demo_managed_sample">布局里的文字</string>
+    <string name="theme_demo_dynamic">动态改色</string>
+    <string name="theme_demo_unmanaged">未管理文字</string>
+    <string name="theme_demo_unmanaged_line">new 出来的文字，需手动 Binding</string>
+    <string name="theme_demo_dialog">对话框</string>
+    <string name="theme_demo_popup">浮层</string>
+    <string name="theme_demo_dialog_message">这一层会随亮色 / 暗色变</string>
+    <string name="theme_demo_dialog_nested_message">按钮再弹出的这一层，也会变</string>
+    <string name="theme_demo_dialog_again">再弹一层</string>
+    <string name="theme_demo_popup_message">浮层里的文字，会随亮色 / 暗色变</string>
+    <string name="theme_demo_light">亮色</string>
+    <string name="theme_demo_dark">暗色</string>
+    <string name="theme_demo_custom">晴空蓝</string>
+    <string name="theme_demo_list_hint">点条目可追加 · 复用项跟肤（RV / ListView / GridView）</string>
+    <string name="theme_demo_list_title_format">项 %1$d</string>
+    <string name="theme_demo_list_subtitle">主色 / 次要色 / 卡片底会跟肤</string>
+    <string name="theme_demo_compound_hint">AppCompat CompoundButton / SwitchCompat · buttonTint / thumbTint 跟肤</string>
+    <string name="theme_demo_compound_drawable_title">Compound drawable 混用</string>
+    <string name="theme_demo_compound_drawable_hint">start / end 都跟肤（★ / ⚙）。点下方用 none() 清空 start，end 仍保留。</string>
+    <string name="theme_demo_compound_drawable_label">跟肤 ★ · 跟肤 ⚙</string>
+    <string name="theme_demo_compound_drawable_clear_start">用 DrawableRef.none() 清空 start</string>
+    <string name="theme_demo_checkbox">CheckBox</string>
+    <string name="theme_demo_radio_a">Radio A</string>
+    <string name="theme_demo_radio_b">Radio B</string>
+    <string name="theme_demo_toggle_on">开</string>
+    <string name="theme_demo_toggle_off">关</string>
+    <string name="theme_demo_switch">SwitchCompat</string>
+
+    <string name="main_entry_vp_stress_title">ViewPager 多tab</string>
+    <string name="vp_stress_title">ViewPager 多tab</string>
+    <string name="vp_stress_subtitle">上：多 Tab · 下：Banner peek · 切肤应刷已挂载/露出页</string>
+    <string name="vp_stress_section_tabs">多 Tab</string>
+    <string name="vp_stress_section_banner">Banner（左右 peek）</string>
+    <string name="vp_stress_tab_format">Tab %1$d</string>
+    <string name="vp_stress_page_format">第 %1$d 页</string>
+    <string name="vp_banner_page_format">Banner %1$d</string>
+
+    <string name="main_entry_vp2_stress_title">ViewPager2 多tab</string>
+    <string name="vp2_stress_title">ViewPager2 多tab</string>
+    <string name="vp2_stress_subtitle">上：多 Tab · 下：Banner peek · 切肤应刷可见/露出页</string>
+    <string name="vp2_stress_section_tabs">多 Tab</string>
+    <string name="vp2_stress_section_banner">Banner（左右 peek）</string>
+    <string name="vp2_stress_tab_format">Tab %1$d</string>
+    <string name="vp2_stress_page_format">第 %1$d 页</string>
+</resources>

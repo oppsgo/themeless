@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="skin_page_bg">#FF1C1917</color>
+    <color name="skin_panel_bg">#FF292524</color>
+    <color name="skin_card_bg">#FF44403C</color>
+    <color name="skin_text_primary">#FFFAFAF9</color>
+    <color name="skin_text_secondary">#FFA8A29E</color>
+    <color name="skin_accent">#FFFBBF24</color>
+    <color name="skin_divider">#FF57534E</color>
+    <color name="skin_button_bg">#FFFBBF24</color>
+    <color name="skin_button_text">#FF1C1917</color>
+</resources>

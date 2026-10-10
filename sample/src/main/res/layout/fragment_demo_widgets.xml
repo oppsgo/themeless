@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/demoWidgetsRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/skin_page_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/demoWidgetsContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/theme_demo_attr_ref_title"
+            android:textColor="?attr/color_theme"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="?attr/color_theme"
+            android:padding="10dp"
+            android:text="@string/theme_demo_attr_ref_hint"
+            android:textColor="?attr/color_theme_secondary"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_demo_original"
+                    android:textColor="@color/skin_text_secondary"
+                    android:textSize="11sp" />
+
+                <ImageView
+                    android:id="@+id/themeOriginalIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="@string/theme_demo_original"
+                    android:src="@drawable/mail_star_fill" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_demo_resized"
+                    android:textColor="@color/skin_text_secondary"
+                    android:textSize="11sp" />
+
+                <ImageView
+                    android:id="@+id/themeSizedIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="@string/theme_demo_resized"
+                    android:scaleType="fitXY" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/themeCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:checked="true"
+            android:text="@string/theme_demo_checkbox"
+            android:textColor="@color/skin_text_primary"
+            app:buttonTint="@color/skin_accent" />
+
+        <RadioGroup
+            android:id="@+id/themeRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/themeRadioA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/theme_demo_radio_a"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/themeRadioB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_demo_radio_b"
+                android:textColor="@color/skin_text_primary"
+                app:buttonTint="@color/skin_accent" />
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatToggleButton
+            android:id="@+id/themeToggle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/theme_demo_toggle_bg"
+            android:backgroundTint="@null"
+            android:checked="true"
+            android:textColor="@color/theme_demo_toggle_text"
+            android:textOff="@string/theme_demo_toggle_off"
+            android:textOn="@string/theme_demo_toggle_on"
+            app:backgroundTint="@null" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/themeSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:checked="true"
+            android:text="@string/theme_demo_switch"
+            android:textColor="@color/skin_text_primary"
+            app:thumbTint="@color/skin_accent"
+            app:trackTint="@color/skin_divider" />
+
+        <Button
+            android:id="@+id/btnThemeDynamic"
+            style="@style/Widget.Themeless.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/skin_button_bg"
+            android:backgroundTint="@null"
+            android:text="@string/theme_demo_dynamic"
+            android:textColor="@color/skin_button_text"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnThemeUnmanaged"
+            style="@style/Widget.Themeless.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@color/skin_button_bg"
+            android:backgroundTint="@null"
+            android:text="@string/theme_demo_unmanaged"
+            android:textColor="@color/skin_button_text"
+            app:backgroundTint="@null" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/theme_demo_compound_drawable_title"
+            android:textColor="@color/skin_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/theme_demo_compound_drawable_hint"
+            android:textColor="@color/skin_text_secondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/themeCompoundMixed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:text="@string/theme_demo_compound_drawable_label"
+            android:textColor="@color/skin_text_primary"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnThemeCompoundClearStart"
+            style="@style/Widget.Themeless.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@color/skin_button_bg"
+            android:backgroundTint="@null"
+            android:text="@string/theme_demo_compound_drawable_clear_start"
+            android:textColor="@color/skin_button_text"
+            app:backgroundTint="@null" />
+
+        <LinearLayout
+            android:id="@+id/themeExtraRows"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>
