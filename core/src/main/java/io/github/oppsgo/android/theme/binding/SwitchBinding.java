@@ -1,9 +1,12 @@
-package io.github.oppsgo.android.theme.androidx.binding;
+package io.github.oppsgo.android.theme.binding;
+
+import android.annotation.SuppressLint;
+import android.os.Build;
+import android.widget.Switch;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.resource.ColorRef;
@@ -12,43 +15,30 @@ import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
 
 /**
- * {@link SwitchCompat}：在 {@link AppCompatCompoundButtonThemeBinding} 之上跟踪
- * thumb / track 及其 tint，并把布局里的 {@code app:thumbTint} / {@code app:trackTint}
- * 归一到平台同名属性。
- * <p>
- * 注意 SwitchCompat 继承自 {@code CompoundButton}，不是系统 {@code Switch}，
- * 所以不复用 {@code SwitchThemeBinding}。
+ * 系统 {@link Switch}：在 CompoundButton 之上跟踪 thumb / track 及其 tint。
+ * {@code SwitchCompat} 请放在 AppCompat 适配模块。
  */
-public class SwitchCompatThemeBinding extends AppCompatCompoundButtonThemeBinding {
+// thumbTint（API 21）/ trackTint（API 23）attr ID 在低版本上查询落空，写回另有 SDK 守卫。
+@SuppressLint("InlinedApi")
+public class SwitchBinding extends CompoundButtonBinding {
 
     public static final int ATTR_THUMB = android.R.attr.thumb;
     public static final int ATTR_TRACK = android.R.attr.track;
     public static final int ATTR_THUMB_TINT = android.R.attr.thumbTint;
     public static final int ATTR_TRACK_TINT = android.R.attr.trackTint;
 
-    /** {@code app:thumbTint} → 平台 {@code android:thumbTint}。 */
-    public static final int ATTR_THUMB_TINT_COMPAT = androidx.appcompat.R.attr.thumbTint;
-    /** {@code app:trackTint} → 平台 {@code android:trackTint}。 */
-    public static final int ATTR_TRACK_TINT_COMPAT = androidx.appcompat.R.attr.trackTint;
-
-    public SwitchCompatThemeBinding(@NonNull SwitchCompat view) {
+    public SwitchBinding(@NonNull Switch view) {
         super(view);
-        bindRaw(ATTR_THUMB, DrawableRef::of, (resolver, ref) -> applyThumb(resolver, ref));
-        bindRaw(ATTR_TRACK, DrawableRef::of, (resolver, ref) -> applyTrack(resolver, ref));
-        bindRaw(ATTR_THUMB_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyThumbTint(resolver, ref));
-        bindRaw(ATTR_TRACK_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyTrackTint(resolver, ref));
-        alias(ATTR_THUMB_TINT_COMPAT, ATTR_THUMB_TINT);
-        alias(ATTR_TRACK_TINT_COMPAT, ATTR_TRACK_TINT);
+        bindRaw(ATTR_THUMB, DrawableRef::of, this::applyThumb);
+        bindRaw(ATTR_TRACK, DrawableRef::of, this::applyTrack);
+        bindRaw(ATTR_THUMB_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyThumbTint);
+        bindRaw(ATTR_TRACK_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyTrackTint);
     }
 
     @NonNull
     @Override
-    public SwitchCompat getView() {
-        return (SwitchCompat) view;
+    public Switch getView() {
+        return (Switch) view;
     }
 
     public void setThumb(@NonNull DrawableRef thumb) {
@@ -76,8 +66,7 @@ public class SwitchCompatThemeBinding extends AppCompatCompoundButtonThemeBindin
     }
 
     public void setThumbTint(@ColorRes int tint) {
-        setAttrResource(ATTR_THUMB_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_THUMB_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
     }
 
     public void setTrackTint(@NonNull ColorRef tint) {
@@ -89,8 +78,7 @@ public class SwitchCompatThemeBinding extends AppCompatCompoundButtonThemeBindin
     }
 
     public void setTrackTint(@ColorRes int tint) {
-        setAttrResource(ATTR_TRACK_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_TRACK_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
     }
 
     private void applyThumb(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
@@ -106,10 +94,12 @@ public class SwitchCompatThemeBinding extends AppCompatCompoundButtonThemeBindin
     }
 
     private void applyThumbTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
         getView().setThumbTintList(resolveTint(resolver, ref));
     }
 
     private void applyTrackTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
         getView().setTrackTintList(resolveTint(resolver, ref));
     }
 }

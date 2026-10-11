@@ -16,15 +16,15 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
 /**
  * {@link CompoundButton} 绑定：在 TextView 之上跟踪 {@code button} / {@code buttonTint}。
  * 覆盖 CheckBox、RadioButton、ToggleButton 等；系统 {@link android.widget.Switch} 见
- * {@link SwitchThemeBinding}。
+ * {@link SwitchBinding}。
  */
-public class CompoundButtonThemeBinding extends TextViewThemeBinding {
+public class CompoundButtonBinding extends TextViewBinding {
 
     public static final int ATTR_BUTTON = android.R.attr.button;
     @SuppressLint("InlinedApi")
     public static final int ATTR_BUTTON_TINT = android.R.attr.buttonTint;
 
-    public CompoundButtonThemeBinding(@NonNull CompoundButton view) {
+    public CompoundButtonBinding(@NonNull CompoundButton view) {
         super(view);
         bindRaw(ATTR_BUTTON,
                 DrawableRef::of,

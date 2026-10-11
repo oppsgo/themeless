@@ -26,13 +26,13 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.ThemeBindingFactory;
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatCompoundButtonThemeBinding;
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatImageViewThemeBinding;
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewThemeBinding;
-import io.github.oppsgo.android.theme.androidx.binding.RecyclerViewThemeBinding;
-import io.github.oppsgo.android.theme.androidx.binding.SwitchCompatThemeBinding;
-import io.github.oppsgo.android.theme.androidx.binding.TabLayoutThemeBinding;
-import io.github.oppsgo.android.theme.androidx.binding.ViewPager2ThemeBinding;
+import io.github.oppsgo.android.theme.androidx.binding.AppCompatCompoundButtonBinding;
+import io.github.oppsgo.android.theme.androidx.binding.AppCompatImageViewBinding;
+import io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewBinding;
+import io.github.oppsgo.android.theme.androidx.binding.RecyclerViewBinding;
+import io.github.oppsgo.android.theme.androidx.binding.SwitchCompatBinding;
+import io.github.oppsgo.android.theme.androidx.binding.TabLayoutBinding;
+import io.github.oppsgo.android.theme.androidx.binding.ViewPager2Binding;
 
 /**
  * AppCompat / Material 组件的 Binding 登记入口。
@@ -55,32 +55,32 @@ public final class ThemeAndroidX {
     public static void registerAvailable() {
         ThemeBindingFactory registry = ThemeManager.get().registry();
 
-        // TextView 系：共用 AppCompatTextViewThemeBinding
+        // TextView 系：共用 AppCompatTextViewBinding
         tryRegister(() -> {
-            registry.register(AppCompatTextView.class, AppCompatTextViewThemeBinding::new);
-            registry.register(AppCompatButton.class, AppCompatTextViewThemeBinding::new);
-            registry.register(AppCompatEditText.class, AppCompatTextViewThemeBinding::new);
-            registry.register(AppCompatMultiAutoCompleteTextView.class, AppCompatTextViewThemeBinding::new);
+            registry.register(AppCompatTextView.class, AppCompatTextViewBinding::new);
+            registry.register(AppCompatButton.class, AppCompatTextViewBinding::new);
+            registry.register(AppCompatEditText.class, AppCompatTextViewBinding::new);
+            registry.register(AppCompatMultiAutoCompleteTextView.class, AppCompatTextViewBinding::new);
         });
 
         // ImageView 系
         tryRegister(() -> {
-            registry.register(AppCompatImageView.class, AppCompatImageViewThemeBinding::new);
-            registry.register(AppCompatImageButton.class, AppCompatImageViewThemeBinding::new);
+            registry.register(AppCompatImageView.class, AppCompatImageViewBinding::new);
+            registry.register(AppCompatImageButton.class, AppCompatImageViewBinding::new);
         });
 
         // CompoundButton 系（不含 SwitchCompat）
         tryRegister(() -> {
-            registry.register(AppCompatCheckBox.class, AppCompatCompoundButtonThemeBinding::new);
-            registry.register(AppCompatRadioButton.class, AppCompatCompoundButtonThemeBinding::new);
-            registry.register(AppCompatToggleButton.class, AppCompatCompoundButtonThemeBinding::new);
+            registry.register(AppCompatCheckBox.class, AppCompatCompoundButtonBinding::new);
+            registry.register(AppCompatRadioButton.class, AppCompatCompoundButtonBinding::new);
+            registry.register(AppCompatToggleButton.class, AppCompatCompoundButtonBinding::new);
         });
 
-        tryRegister(() -> registry.register(SwitchCompat.class, SwitchCompatThemeBinding::new));
-        tryRegister(() -> registry.register(RecyclerView.class, RecyclerViewThemeBinding::new));
-        tryRegister(() -> registry.register(ViewPager2.class, ViewPager2ThemeBinding::new));
+        tryRegister(() -> registry.register(SwitchCompat.class, SwitchCompatBinding::new));
+        tryRegister(() -> registry.register(RecyclerView.class, RecyclerViewBinding::new));
+        tryRegister(() -> registry.register(ViewPager2.class, ViewPager2Binding::new));
 
-        tryRegister(() -> registry.register(TabLayout.class, TabLayoutThemeBinding::new));
+        tryRegister(() -> registry.register(TabLayout.class, TabLayoutBinding::new));
     }
 
     private static void tryRegister(@NonNull Runnable register) {

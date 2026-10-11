@@ -15,15 +15,15 @@ import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
 
 /**
- * {@link AbsSeekBar}（SeekBar / RatingBar）：在 {@link ProgressBarThemeBinding} 之上跟踪 thumb / thumbTint。
+ * {@link AbsSeekBar}（SeekBar / RatingBar）：在 {@link ProgressBarBinding} 之上跟踪 thumb / thumbTint。
  */
-public class AbsSeekBarThemeBinding extends ProgressBarThemeBinding {
+public class AbsSeekBarBinding extends ProgressBarBinding {
 
     public static final int ATTR_THUMB = android.R.attr.thumb;
     @SuppressLint("InlinedApi")
     public static final int ATTR_THUMB_TINT = android.R.attr.thumbTint;
 
-    public AbsSeekBarThemeBinding(@NonNull AbsSeekBar view) {
+    public AbsSeekBarBinding(@NonNull AbsSeekBar view) {
         super(view);
         bindRaw(ATTR_THUMB, DrawableRef::of, this::applyThumb);
         bindRaw(ATTR_THUMB_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyThumbTint);

@@ -18,14 +18,14 @@ import io.github.oppsgo.android.theme.ThemeManager;
  * 是否启用由各 Binding 自己的 {@link IViewBinding#apply} 判断，
  * 上层只根据「有没有挂 Binding」决定传给谁。
  */
-public class ViewGroupThemeBinding extends ViewBinding {
+public class ViewGroupBinding extends ViewBinding {
 
     /**
      * 遍历的深度
      */
     private int depth = 1;
 
-    public ViewGroupThemeBinding(@NonNull ViewGroup view) {
+    public ViewGroupBinding(@NonNull ViewGroup view) {
         super(view);
     }
 

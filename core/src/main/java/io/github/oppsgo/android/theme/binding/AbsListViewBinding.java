@@ -21,7 +21,7 @@ import io.github.oppsgo.android.theme.ThemeManager;
  * {@link #setAutoRefresh(boolean)}（layout 变化时遍历当前子项，可覆盖 adapter 增删引起的重排）。
  * 多数情况在 Adapter {@code getView} 里自行刷即可，不必开自动补刷。
  */
-public class AbsListViewThemeBinding extends ViewGroupThemeBinding
+public class AbsListViewBinding extends ViewGroupBinding
         implements ViewGroup.OnHierarchyChangeListener, View.OnLayoutChangeListener {
 
     private final boolean hierarchy;
@@ -31,7 +31,7 @@ public class AbsListViewThemeBinding extends ViewGroupThemeBinding
 
     private boolean autoRefresh;
 
-    public AbsListViewThemeBinding(@NonNull AbsListView view) {
+    public AbsListViewBinding(@NonNull AbsListView view) {
         this(view, true);
     }
 
@@ -39,7 +39,7 @@ public class AbsListViewThemeBinding extends ViewGroupThemeBinding
      * @param hierarchy {@code true}（默认）时在挂载后占用并监听 hierarchy 变化；
      *                  {@code false} 不占用，由外部自行处理或配合 {@link #setAutoRefresh}。
      */
-    public AbsListViewThemeBinding(@NonNull AbsListView view, boolean hierarchy) {
+    public AbsListViewBinding(@NonNull AbsListView view, boolean hierarchy) {
         super(view);
         this.hierarchy = hierarchy;
     }
@@ -74,7 +74,7 @@ public class AbsListViewThemeBinding extends ViewGroupThemeBinding
      * 子项挂上时先回调外部，再补刷（外部可能要先做其它操作）。
      * 已挂载时立刻写入 View；未挂载时记下，等挂载时再装。
      */
-    public AbsListViewThemeBinding setOnHierarchyChangeListener(@Nullable ViewGroup.OnHierarchyChangeListener listener) {
+    public AbsListViewBinding setOnHierarchyChangeListener(@Nullable ViewGroup.OnHierarchyChangeListener listener) {
         this.onHierarchyChangeListener = listener;
         if (isAttachedToView()) {
             getView().setOnHierarchyChangeListener(this);
@@ -87,7 +87,7 @@ public class AbsListViewThemeBinding extends ViewGroupThemeBinding
      * 未占用 hierarchy listener、又希望自动补刷时再打开；否则优先在 Adapter {@code getView} 里自行刷。
      */
     @NonNull
-    public AbsListViewThemeBinding setAutoRefresh(boolean autoRefresh) {
+    public AbsListViewBinding setAutoRefresh(boolean autoRefresh) {
         if (this.autoRefresh == autoRefresh) {
             return this;
         }

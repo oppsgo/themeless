@@ -27,7 +27,7 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * compound drawable：与平台 API 一样整组写入四个方向，统一由 {@link #applySpecialAttrs} 刷；
  * {@link DrawableRef#none()} 表示该方向为空。尺寸沿用 {@code Drawable.setBounds}，没设过才用 intrinsic。
  */
-public class TextViewThemeBinding extends ViewBinding {
+public class TextViewBinding extends ViewBinding {
 
     public static final int ATTR_TEXT_COLOR = android.R.attr.textColor;
     public static final int ATTR_TEXT_COLOR_HINT = android.R.attr.textColorHint;
@@ -40,7 +40,7 @@ public class TextViewThemeBinding extends ViewBinding {
     public static final int ATTR_DRAWABLE_START = android.R.attr.drawableStart;
     public static final int ATTR_DRAWABLE_END = android.R.attr.drawableEnd;
 
-    public TextViewThemeBinding(@NonNull TextView view) {
+    public TextViewBinding(@NonNull TextView view) {
         super(view);
         bindRaw(ATTR_TEXT_COLOR,
                 resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),

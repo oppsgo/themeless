@@ -18,7 +18,7 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * 也可自行实现本接口（含代理包装），不必继承 {@link ViewBinding}。
  * <p>
  * 不带 View 泛型：具体 Binding 用协变 {@link #getView()} 暴露真实类型
- * （如 {@code SwitchThemeBinding#getView()} 返回 {@code Switch}），避免继承链把类型收窄。
+ * （如 {@code SwitchBinding#getView()} 返回 {@code Switch}），避免继承链把类型收窄。
  */
 public interface IViewBinding {
 

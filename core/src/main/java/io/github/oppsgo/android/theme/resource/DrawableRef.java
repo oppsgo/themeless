@@ -41,7 +41,7 @@ public class DrawableRef extends ResourceRef<Drawable> {
     }
 
     @NonNull
-    public static DrawableRef fromProvider(@NonNull ResourceProvider<Drawable> provider) {
+    public static DrawableRef of(@NonNull ResourceProvider<Drawable> provider) {
         return new DrawableRef(ID_NULL, provider);
     }
 

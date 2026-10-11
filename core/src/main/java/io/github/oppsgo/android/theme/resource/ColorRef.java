@@ -26,7 +26,7 @@ public class ColorRef extends ResourceRef<Integer> {
     }
 
     @NonNull
-    public static ColorRef fromProvider(@NonNull ResourceProvider<Integer> provider) {
+    public static ColorRef of(@NonNull ResourceProvider<Integer> provider) {
         return new ColorRef(ID_NULL, provider);
     }
 

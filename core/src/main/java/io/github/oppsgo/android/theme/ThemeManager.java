@@ -219,7 +219,7 @@ public class ThemeManager {
     /**
      * 取 View 上的 Binding：已挂载则复用，否则按注册表创建并挂到 tag 上。
      * 具体类型请用 {@link #of(View, Class)}，例如
-     * {@code ThemeManager.of(textView, TextViewThemeBinding.class).setTextColor(...)}。
+     * {@code ThemeManager.of(textView, TextViewBinding.class).setTextColor(...)}。
      */
     @NonNull
     public IViewBinding of(@NonNull View view) {

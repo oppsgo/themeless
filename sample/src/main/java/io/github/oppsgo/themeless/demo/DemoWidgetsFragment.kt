@@ -11,8 +11,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.github.oppsgo.android.theme.ThemeManager
-import io.github.oppsgo.android.theme.binding.ImageViewThemeBinding
-import io.github.oppsgo.android.theme.binding.TextViewThemeBinding
+import io.github.oppsgo.android.theme.binding.ImageViewBinding
+import io.github.oppsgo.android.theme.binding.TextViewBinding
 import io.github.oppsgo.android.theme.resource.ColorRef
 import io.github.oppsgo.android.theme.resource.DrawableRef
 import io.github.oppsgo.themeless.R
@@ -30,7 +30,7 @@ class DemoWidgetsFragment : Fragment() {
         view.bindBg(R.id.demoWidgetsRoot, R.color.skin_page_bg)
 
         val icon = view.findViewById<ImageView>(R.id.themeSizedIcon)
-        val binding = ThemeManager.get().of(icon, ImageViewThemeBinding::class.java)
+        val binding = ThemeManager.get().of(icon, ImageViewBinding::class.java)
         val size = (72 * resources.displayMetrics.density).toInt()
         binding.setImage(
             DrawableRef.of(R.drawable.mail_star_fill) { resolver ->
@@ -49,7 +49,7 @@ class DemoWidgetsFragment : Fragment() {
             // 默认：浅色字 + 按钮底；切换：强调色字 + 面板底（字色白↔强调色，变化明显）
             val text = if (useAlt) R.color.skin_accent else R.color.skin_button_text
             val bg = if (useAlt) R.color.skin_panel_bg else R.color.skin_button_bg
-            val textBinding = ThemeManager.get().of(dynamicBtn, TextViewThemeBinding::class.java)
+            val textBinding = ThemeManager.get().of(dynamicBtn, TextViewBinding::class.java)
             textBinding.setTextColor(text)
             textBinding.setBackground(bg)
         }
@@ -63,10 +63,10 @@ class DemoWidgetsFragment : Fragment() {
                 setPadding(0, pad, 0, 0)
             }
             rows.addView(created)
-            val createdBinding = ThemeManager.get().of(created, TextViewThemeBinding::class.java)
+            val createdBinding = ThemeManager.get().of(created, TextViewBinding::class.java)
             createdBinding.setTextColor(ColorRef.of(R.color.skin_accent))
             createdBinding.setBackground(
-                DrawableRef.fromProvider { resolver ->
+                DrawableRef.of { resolver ->
                     GradientDrawable().apply {
                         cornerRadius = 15F
                         orientation = GradientDrawable.Orientation.LEFT_RIGHT
@@ -87,7 +87,7 @@ class DemoWidgetsFragment : Fragment() {
         val compound = view.findViewById<TextView>(R.id.themeCompoundMixed)
         val endRef = DrawableRef.of(R.drawable.ic_settings)
 
-        val compoundBinding = ThemeManager.get().of(compound, TextViewThemeBinding::class.java)
+        val compoundBinding = ThemeManager.get().of(compound, TextViewBinding::class.java)
         compoundBinding.setTextColor(R.color.skin_text_primary)
         compoundBinding.setCompoundDrawablesRelativeWithIntrinsicBounds(
             DrawableRef.of(R.drawable.mail_star_fill),

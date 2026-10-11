@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
-import io.github.oppsgo.android.theme.binding.ViewGroupThemeBinding;
+import io.github.oppsgo.android.theme.binding.ViewGroupBinding;
 
 /**
  * {@link ViewPager2}：内部 RecyclerView 与 FragmentViewHolder 容器通常无 Binding，
@@ -13,7 +13,7 @@ import io.github.oppsgo.android.theme.binding.ViewGroupThemeBinding;
  * 路径：ViewPager2 → 内部 RecyclerView → FragmentViewHolder 容器 → Fragment 根，共 3 层。
  * 滑页时通过 {@link ViewPager2.OnPageChangeCallback} 补刷。
  */
-public class ViewPager2ThemeBinding extends ViewGroupThemeBinding {
+public class ViewPager2Binding extends ViewGroupBinding {
 
     /** ViewPager2 → 内部 RecyclerView → FragmentViewHolder 容器 → Fragment 根。 */
     static final int TRAVERSE_DEPTH = 3;
@@ -33,7 +33,7 @@ public class ViewPager2ThemeBinding extends ViewGroupThemeBinding {
                 }
             };
 
-    public ViewPager2ThemeBinding(@NonNull ViewPager2 view) {
+    public ViewPager2Binding(@NonNull ViewPager2 view) {
         super(view);
         setTraverseDepth(TRAVERSE_DEPTH);
     }

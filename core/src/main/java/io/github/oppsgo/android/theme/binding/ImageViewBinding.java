@@ -16,12 +16,12 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * {@link ImageView} 绑定，额外跟踪 src 和 tint。
  * src 的显示尺寸由调用方用 {@code Drawable.setBounds} 指定（空 bounds 用 intrinsic）。
  */
-public class ImageViewThemeBinding extends ViewBinding {
+public class ImageViewBinding extends ViewBinding {
 
     public static final int ATTR_SRC = android.R.attr.src;
     public static final int ATTR_TINT = android.R.attr.tint;
 
-    public ImageViewThemeBinding(@NonNull ImageView view) {
+    public ImageViewBinding(@NonNull ImageView view) {
         super(view);
         bindRaw(ATTR_SRC,
                 DrawableRef::of,

@@ -20,7 +20,7 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * 布局里的 {@code app:tabTextColor} / {@code app:tabSelectedTextColor} 统一收为
  * {@code setTabTextColors(int, int)}；其它 tint 走对应 ColorStateList setter。
  */
-public class TabLayoutThemeBinding extends ViewBinding {
+public class TabLayoutBinding extends ViewBinding {
 
     public static final int ATTR_TAB_TEXT_COLOR = com.google.android.material.R.attr.tabTextColor;
     public static final int ATTR_TAB_SELECTED_TEXT_COLOR = com.google.android.material.R.attr.tabSelectedTextColor;
@@ -28,7 +28,7 @@ public class TabLayoutThemeBinding extends ViewBinding {
     public static final int ATTR_TAB_RIPPLE_COLOR = com.google.android.material.R.attr.tabRippleColor;
     public static final int ATTR_TAB_ICON_TINT = com.google.android.material.R.attr.tabIconTint;
 
-    public TabLayoutThemeBinding(@NonNull TabLayout view) {
+    public TabLayoutBinding(@NonNull TabLayout view) {
         super(view);
         bindRaw(ATTR_TAB_INDICATOR_COLOR, ColorRef::of, this::applyIndicatorColor);
         bindSpecial(ATTR_TAB_TEXT_COLOR,

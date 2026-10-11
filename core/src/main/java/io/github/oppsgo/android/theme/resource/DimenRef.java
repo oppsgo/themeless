@@ -29,7 +29,7 @@ public class DimenRef extends ResourceRef<Integer> {
     }
 
     @NonNull
-    public static DimenRef fromProvider(@NonNull ResourceProvider<Integer> provider) {
+    public static DimenRef of(@NonNull ResourceProvider<Integer> provider) {
         return new DimenRef(ID_NULL, provider);
     }
 

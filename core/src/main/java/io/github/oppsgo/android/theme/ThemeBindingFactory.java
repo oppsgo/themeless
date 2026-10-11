@@ -15,15 +15,15 @@ import androidx.annotation.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.github.oppsgo.android.theme.binding.AbsListViewThemeBinding;
-import io.github.oppsgo.android.theme.binding.AbsSeekBarThemeBinding;
-import io.github.oppsgo.android.theme.binding.CompoundButtonThemeBinding;
-import io.github.oppsgo.android.theme.binding.ImageViewThemeBinding;
-import io.github.oppsgo.android.theme.binding.ProgressBarThemeBinding;
-import io.github.oppsgo.android.theme.binding.SwitchThemeBinding;
-import io.github.oppsgo.android.theme.binding.TextViewThemeBinding;
+import io.github.oppsgo.android.theme.binding.AbsListViewBinding;
+import io.github.oppsgo.android.theme.binding.AbsSeekBarBinding;
+import io.github.oppsgo.android.theme.binding.CompoundButtonBinding;
+import io.github.oppsgo.android.theme.binding.ImageViewBinding;
+import io.github.oppsgo.android.theme.binding.ProgressBarBinding;
+import io.github.oppsgo.android.theme.binding.SwitchBinding;
+import io.github.oppsgo.android.theme.binding.TextViewBinding;
 import io.github.oppsgo.android.theme.binding.ViewBinding;
-import io.github.oppsgo.android.theme.binding.ViewGroupThemeBinding;
+import io.github.oppsgo.android.theme.binding.ViewGroupBinding;
 import io.github.oppsgo.android.theme.core.R;
 
 /**
@@ -43,14 +43,14 @@ public final class ThemeBindingFactory {
 
     ThemeBindingFactory() {
         register(View.class, ViewBinding::new);
-        register(ViewGroup.class, ViewGroupThemeBinding::new);
-        register(TextView.class, TextViewThemeBinding::new);
-        register(ImageView.class, ImageViewThemeBinding::new);
-        register(CompoundButton.class, CompoundButtonThemeBinding::new);
-        register(Switch.class, SwitchThemeBinding::new);
-        register(ProgressBar.class, ProgressBarThemeBinding::new);
-        register(AbsSeekBar.class, AbsSeekBarThemeBinding::new);
-        register(AbsListView.class, AbsListViewThemeBinding::new);
+        register(ViewGroup.class, ViewGroupBinding::new);
+        register(TextView.class, TextViewBinding::new);
+        register(ImageView.class, ImageViewBinding::new);
+        register(CompoundButton.class, CompoundButtonBinding::new);
+        register(Switch.class, SwitchBinding::new);
+        register(ProgressBar.class, ProgressBarBinding::new);
+        register(AbsSeekBar.class, AbsSeekBarBinding::new);
+        register(AbsListView.class, AbsListViewBinding::new);
     }
 
     public <V extends View> void register(@NonNull Class<V> viewType, @NonNull Creator<V> creator) {

@@ -16,11 +16,11 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
 
 /**
  * {@link ProgressBar}：跟踪 progress / indeterminate drawable 及其 tint。
- * {@link android.widget.AbsSeekBar} 见 {@link AbsSeekBarThemeBinding}。
+ * {@link android.widget.AbsSeekBar} 见 {@link AbsSeekBarBinding}。
  */
 // 各 tint attr ID（API 21 引入）在低版本上查询落空，写回另有 SDK 守卫。
 @SuppressLint("InlinedApi")
-public class ProgressBarThemeBinding extends ViewBinding {
+public class ProgressBarBinding extends ViewBinding {
 
     public static final int ATTR_PROGRESS_DRAWABLE = android.R.attr.progressDrawable;
     public static final int ATTR_INDETERMINATE_DRAWABLE = android.R.attr.indeterminateDrawable;
@@ -29,7 +29,7 @@ public class ProgressBarThemeBinding extends ViewBinding {
     public static final int ATTR_PROGRESS_BACKGROUND_TINT = android.R.attr.progressBackgroundTint;
     public static final int ATTR_SECONDARY_PROGRESS_TINT = android.R.attr.secondaryProgressTint;
 
-    public ProgressBarThemeBinding(@NonNull ProgressBar view) {
+    public ProgressBarBinding(@NonNull ProgressBar view) {
         super(view);
         bindRaw(ATTR_PROGRESS_DRAWABLE, DrawableRef::of, this::applyProgressDrawable);
         bindRaw(ATTR_INDETERMINATE_DRAWABLE, DrawableRef::of, this::applyIndeterminateDrawable);

@@ -32,7 +32,7 @@ public class ColorStateListRef extends ResourceRef<ColorStateList> {
     }
 
     @NonNull
-    public static ColorStateListRef fromProvider(@NonNull ResourceProvider<ColorStateList> provider) {
+    public static ColorStateListRef of(@NonNull ResourceProvider<ColorStateList> provider) {
         return new ColorStateListRef(ID_NULL, provider);
     }
 
@@ -50,7 +50,7 @@ public class ColorStateListRef extends ResourceRef<ColorStateList> {
         if (states.length != colors.length) {
             throw new IllegalArgumentException("states.length (" + states.length + ") != colors.length (" + colors.length + ")");
         }
-        return fromProvider(resolver -> {
+        return of(resolver -> {
             int[] resolved = new int[colors.length];
             for (int i = 0; i < colors.length; i++) {
                 Integer c = colors[i].provide(resolver);

@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import io.github.oppsgo.android.theme.binding.ViewGroupThemeBinding;
+import io.github.oppsgo.android.theme.binding.ViewGroupBinding;
 
 /**
  * {@link RecyclerView}：item 复用后重新挂上时补刷，避免换肤后滑回来仍是旧色。
@@ -15,13 +15,13 @@ import io.github.oppsgo.android.theme.binding.ViewGroupThemeBinding;
  * 作为 ViewPager2 内部 RecyclerView 时，子 View 是 FragmentViewHolder 容器，
  * 需再下探一层到 Fragment 根。
  */
-public class RecyclerViewThemeBinding extends ViewGroupThemeBinding
+public class RecyclerViewBinding extends ViewGroupBinding
         implements RecyclerView.OnChildAttachStateChangeListener {
 
     /** 在 ViewPager2 内部时：RecyclerView → FragmentViewHolder 容器 → Fragment 根。 */
     static final int TRAVERSE_DEPTH_IN_VIEW_PAGER2 = 2;
 
-    public RecyclerViewThemeBinding(@NonNull RecyclerView view) {
+    public RecyclerViewBinding(@NonNull RecyclerView view) {
         super(view);
     }
 
