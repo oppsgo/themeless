@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 挂到一个 Activity 上的主题委托，对应 {@link androidx.appcompat.app.AppCompatDelegate} 的角色。
@@ -42,7 +43,7 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
     @Nullable
     ResourceResolver resolver;
 
-    volatile int modCount;
+    AtomicInteger modCount = new AtomicInteger(0);
 
     /**
      * 创建完 View 是否需要立即刷新。默认不需要，运行中换主题时需要。

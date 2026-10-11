@@ -1,5 +1,6 @@
 package io.github.oppsgo.android.theme.binding;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.widget.Switch;
 
@@ -17,6 +18,8 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * 系统 {@link Switch}：在 CompoundButton 之上跟踪 thumb / track 及其 tint。
  * {@code SwitchCompat} 请放在 AppCompat 适配模块。
  */
+// thumbTint（API 21）/ trackTint（API 23）attr ID 在低版本上查询落空，写回另有 SDK 守卫。
+@SuppressLint("InlinedApi")
 public class SwitchThemeBinding extends CompoundButtonThemeBinding {
 
     public static final int ATTR_THUMB = android.R.attr.thumb;
@@ -26,18 +29,10 @@ public class SwitchThemeBinding extends CompoundButtonThemeBinding {
 
     public SwitchThemeBinding(@NonNull Switch view) {
         super(view);
-        bindRaw(ATTR_THUMB,
-                DrawableRef::of,
-                (resolver, ref) -> applyThumb(resolver, ref));
-        bindRaw(ATTR_TRACK,
-                DrawableRef::of,
-                (resolver, ref) -> applyTrack(resolver, ref));
-        bindRaw(ATTR_THUMB_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyThumbTint(resolver, ref));
-        bindRaw(ATTR_TRACK_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyTrackTint(resolver, ref));
+        bindRaw(ATTR_THUMB, DrawableRef::of, this::applyThumb);
+        bindRaw(ATTR_TRACK, DrawableRef::of, this::applyTrack);
+        bindRaw(ATTR_THUMB_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyThumbTint);
+        bindRaw(ATTR_TRACK_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyTrackTint);
     }
 
     @NonNull
@@ -71,8 +66,7 @@ public class SwitchThemeBinding extends CompoundButtonThemeBinding {
     }
 
     public void setThumbTint(@ColorRes int tint) {
-        setAttrResource(ATTR_THUMB_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_THUMB_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
     }
 
     public void setTrackTint(@NonNull ColorRef tint) {
@@ -84,8 +78,7 @@ public class SwitchThemeBinding extends CompoundButtonThemeBinding {
     }
 
     public void setTrackTint(@ColorRes int tint) {
-        setAttrResource(ATTR_TRACK_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_TRACK_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
     }
 
     private void applyThumb(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

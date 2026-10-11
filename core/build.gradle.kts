@@ -6,7 +6,7 @@ plugins {
 android {
     namespace = "io.github.oppsgo.android.theme.core"
     defaultConfig {
-        minSdk = 19
+        minSdk = 16
     }
     testOptions {
         unitTests {

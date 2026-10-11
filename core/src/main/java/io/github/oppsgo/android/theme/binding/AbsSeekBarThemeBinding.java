@@ -1,5 +1,6 @@
 package io.github.oppsgo.android.theme.binding;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.widget.AbsSeekBar;
 
@@ -19,6 +20,7 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
 public class AbsSeekBarThemeBinding extends ProgressBarThemeBinding {
 
     public static final int ATTR_THUMB = android.R.attr.thumb;
+    @SuppressLint("InlinedApi")
     public static final int ATTR_THUMB_TINT = android.R.attr.thumbTint;
 
     public AbsSeekBarThemeBinding(@NonNull AbsSeekBar view) {

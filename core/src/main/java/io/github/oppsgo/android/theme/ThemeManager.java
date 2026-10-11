@@ -3,6 +3,7 @@ package io.github.oppsgo.android.theme;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver;
 
 /**
  * 主题入口，全局一个实例。
@@ -62,6 +65,34 @@ public class ThemeManager {
         layoutInflater.setFactory2(createDelegate(activity, viewFactory));
     }
 
+    public void installDayNight(@NonNull Activity activity) {
+        installDayNight(activity, null);
+    }
+
+    public void installDayNight(@NonNull Activity activity, boolean night) {
+        installDayNight(activity, null, night);
+    }
+
+    public void installDayNight(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory) {
+        boolean night = DayNightResourceResolver.isSystemNight(activity);
+        installDayNight(activity, viewFactory, night);
+    }
+
+
+    public void installDayNight(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory, boolean night) {
+        LayoutInflater layoutInflater = LayoutInflater.from(activity);
+        if (layoutInflater.getFactory2() instanceof ThemeDelegate) {
+            return;
+        }
+        if (layoutInflater.getFactory() != null) {
+            Log.e(TAG, "LayoutInflater already has a Factory. Call ThemeManager.install() before super.onCreate().");
+            return;
+        }
+        ThemeDelegate factory = createDelegate(activity, viewFactory);
+        factory.resolver = DayNightResourceResolver.of(activity, night);
+        layoutInflater.setFactory2(factory);
+    }
+
     @NonNull
     protected ThemeDelegate createDelegate(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory) {
         return new ThemeDelegate(activity, viewFactory);
@@ -71,12 +102,17 @@ public class ThemeManager {
      * 换一套资源实现，递增刷新代数，并立刻刷新该 Activity 的内容树。
      * 必须先 {@link #install}，否则这里直接返回。
      */
-    public void apply(@NonNull Context context, @NonNull ResourceResolver resolver) {
+    public void apply(Context context, @NonNull ResourceResolver resolver) {
         ThemeDelegate installed = findDelegate(context);
         if (installed == null) return;
         installed.resolver = resolver;
-        installed.modCount++;
+        installed.modCount.incrementAndGet();
         refresh(installed.activity);
+    }
+
+    public void applyDayNight(Context context, boolean night) {
+        if (context != null)
+            apply(context, DayNightResourceResolver.of(context, night));
     }
 
     @Nullable
@@ -90,7 +126,7 @@ public class ThemeManager {
      */
     public int getModCount(@Nullable Context context) {
         ThemeDelegate installed = findDelegate(context);
-        return installed == null ? MOD_COUNT_NONE : installed.modCount;
+        return installed == null ? MOD_COUNT_NONE : installed.modCount.get();
     }
 
     /**
@@ -118,7 +154,11 @@ public class ThemeManager {
         ThemeDelegate installed = findDelegate(context);
         if (installed == null) return;
         Activity activity = installed.activity;
-        if (activity.isFinishing() || activity.isDestroyed()) return;
+        // isDestroyed() 是 API 17；低版本只靠 isFinishing() 判断。
+        if (activity.isFinishing()
+                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed())) {
+            return;
+        }
         ResourceResolver resolver = installed.resolver;
         if (resolver == null) return;
         // 必须用 Activity 上记下的 resolver。Dialog / PopupWindow 的 Context
@@ -128,7 +168,11 @@ public class ThemeManager {
             applyRoot(resolver, content);
         }
         for (View root : installed.copyWindowRoots()) {
-            if (root.isAttachedToWindow()) {
+            // isAttachedToWindow() 是 API 19；低版本用 getWindowToken() != null 近似判断。
+            boolean attached = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                    ? root.isAttachedToWindow()
+                    : root.getWindowToken() != null;
+            if (attached) {
                 applyRoot(resolver, root);
             }
         }

@@ -1,8 +1,11 @@
 package io.github.oppsgo.android.theme.binding;
 
+import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
@@ -28,6 +31,7 @@ public class TextViewThemeBinding extends ViewBinding {
 
     public static final int ATTR_TEXT_COLOR = android.R.attr.textColor;
     public static final int ATTR_TEXT_COLOR_HINT = android.R.attr.textColorHint;
+    @SuppressLint("InlinedApi")
     public static final int ATTR_DRAWABLE_TINT = android.R.attr.drawableTint;
     public static final int ATTR_DRAWABLE_LEFT = android.R.attr.drawableLeft;
     public static final int ATTR_DRAWABLE_TOP = android.R.attr.drawableTop;
@@ -148,7 +152,7 @@ public class TextViewThemeBinding extends ViewBinding {
     }
 
     @Override
-    protected void applySpecialAttrs(@NonNull ResourceResolver resolver) {
+    protected void applySpecialAttrs(ResourceResolver resolver) {
         applyCompoundDrawables(resolver);
     }
 
@@ -156,8 +160,12 @@ public class TextViewThemeBinding extends ViewBinding {
         applyCompoundDrawables(currentResolver());
     }
 
-    /** 有任一方向的 {@link DrawableRef} 时整组写入；未跟踪的方向为 null。 */
-    private void applyCompoundDrawables(@NonNull ResourceResolver resolver) {
+    /**
+     * 有任一方向的 {@link DrawableRef} 时整组写入；未跟踪的方向为 null。
+     */
+    private void applyCompoundDrawables(ResourceResolver resolver) {
+        if (resolver == null) return;
+
         boolean relative = isDrawableTracked(ATTR_DRAWABLE_START) || isDrawableTracked(ATTR_DRAWABLE_END);
         boolean any = relative
                 || isDrawableTracked(ATTR_DRAWABLE_LEFT)
@@ -175,7 +183,13 @@ public class TextViewThemeBinding extends ViewBinding {
             keepBounds(top);
             keepBounds(end);
             keepBounds(bottom);
-            getView().setCompoundDrawablesRelative(start, top, end, bottom);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                getView().setCompoundDrawablesRelative(start, top, end, bottom);
+            } else {
+                getView().setCompoundDrawables(start, top, end, bottom);
+            }
+
         } else {
             Drawable left = resolveDrawable(resolver, ATTR_DRAWABLE_LEFT);
             Drawable right = resolveDrawable(resolver, ATTR_DRAWABLE_RIGHT);
@@ -210,7 +224,9 @@ public class TextViewThemeBinding extends ViewBinding {
         return resId == ResourceRef.ID_NULL ? DrawableRef.none() : DrawableRef.of(resId);
     }
 
-    /** 已经 {@link Drawable#setBounds} 的沿用；没设过的才用 intrinsic 尺寸。 */
+    /**
+     * 已经 {@link Drawable#setBounds} 的沿用；没设过的才用 intrinsic 尺寸。
+     */
     private static void keepBounds(@Nullable Drawable drawable) {
         if (drawable == null) return;
         Rect bounds = drawable.getBounds();

@@ -1,5 +1,6 @@
 package io.github.oppsgo.android.theme;
 
+import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -45,7 +46,7 @@ public interface IViewBinding {
     /**
      * 清掉该属性当前的值（登记保留）。没有登记过返回 {@code false}。
      */
-    boolean unbind(@AttrRes int attr);
+    void unbind(@AttrRes int attr);
 
     /**
      * 关闭后 {@link #apply} 不再改这个 View。
@@ -60,7 +61,14 @@ public interface IViewBinding {
      * 用给定的 {@link ResourceResolver} 把已绑定的资源刷到 View。
      * ViewGroup 会把同一套 resolver 传给已绑定的直接子 View。
      */
-    void apply(@NonNull ResourceResolver resolver);
+    void apply(ResourceResolver resolver);
+
+    /**
+     * 按需刷新：若当前 {@link ThemeManager#getModCount(Context)}与本 Binding 上次 apply 时记录的一致，
+     * 说明资源未变，直接跳过；否则用当前安装的 Resolver 刷一遍。
+     * 用于 View 重新挂载（如 RecyclerView 复用）时的补刷，避免每次都全量重写。
+     */
+    void refresh();
 
     /**
      * 把解析出的值写回 View。

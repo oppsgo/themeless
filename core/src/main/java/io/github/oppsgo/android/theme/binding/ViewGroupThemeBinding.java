@@ -43,12 +43,10 @@ public class ViewGroupThemeBinding extends ViewBinding {
         return (ViewGroup) view;
     }
 
-    /**
-     * 深度受限的传播：已绑子 View 直接刷；未绑的 ViewGroup 以 {@code depth - 1} 下探。
-     */
     @Override
-    protected void applyChildren(@NonNull ResourceResolver resolver) {
-        applyChildBindings(resolver, getTraverseDepth());
+    public void apply(@NonNull ResourceResolver resolver) {
+        super.apply(resolver);
+        if (isEnabled()) applyChildBindings(resolver, getTraverseDepth());
     }
 
     /**
@@ -89,19 +87,21 @@ public class ViewGroupThemeBinding extends ViewBinding {
     }
 
     /**
-     * 自身有 Binding 则刷自身；仅当自身没有 Binding 时，才对直接子节点里已挂 Binding 的做 {@link IViewBinding#apply}。
+     * 自身有 Binding 则刷自身；仅当自身没有 Binding 时，才对直接子节点里已挂 Binding 的做 {@link IViewBinding#refresh}。
      * 用当前安装的 Resolver；还没 {@link ThemeManager#apply(Context, ResourceResolver)} 时什么都不做。
+     * <p>
+     * 走 {@link IViewBinding#refresh()} 而非 {@link IViewBinding#apply(ResourceResolver)}：
+     * modCount 未变时跳过，避免 RecyclerView 复用等场景每次挂载都全量重写。
      */
     protected void refreshTargetBindings(@Nullable View target, int depth) {
         if (target == null || depth <= 0) return;
 
         ThemeManager manager = ThemeManager.get();
-        ResourceResolver resolver = manager.getResolver(getView().getContext());
-        if (resolver == null) return;
+        if (manager.getResolver(getView().getContext()) == null) return;
 
         IViewBinding self = manager.find(target);
         if (self != null && target != getView()) {
-            self.apply(resolver);
+            self.refresh();
             return;
         }
         if (!(target instanceof ViewGroup)) return;
@@ -112,7 +112,7 @@ public class ViewGroupThemeBinding extends ViewBinding {
             View child = group.getChildAt(i);
             IViewBinding binding = manager.find(child);
             if (binding != null) {
-                binding.apply(resolver);
+                binding.refresh();
             } else {
                 refreshTargetBindings(child, depth - 1);
             }

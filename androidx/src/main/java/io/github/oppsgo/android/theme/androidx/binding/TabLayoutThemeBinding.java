@@ -23,22 +23,18 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
 public class TabLayoutThemeBinding extends ViewBinding {
 
     public static final int ATTR_TAB_TEXT_COLOR = com.google.android.material.R.attr.tabTextColor;
-    public static final int ATTR_TAB_SELECTED_TEXT_COLOR =
-            com.google.android.material.R.attr.tabSelectedTextColor;
-    public static final int ATTR_TAB_INDICATOR_COLOR =
-            com.google.android.material.R.attr.tabIndicatorColor;
+    public static final int ATTR_TAB_SELECTED_TEXT_COLOR = com.google.android.material.R.attr.tabSelectedTextColor;
+    public static final int ATTR_TAB_INDICATOR_COLOR = com.google.android.material.R.attr.tabIndicatorColor;
     public static final int ATTR_TAB_RIPPLE_COLOR = com.google.android.material.R.attr.tabRippleColor;
     public static final int ATTR_TAB_ICON_TINT = com.google.android.material.R.attr.tabIconTint;
 
     public TabLayoutThemeBinding(@NonNull TabLayout view) {
         super(view);
+        bindRaw(ATTR_TAB_INDICATOR_COLOR, ColorRef::of, this::applyIndicatorColor);
         bindSpecial(ATTR_TAB_TEXT_COLOR,
                 resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
         bindSpecial(ATTR_TAB_SELECTED_TEXT_COLOR,
                 resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        bindRaw(ATTR_TAB_INDICATOR_COLOR,
-                ColorRef::of,
-                this::applyIndicatorColor);
         bindSpecial(ATTR_TAB_RIPPLE_COLOR,
                 resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
         bindSpecial(ATTR_TAB_ICON_TINT,
@@ -52,7 +48,7 @@ public class TabLayoutThemeBinding extends ViewBinding {
     }
 
     @Override
-    protected void applySpecialAttrs(@NonNull ResourceResolver resolver) {
+    protected void applySpecialAttrs( ResourceResolver resolver) {
         ResourceRef<?> normalRef = getAttrValue(ATTR_TAB_TEXT_COLOR);
         ResourceRef<?> selectedRef = getAttrValue(ATTR_TAB_SELECTED_TEXT_COLOR);
         if (normalRef != null || selectedRef != null) {
@@ -77,7 +73,8 @@ public class TabLayoutThemeBinding extends ViewBinding {
                 resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
         setAttrResource(ATTR_TAB_SELECTED_TEXT_COLOR, selectedColor,
                 resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        applySpecialAttrs(currentResolver());
+        ResourceResolver resolver = currentResolver();
+        applySpecialAttrs(resolver);
     }
 
     public void setTabIndicatorColor(@ColorRes int colorRes) {

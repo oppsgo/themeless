@@ -1,5 +1,6 @@
 package io.github.oppsgo.android.theme.binding;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.widget.ProgressBar;
 
@@ -17,6 +18,8 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * {@link ProgressBar}：跟踪 progress / indeterminate drawable 及其 tint。
  * {@link android.widget.AbsSeekBar} 见 {@link AbsSeekBarThemeBinding}。
  */
+// 各 tint attr ID（API 21 引入）在低版本上查询落空，写回另有 SDK 守卫。
+@SuppressLint("InlinedApi")
 public class ProgressBarThemeBinding extends ViewBinding {
 
     public static final int ATTR_PROGRESS_DRAWABLE = android.R.attr.progressDrawable;
@@ -28,24 +31,12 @@ public class ProgressBarThemeBinding extends ViewBinding {
 
     public ProgressBarThemeBinding(@NonNull ProgressBar view) {
         super(view);
-        bindRaw(ATTR_PROGRESS_DRAWABLE,
-                DrawableRef::of,
-                (resolver, ref) -> applyProgressDrawable(resolver, ref));
-        bindRaw(ATTR_INDETERMINATE_DRAWABLE,
-                DrawableRef::of,
-                (resolver, ref) -> applyIndeterminateDrawable(resolver, ref));
-        bindRaw(ATTR_PROGRESS_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyProgressTint(resolver, ref));
-        bindRaw(ATTR_INDETERMINATE_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyIndeterminateTint(resolver, ref));
-        bindRaw(ATTR_PROGRESS_BACKGROUND_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyProgressBackgroundTint(resolver, ref));
-        bindRaw(ATTR_SECONDARY_PROGRESS_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applySecondaryProgressTint(resolver, ref));
+        bindRaw(ATTR_PROGRESS_DRAWABLE, DrawableRef::of, this::applyProgressDrawable);
+        bindRaw(ATTR_INDETERMINATE_DRAWABLE, DrawableRef::of, this::applyIndeterminateDrawable);
+        bindRaw(ATTR_PROGRESS_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyProgressTint);
+        bindRaw(ATTR_INDETERMINATE_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyIndeterminateTint);
+        bindRaw(ATTR_PROGRESS_BACKGROUND_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyProgressBackgroundTint);
+        bindRaw(ATTR_SECONDARY_PROGRESS_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applySecondaryProgressTint);
     }
 
     @NonNull
@@ -92,8 +83,7 @@ public class ProgressBarThemeBinding extends ViewBinding {
     }
 
     public void setIndeterminateTint(@ColorRes int tint) {
-        setAttrResource(ATTR_INDETERMINATE_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_INDETERMINATE_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
     }
 
     public void setProgressBackgroundTint(@NonNull ColorRef tint) {

@@ -1,5 +1,7 @@
 package io.github.oppsgo.android.theme.binding;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -7,7 +9,6 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.AnyRes;
 import androidx.annotation.AttrRes;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 
 import io.github.oppsgo.android.theme.IViewBinding;
 import io.github.oppsgo.android.theme.ResourceResolver;
+import io.github.oppsgo.android.theme.ThemeBindingFactory;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.core.R;
 import io.github.oppsgo.android.theme.resolver.ContextResourceResolver;
@@ -41,6 +43,7 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
 public class ViewBinding implements IViewBinding {
 
     public static final int ATTR_BACKGROUND = android.R.attr.background;
+    @SuppressLint("InlinedApi")
     public static final int ATTR_BACKGROUND_TINT = android.R.attr.backgroundTint;
 
     /**
@@ -50,6 +53,12 @@ public class ViewBinding implements IViewBinding {
 
     @NonNull
     protected final View view;
+
+    /**
+     * 上次 {@link #apply(ResourceResolver)} 时记录的 {@link ThemeManager#getModCount(Context)}。
+     * {@link #refresh()} 据此判断是否需要重刷：一致则跳过。
+     */
+    protected volatile int modCount = ThemeManager.MOD_COUNT_NONE;
 
     /**
      * 同一张表同时服务有 attr 和没有 attr 的 View；key 是归一化（别名展开）后的 attr。
@@ -244,13 +253,12 @@ public class ViewBinding implements IViewBinding {
     }
 
     @Override
-    public boolean unbind(@AttrRes int attr) {
+    public void unbind(@AttrRes int attr) {
         ViewAttr target = findAttr(attr);
         if (target == null) {
-            return false;
+            return;
         }
         target.ref = null;
-        return true;
     }
 
     @Override
@@ -264,38 +272,33 @@ public class ViewBinding implements IViewBinding {
     }
 
     @Override
-    public void apply(@NonNull ResourceResolver resolver) {
-        if (!enabled) return;
+    public void apply(ResourceResolver resolver) {
+        if (!isEnabled() || resolver == null) return;
+        int current = ThemeManager.get().getModCount(view.getContext());
+        if (current != ThemeManager.MOD_COUNT_NONE) {
+            this.modCount = current;
+        }
         applySpecialAttrs(resolver);
         for (int i = 0; i < attrs.size(); i++) {
             applyAttr(resolver, attrs.valueAt(i));
         }
-        applyChildren(resolver);
+    }
+
+    @Override
+    public void refresh() {
+        int current = ThemeManager.get().getModCount(view.getContext());
+        if (current != ThemeManager.MOD_COUNT_NONE && modCount == current) {
+            return;
+        }
+        ResourceResolver resolver = ThemeManager.get().getResolver(view.getContext());
+        apply(resolver);
     }
 
     /**
      * 特殊属性（{@link #bindSpecial}）的统一刷入口；默认没有。
      */
-    protected void applySpecialAttrs(@NonNull ResourceResolver resolver) {
+    protected void applySpecialAttrs(ResourceResolver resolver) {
     }
-
-    /**
-     * 把同一套 resolver 传给已绑定的直接子 View；更深的子树由子 View 自己的 apply 继续传。
-     * 开放成 protected 是给需要控制下探深度的容器 Binding（ViewGroupThemeBinding）。
-     */
-    protected void applyChildren(@NonNull ResourceResolver resolver) {
-        if (!(view instanceof ViewGroup)) return;
-        ViewGroup group = (ViewGroup) view;
-        ThemeManager manager = ThemeManager.get();
-        int childCount = group.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            IViewBinding child = manager.find(group.getChildAt(i));
-            if (child != null) {
-                child.apply(resolver);
-            }
-        }
-    }
-
     // ---- 手动 setXxx 的内部通路 ----
 
     /**
@@ -336,8 +339,9 @@ public class ViewBinding implements IViewBinding {
     }
 
     private void applyNow(@NonNull ViewAttr attr) {
-        if (!enabled || attr.ref == null) return;
-        applyAttr(currentResolver(), attr);
+        ResourceResolver resolver;
+        if (!enabled || attr.ref == null || (resolver = currentResolver()) == null) return;
+        applyAttr(resolver, attr);
     }
 
     private void applyAttr(@NonNull ResourceResolver resolver, @NonNull ViewAttr attr) {
@@ -373,7 +377,8 @@ public class ViewBinding implements IViewBinding {
      */
     @NonNull
     protected final Resources resourceTable() {
-        return currentResolver().getResources();
+        ResourceResolver resolver = currentResolver();
+        return resolver == null ? getView().getResources() : resolver.getResources();
     }
 
     /**

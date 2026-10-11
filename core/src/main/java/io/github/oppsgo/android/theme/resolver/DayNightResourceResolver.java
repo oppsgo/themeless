@@ -1,7 +1,10 @@
 package io.github.oppsgo.android.theme.resolver;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -74,10 +77,34 @@ public class DayNightResourceResolver extends ContextResourceResolver {
     /**
      * 造一个只按 {@code config.uiMode} 解析 values / values-night 的 Context。
      * 从 Application 创建，不修改 Activity，也不对 Activity 调 {@code createConfigurationContext}。
+     * <p>
+     * {@code createConfigurationContext} 是 API 17；API 16 回退到共用 {@code AssetManager}
+     * 的 {@code new Resources(...)}（在 {@code ResourcesImpl} 之前的旧实现上会按传入 config 选 night）。
      */
     @NonNull
     public static Context wrapContext(@NonNull Context context, @NonNull Configuration config) {
-        return context.getApplicationContext().createConfigurationContext(config);
+        Context app = context.getApplicationContext();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return app.createConfigurationContext(config);
+        }
+        return wrapContextApi16(app, config);
+    }
+
+    /**
+     * API 16 专用回退：共用 {@code AssetManager} 的 {@code new Resources(...)}
+     * 在 {@code ResourcesImpl} 之前的旧实现上会按传入 config 选 night。
+     */
+    @NonNull
+    @SuppressWarnings("deprecation")
+    private static Context wrapContextApi16(@NonNull Context app, @NonNull Configuration config) {
+        Resources base = app.getResources();
+        final Resources themed = new Resources(base.getAssets(), base.getDisplayMetrics(), config);
+        return new ContextWrapper(app) {
+            @Override
+            public Resources getResources() {
+                return themed;
+            }
+        };
     }
 
     public DayNightResourceResolver(@NonNull Context context) {

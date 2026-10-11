@@ -1,5 +1,6 @@
 package io.github.oppsgo.android.theme.binding;
 
+import android.annotation.SuppressLint;
 import android.widget.CompoundButton;
 
 import androidx.annotation.ColorRes;
@@ -20,13 +21,14 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
 public class CompoundButtonThemeBinding extends TextViewThemeBinding {
 
     public static final int ATTR_BUTTON = android.R.attr.button;
+    @SuppressLint("InlinedApi")
     public static final int ATTR_BUTTON_TINT = android.R.attr.buttonTint;
 
     public CompoundButtonThemeBinding(@NonNull CompoundButton view) {
         super(view);
         bindRaw(ATTR_BUTTON,
                 DrawableRef::of,
-                (resolver, ref) -> applyButtonDrawable(resolver, ref));
+                this::applyButtonDrawable);
         bindRaw(ATTR_BUTTON_TINT,
                 resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
                 (resolver, ref) ->
