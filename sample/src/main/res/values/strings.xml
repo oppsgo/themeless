@@ -70,6 +70,8 @@
     <string name="theme_demo_light">亮色</string>
     <string name="theme_demo_dark">暗色</string>
     <string name="theme_demo_custom">晴空蓝</string>
+    <string name="theme_demo_skin_pack">紫晶包</string>
+    <string name="theme_demo_skin_pack_missing">皮肤包加载失败，请查看日志</string>
     <string name="theme_demo_list_hint">点条目可追加 · 复用项跟肤（RV / ListView / GridView）</string>
     <string name="theme_demo_list_title_format">项 %1$d</string>
     <string name="theme_demo_list_subtitle">主色 / 次要色 / 卡片底会跟肤</string>
@@ -78,6 +80,11 @@
     <string name="theme_demo_compound_drawable_hint">start / end 都跟肤（★ / ⚙）。点下方用 none() 清空 start，end 仍保留。</string>
     <string name="theme_demo_compound_drawable_label">跟肤 ★ · 跟肤 ⚙</string>
     <string name="theme_demo_compound_drawable_clear_start">用 DrawableRef.none() 清空 start</string>
+    <string name="theme_demo_spannable_title">Spannable 混色跟肤</string>
+    <string name="theme_demo_spannable_hint">一段文字多种颜色取自皮肤，单个 textColor 表达不了；靠 OnViewThemeUpdateListener 在每次主题刷新后整段重建。</string>
+    <string name="theme_demo_spannable_normal">主题色会跟着换，</string>
+    <string name="theme_demo_spannable_accent">这一段是强调色</string>
+    <string name="theme_demo_spannable_secondary">，这一段是次要色。</string>
     <string name="theme_demo_checkbox">CheckBox</string>
     <string name="theme_demo_radio_a">Radio A</string>
     <string name="theme_demo_radio_b">Radio B</string>

@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import java.util.Arrays;
 
 import io.github.oppsgo.android.theme.IViewBinding;
+import io.github.oppsgo.android.theme.OnViewThemeUpdateListener;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeBindingFactory;
 import io.github.oppsgo.android.theme.ThemeManager;
@@ -71,6 +72,9 @@ public class ViewBinding implements IViewBinding {
     private final SparseIntArray aliases = new SparseIntArray();
 
     private boolean enabled = true;
+
+    @Nullable
+    private OnViewThemeUpdateListener updateListener;
 
     /**
      * 临时 Binding 在未 apply 时复用的 Context Resolver，避免每次 setXxx 都 new。
@@ -272,12 +276,30 @@ public class ViewBinding implements IViewBinding {
     }
 
     @Override
-    public void apply(ResourceResolver resolver) {
+    public void setOnViewThemeUpdateListener(@Nullable OnViewThemeUpdateListener listener) {
+        this.updateListener = listener;
+    }
+
+    @Override
+    public final void apply(ResourceResolver resolver) {
         if (!isEnabled() || resolver == null) return;
         int current = ThemeManager.get().getModCount(view.getContext());
         if (current != ThemeManager.MOD_COUNT_NONE) {
             this.modCount = current;
         }
+        applyContent(resolver);
+        OnViewThemeUpdateListener listener = updateListener;
+        if (listener != null) {
+            listener.onThemeUpdate(view, resolver);
+        }
+    }
+
+    /**
+     * 本次刷新的全部写入内容：默认写自身已绑定属性，子类可追加（如 ViewGroup 级联子 View）。
+     * {@link #apply} 是 final，扩展只能重写本方法，
+     * {@link OnViewThemeUpdateListener} 因此固定在全部写入完成后触发，子类无法改变时机。
+     */
+    protected void applyContent(@NonNull ResourceResolver resolver) {
         applySpecialAttrs(resolver);
         for (int i = 0; i < attrs.size(); i++) {
             applyAttr(resolver, attrs.valueAt(i));

@@ -3,6 +3,7 @@ package io.github.oppsgo.android.theme;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -23,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 实现 {@link LayoutInflater.Factory2} 是为了挂进 LayoutInflater，方便按 Context 找回这一份。
  */
 public class ThemeDelegate implements LayoutInflater.Factory2 {
+
+    private static final String TAG = "ThemeDelegate";
 
     private static final String[] VIEW_PREFIXES = {
             "android.widget.",
@@ -55,6 +59,11 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
      * 只记这一层，子树由 ViewGroup Binding 往下传。按对象身份去重。
      */
     private final Set<View> windowRoots = Collections.newSetFromMap(new IdentityHashMap<>());
+
+    /**
+     * 整页刷新完成的回调。写少读多，回调里可增删。
+     */
+    private final CopyOnWriteArrayList<OnThemeUpdateListener> themeUpdateListeners = new CopyOnWriteArrayList<>();
 
     private final View.OnAttachStateChangeListener windowWatcher = new View.OnAttachStateChangeListener() {
         @Override
@@ -117,6 +126,27 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
     @NonNull
     List<View> copyWindowRoots() {
         return new ArrayList<>(windowRoots);
+    }
+
+    void addOnThemeUpdateListener(@NonNull OnThemeUpdateListener listener) {
+        themeUpdateListeners.addIfAbsent(listener);
+    }
+
+    void removeOnThemeUpdateListener(@NonNull OnThemeUpdateListener listener) {
+        themeUpdateListeners.remove(listener);
+    }
+
+    /**
+     * 整页刷完后逐个回调。一个回调抛异常不影响其余回调和刷新流程。
+     */
+    void notifyThemeUpdate(@NonNull ResourceResolver resolver) {
+        for (OnThemeUpdateListener listener : themeUpdateListeners) {
+            try {
+                listener.onThemeUpdate(activity, resolver);
+            } catch (Throwable t) {
+                Log.e(TAG, "OnThemeUpdateListener threw.", t);
+            }
+        }
     }
 
     /**

@@ -145,6 +145,25 @@ public class ThemeManager {
     }
 
     /**
+     * 登记整页主题刷新完成的回调，可登记多个（按对象去重）。
+     * 回调挂在该页的 {@link ThemeDelegate} 上，随页面回收；
+     * 只有回调实例还要跨页复用时才需要 {@link #removeOnThemeUpdateListener}。
+     */
+    public void addOnThemeUpdateListener(Context context, @NonNull OnThemeUpdateListener listener) {
+        ThemeDelegate installed = findDelegate(context);
+        if (installed != null) {
+            installed.addOnThemeUpdateListener(listener);
+        }
+    }
+
+    public void removeOnThemeUpdateListener(@NonNull Context context, @NonNull OnThemeUpdateListener listener) {
+        ThemeDelegate installed = findDelegate(context);
+        if (installed != null) {
+            installed.removeOnThemeUpdateListener(listener);
+        }
+    }
+
+    /**
      * 刷该 Activity 的内容树，以及已登记的 Dialog / PopupWindow 内容根。
      * <p>
      * Activity 最多落到 {@code setContentView} 那一层（{@code android.R.id.content} 的直接子 View）；
@@ -176,6 +195,7 @@ public class ThemeManager {
                 applyRoot(resolver, root);
             }
         }
+        installed.notifyThemeUpdate(resolver);
     }
 
     /**

@@ -64,6 +64,12 @@ public interface IViewBinding {
     void apply(ResourceResolver resolver);
 
     /**
+     * 设置该 View 每次主题刷新完成的回调；{@code null} 清除。
+     * 单回调：后设覆盖先设，需要多方接收时在回调里自行转发。
+     */
+    void setOnViewThemeUpdateListener(@Nullable OnViewThemeUpdateListener listener);
+
+    /**
      * 按需刷新：若当前 {@link ThemeManager#getModCount(Context)}与本 Binding 上次 apply 时记录的一致，
      * 说明资源未变，直接跳过；否则用当前安装的 Resolver 刷一遍。
      * 用于 View 重新挂载（如 RecyclerView 复用）时的补刷，避免每次都全量重写。

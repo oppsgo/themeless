@@ -2,6 +2,9 @@ package io.github.oppsgo.themeless.demo
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import io.github.oppsgo.android.theme.ResourceResolver
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.binding.ImageViewBinding
 import io.github.oppsgo.android.theme.binding.TextViewBinding
@@ -41,6 +45,7 @@ class DemoWidgetsFragment : Fragment() {
         )
 
         bindCompoundDrawableDemo(view)
+        bindSpannableDemo(view)
 
         val dynamicBtn = view.findViewById<Button>(R.id.btnThemeDynamic)
         var useAlt = false
@@ -102,6 +107,46 @@ class DemoWidgetsFragment : Fragment() {
                 null,
                 endRef,
                 null,
+            )
+        }
+    }
+
+    /**
+     * 一段文字里混了多种皮肤色，单个 textColor 表达不了：
+     * 普通段走 [TextViewBinding.setTextColor] 跟肤，强调段 / 次要段的 span
+     * 靠 [io.github.oppsgo.android.theme.OnViewThemeUpdateListener] 在每次主题刷新后整段重建。
+     * 回调语义是「一次刷新发生了」，set 时不立即触发，所以首屏要自己建一次。
+     */
+    private fun bindSpannableDemo(view: View) {
+        val spannable = view.findViewById<TextView>(R.id.themeSpannable)
+        val spannableBinding = ThemeManager.get().of(spannable, TextViewBinding::class.java)
+        spannableBinding.setTextColor(R.color.skin_text_primary)
+        spannableBinding.setOnViewThemeUpdateListener { _, resolver ->
+            spannable.text = buildThemedSpannable(resolver)
+        }
+        // 首屏内容归调用方建：已安装 resolver 就直接建，否则等首次刷新触发的回调
+        ThemeManager.get().getResolver(requireContext())?.let { resolver ->
+            spannable.text = buildThemedSpannable(resolver)
+        }
+    }
+
+    private fun buildThemedSpannable(resolver: ResourceResolver): CharSequence {
+        val normal = getString(R.string.theme_demo_spannable_normal)
+        val accent = getString(R.string.theme_demo_spannable_accent)
+        val secondary = getString(R.string.theme_demo_spannable_secondary)
+        val full = normal + accent + secondary
+        return SpannableString(full).apply {
+            setSpan(
+                ForegroundColorSpan(resolver.getColor(R.color.skin_accent)),
+                normal.length,
+                normal.length + accent.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+            setSpan(
+                ForegroundColorSpan(resolver.getColor(R.color.skin_text_secondary)),
+                normal.length + accent.length,
+                full.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
             )
         }
     }

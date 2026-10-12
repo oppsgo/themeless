@@ -43,10 +43,14 @@ public class ViewGroupBinding extends ViewBinding {
         return (ViewGroup) view;
     }
 
+    /**
+     * 先写自身属性，再按深度级联子 View；回调由 final 的 {@link #apply} 在级联完成后触发。
+     * 被 {@link #setEnabled(boolean)} 关闭时 {@link #apply} 直接早退，不会走到这里。
+     */
     @Override
-    public void apply(@NonNull ResourceResolver resolver) {
-        super.apply(resolver);
-        if (isEnabled()) applyChildBindings(resolver, getTraverseDepth());
+    protected void applyContent(@NonNull ResourceResolver resolver) {
+        super.applyContent(resolver);
+        applyChildBindings(resolver, getTraverseDepth());
     }
 
     /**
