@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 「紫晶」皮肤：与宿主 skin_* 同名同类型，按名覆盖 -->
+    <color name="skin_page_bg">#FFF5F3FF</color>
+    <color name="skin_panel_bg">#FFFFFFFF</color>
+    <color name="skin_card_bg">#FFFAF8FF</color>
+    <color name="skin_text_primary">#FF2E1065</color>
+    <color name="skin_text_secondary">#FF6B7280</color>
+    <color name="skin_accent">#FF7C3AED</color>
+    <color name="skin_divider">#FFDDD6FE</color>
+    <color name="skin_button_bg">#FF7C3AED</color>
+    <color name="skin_button_text">#FFFFFFFF</color>
+</resources>

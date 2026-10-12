@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 纯资源皮肤包：无代码、无入口，仅供宿主按包名解析资源 -->
+    <application android:hasCode="false" />
+</manifest>

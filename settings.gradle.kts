@@ -47,6 +47,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":sample")
 include(":core")
 include(":androidx")
+include(":skin:purple")
 
 println(
     """

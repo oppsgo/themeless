@@ -10,6 +10,7 @@ package io.github.oppsgo.android.theme {
     method public boolean isEnabled();
     method public void refresh();
     method public void setEnabled(boolean);
+    method public void setOnViewThemeUpdateListener(io.github.oppsgo.android.theme.OnViewThemeUpdateListener?);
     method public void unbind(@AttrRes int);
   }
 
@@ -19,6 +20,14 @@ package io.github.oppsgo.android.theme {
 
   @java.lang.FunctionalInterface public static interface IViewBinding.ResourceFactory<T> {
     method public io.github.oppsgo.android.theme.resource.ResourceRef<? extends T>? create(int);
+  }
+
+  public interface OnThemeUpdateListener {
+    method public void onThemeUpdate(android.app.Activity, io.github.oppsgo.android.theme.ResourceResolver);
+  }
+
+  public interface OnViewThemeUpdateListener {
+    method public void onThemeUpdate(android.view.View, io.github.oppsgo.android.theme.ResourceResolver);
   }
 
   public interface ResourceResolver {
@@ -57,6 +66,7 @@ package io.github.oppsgo.android.theme {
 
   public class ThemeManager {
     ctor protected ThemeManager();
+    method public void addOnThemeUpdateListener(android.content.Context!, io.github.oppsgo.android.theme.OnThemeUpdateListener);
     method public void apply(android.content.Context!, io.github.oppsgo.android.theme.ResourceResolver);
     method public void applyDayNight(android.content.Context!, boolean);
     method protected io.github.oppsgo.android.theme.ThemeDelegate createDelegate(android.app.Activity, android.view.LayoutInflater.Factory2?);
@@ -77,6 +87,7 @@ package io.github.oppsgo.android.theme {
     method public void refresh(android.content.Context?);
     method public void refresh(android.view.View?);
     method public io.github.oppsgo.android.theme.ThemeBindingFactory registry();
+    method public void removeOnThemeUpdateListener(android.content.Context, io.github.oppsgo.android.theme.OnThemeUpdateListener);
     method public void setRefreshOnInflate(android.content.Context, boolean);
     method public boolean shouldRefreshOnInflate(android.content.Context?);
     field public static final int MOD_COUNT_NONE = -1; // 0xffffffff
@@ -217,7 +228,8 @@ package io.github.oppsgo.android.theme.binding {
   public class ViewBinding implements io.github.oppsgo.android.theme.IViewBinding {
     ctor public ViewBinding(android.view.View);
     method public final void alias(@AttrRes int, @AttrRes int);
-    method public void apply(io.github.oppsgo.android.theme.ResourceResolver!);
+    method public final void apply(io.github.oppsgo.android.theme.ResourceResolver!);
+    method protected void applyContent(io.github.oppsgo.android.theme.ResourceResolver);
     method protected void applySpecialAttrs(io.github.oppsgo.android.theme.ResourceResolver!);
     method public void bind(android.util.AttributeSet?);
     method public final <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
@@ -244,6 +256,7 @@ package io.github.oppsgo.android.theme.binding {
     method public void setBackgroundTint(io.github.oppsgo.android.theme.resource.ColorRef);
     method public void setBackgroundTint(io.github.oppsgo.android.theme.resource.ColorStateListRef);
     method public void setEnabled(boolean);
+    method public void setOnViewThemeUpdateListener(io.github.oppsgo.android.theme.OnViewThemeUpdateListener?);
     method public void unbind(@AttrRes int);
     field public static final int ATTR_BACKGROUND = 16842964; // 0x10100d4
     field public static final int ATTR_BACKGROUND_TINT = 16843883; // 0x101046b
@@ -297,6 +310,18 @@ package io.github.oppsgo.android.theme.resolver {
     method public static android.content.Context wrapContext(android.content.Context, android.content.res.Configuration);
   }
 
+  public class SkinPackageResolver implements io.github.oppsgo.android.theme.ResourceResolver {
+    ctor public SkinPackageResolver(io.github.oppsgo.android.theme.ResourceResolver, android.content.res.Resources, String);
+    method public int getColor(@ColorRes int);
+    method public android.content.res.ColorStateList? getColorStateList(@ColorRes int);
+    method public float getDimension(@DimenRes int);
+    method public int getDimensionPixelSize(@DimenRes int);
+    method public android.graphics.drawable.Drawable? getDrawable(@AnyRes int);
+    method public android.content.res.Resources! getResources();
+    method public io.github.oppsgo.android.theme.ThemeViewCompat getViewCompat();
+    method public static io.github.oppsgo.android.theme.resolver.SkinPackageResolver? load(io.github.oppsgo.android.theme.ResourceResolver, android.content.Context, String);
+  }
+
   public class ThemeViewCompatImpl implements io.github.oppsgo.android.theme.ThemeViewCompat {
     ctor public ThemeViewCompatImpl();
     method public void setBackgroundTintList(android.view.View, android.content.res.ColorStateList?);
@@ -311,27 +336,27 @@ package io.github.oppsgo.android.theme.resource {
 
   public class ColorRef extends io.github.oppsgo.android.theme.resource.ResourceRef<java.lang.Integer!> {
     ctor protected ColorRef(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>?);
-    method public static io.github.oppsgo.android.theme.resource.ColorRef fromProvider(io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
     method @ColorInt protected Integer! load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
     method public static io.github.oppsgo.android.theme.resource.ColorRef of(@ColorRes int);
     method public static io.github.oppsgo.android.theme.resource.ColorRef of(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
+    method public static io.github.oppsgo.android.theme.resource.ColorRef of(io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
   }
 
   public class ColorStateListRef extends io.github.oppsgo.android.theme.resource.ResourceRef<android.content.res.ColorStateList!> {
     ctor protected ColorStateListRef(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<android.content.res.ColorStateList!>?);
     method @java.lang.SafeVarargs public static io.github.oppsgo.android.theme.resource.ColorStateListRef fromColors(int[]![], io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>!...);
-    method public static io.github.oppsgo.android.theme.resource.ColorStateListRef fromProvider(io.github.oppsgo.android.theme.resource.ResourceProvider<android.content.res.ColorStateList!>);
     method protected android.content.res.ColorStateList? load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
     method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(@ColorRes int);
     method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<android.content.res.ColorStateList!>);
+    method public static io.github.oppsgo.android.theme.resource.ColorStateListRef of(io.github.oppsgo.android.theme.resource.ResourceProvider<android.content.res.ColorStateList!>);
   }
 
   public class DimenRef extends io.github.oppsgo.android.theme.resource.ResourceRef<java.lang.Integer!> {
     ctor protected DimenRef(@DimenRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>?);
-    method public static io.github.oppsgo.android.theme.resource.DimenRef fromProvider(io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
     method @Px protected Integer! load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
     method public static io.github.oppsgo.android.theme.resource.DimenRef of(@DimenRes int);
     method public static io.github.oppsgo.android.theme.resource.DimenRef of(@DimenRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
+    method public static io.github.oppsgo.android.theme.resource.DimenRef of(io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
   }
 
   public class DrawableRef extends io.github.oppsgo.android.theme.resource.ResourceRef<android.graphics.drawable.Drawable!> {
@@ -341,6 +366,8 @@ package io.github.oppsgo.android.theme.resource {
     method public static io.github.oppsgo.android.theme.resource.DrawableRef of(@DrawableRes int);
     method public static io.github.oppsgo.android.theme.resource.DrawableRef of(@DrawableRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<android.graphics.drawable.Drawable!>);
     method public static io.github.oppsgo.android.theme.resource.DrawableRef of(io.github.oppsgo.android.theme.resource.ResourceProvider<android.graphics.drawable.Drawable!>);
+    method public static io.github.oppsgo.android.theme.resource.DrawableRef tinted(@DrawableRes int, @ColorRes int);
+    method public static io.github.oppsgo.android.theme.resource.DrawableRef tinted(@DrawableRes int, @ColorRes int, android.graphics.PorterDuff.Mode);
   }
 
   @java.lang.FunctionalInterface public interface ResourceProvider<T> {

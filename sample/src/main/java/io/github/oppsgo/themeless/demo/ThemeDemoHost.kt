@@ -30,6 +30,9 @@ internal fun FragmentActivity.setupThemeDemoHost(@StringRes subtitle: Int) {
     findViewById<Button>(R.id.btnCustom).setOnClickListener {
         applyCustomTheme()
     }
+    findViewById<Button>(R.id.btnSkinPack).setOnClickListener {
+        applySkinPackageTheme()
+    }
 
     val pager = findViewById<ViewPager2>(R.id.demoPager)
     pager.adapter = ThemeDemoPagerAdapter(this)

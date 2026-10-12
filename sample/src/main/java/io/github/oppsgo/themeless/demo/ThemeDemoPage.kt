@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -17,9 +18,11 @@ import androidx.fragment.app.FragmentManager
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver
 import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver
+import io.github.oppsgo.android.theme.resolver.SkinPackageResolver
 import io.github.oppsgo.themeless.R
 import io.github.oppsgo.themeless.demo.ThemeDemoPage.dayNightMode
 import io.github.oppsgo.themeless.demo.ThemeDemoPage.demoThemeMode
+import java.io.File
 
 private const val DEMO_TAG = "ThemelessDemo"
 
@@ -164,6 +167,48 @@ internal fun Activity.applyThemeResources(persist: Boolean = false) {
     Log.i(DEMO_TAG, "apply follow night=$night page=0x${page.hex()} persist=$persist")
     ThemeManager.get().apply(this, resolver)
     paintDemoSurfaces("follow", page, panel, card)
+}
+
+/** 皮肤包 APK 在 assets 里的路径；运行时复制到 filesDir 再按路径加载。 */
+private const val SKIN_PACK_ASSET = "skin/themeless-skin-purple.apk"
+
+/**
+ * 外部皮肤包（紫晶）：APK 与宿主同名的 skin_* 资源整体覆盖，含嵌套引用的 selector / vector。
+ * 与顶部其它按钮一样只做临时预览，不写 prefs。
+ */
+internal fun Activity.applySkinPackageTheme() {
+    if (syncActivityNightMode(dark = false)) return
+    val resolver = extractSkinPackage()?.let { apk ->
+        SkinPackageResolver.load(AppCompatDayNightResourceResolver.light(this), this, apk.absolutePath)
+    }
+    if (resolver == null) {
+        Log.w(DEMO_TAG, "skin package load failed: $SKIN_PACK_ASSET")
+        Toast.makeText(this, R.string.theme_demo_skin_pack_missing, Toast.LENGTH_SHORT).show()
+        return
+    }
+    val page = resolver.getColor(R.color.skin_page_bg)
+    val panel = resolver.getColor(R.color.skin_panel_bg)
+    val card = resolver.getColor(R.color.skin_card_bg)
+    Log.i(DEMO_TAG, "apply skin-pack page=0x${page.hex()} panel=0x${panel.hex()}")
+    ThemeManager.get().apply(this, resolver)
+    paintDemoSurfaces("skin-pack", page, panel, card)
+}
+
+/** 把 assets 里的皮肤包复制到可读路径；已存在则复用，失败返回 null。 */
+private fun Context.extractSkinPackage(): File? {
+    val out = File(filesDir, SKIN_PACK_ASSET)
+    if (out.exists()) return out
+    return try {
+        out.parentFile?.mkdirs()
+        assets.open(SKIN_PACK_ASSET).use { input ->
+            out.outputStream().use { output -> input.copyTo(output) }
+        }
+        out
+    } catch (e: Exception) {
+        Log.w(DEMO_TAG, "extract skin package failed", e)
+        out.delete()
+        null
+    }
 }
 
 internal fun Activity.applyHostNightMode(mode: Int) {
