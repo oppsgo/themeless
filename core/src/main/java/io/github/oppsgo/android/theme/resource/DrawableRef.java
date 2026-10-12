@@ -1,8 +1,12 @@
 package io.github.oppsgo.android.theme.resource;
 
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 
 import androidx.annotation.AnyRes;
+import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +47,43 @@ public class DrawableRef extends ResourceRef<Drawable> {
     @NonNull
     public static DrawableRef of(@NonNull ResourceProvider<Drawable> provider) {
         return new DrawableRef(ID_NULL, provider);
+    }
+
+    /**
+     * 一行式着色：把 {@code drawableId} 染成 {@code colorId} 的颜色，混合模式默认 {@link PorterDuff.Mode#SRC_IN}。
+     */
+    @NonNull
+    public static DrawableRef tinted(@DrawableRes int drawableId, @ColorRes int colorId) {
+        return tinted(drawableId, colorId, PorterDuff.Mode.SRC_IN);
+    }
+
+    /**
+     * 带混合模式的着色。API 21+ 用 {@link Drawable#setTintList} / {@link Drawable#setTintMode}；
+     * 16–20 回退 {@code setColorFilter(color, mode)}。
+     */
+    @NonNull
+    public static DrawableRef tinted(@DrawableRes int drawableId, @ColorRes int colorId, @NonNull PorterDuff.Mode mode) {
+        return new DrawableRef(drawableId, resolver -> {
+            Drawable drawable = resolver.getDrawable(drawableId);
+            if (drawable == null) {
+                return null;
+            }
+            int color = resolver.getColor(colorId);
+            // 资源 Drawable 共享 constant state，先 mutate 再染，避免污染其它使用者。
+            Drawable target = drawable.mutate();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                target.setTintList(ColorStateList.valueOf(color));
+                target.setTintMode(mode);
+            } else {
+                setColorFilterCompat(target, color, mode);
+            }
+            return target;
+        });
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void setColorFilterCompat(@NonNull Drawable drawable, int color, @NonNull PorterDuff.Mode mode) {
+        drawable.setColorFilter(color, mode);
     }
 
     @Nullable
