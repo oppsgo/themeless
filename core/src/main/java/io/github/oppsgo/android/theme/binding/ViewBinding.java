@@ -374,7 +374,11 @@ public class ViewBinding implements IViewBinding {
 
     @NonNull
     private static <T> AttributeApplier providerSetter(@NonNull IViewBinding.AttrSetter<T> setter) {
-        return (resolver, ref) -> setter.set(provideValue(resolver, ref));
+        return (resolver, ref) -> {
+            T value = provideValue(resolver, ref);
+            if (value != null)
+                setter.set(value);
+        };
     }
 
     @Nullable
