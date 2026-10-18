@@ -8,15 +8,12 @@ import io.github.oppsgo.android.theme.binding.ViewGroupBinding;
 
 /**
  * {@link ViewPager2}：内部 RecyclerView 与 FragmentViewHolder 容器通常无 Binding，
- * Fragment 根在 page 容器下一层。
+ * 下探时自动穿透，到 Fragment 根的 Binding 为止。
  * <p>
- * 路径：ViewPager2 → 内部 RecyclerView → FragmentViewHolder 容器 → Fragment 根，共 3 层。
+ * 路径：ViewPager2 → 内部 RecyclerView → FragmentViewHolder 容器 → Fragment 根。
  * 滑页时通过 {@link ViewPager2.OnPageChangeCallback} 补刷。
  */
 public class ViewPager2Binding extends ViewGroupBinding {
-
-    /** ViewPager2 → 内部 RecyclerView → FragmentViewHolder 容器 → Fragment 根。 */
-    static final int TRAVERSE_DEPTH = 3;
 
     private final ViewPager2.OnPageChangeCallback pageChangeCallback =
             new ViewPager2.OnPageChangeCallback() {
@@ -35,7 +32,6 @@ public class ViewPager2Binding extends ViewGroupBinding {
 
     public ViewPager2Binding(@NonNull ViewPager2 view) {
         super(view);
-        setTraverseDepth(TRAVERSE_DEPTH);
     }
 
     @NonNull
