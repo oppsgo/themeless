@@ -43,13 +43,13 @@ public class TextViewBinding extends ViewBinding {
     public TextViewBinding(@NonNull TextView view) {
         super(view);
         bindRaw(ATTR_TEXT_COLOR,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
+                colorFactory(),
                 (resolver, ref) -> applyTextColor(false, resolver, ref));
         bindRaw(ATTR_TEXT_COLOR_HINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
+                colorFactory(),
                 (resolver, ref) -> applyTextColor(true, resolver, ref));
         bindRaw(ATTR_DRAWABLE_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
+                colorFactory(),
                 (resolver, ref) ->
                         resolver.getViewCompat().setCompoundDrawableTintList(getView(), resolveTint(resolver, ref)));
         bindSpecial(ATTR_DRAWABLE_LEFT, DrawableRef::of);
@@ -76,7 +76,7 @@ public class TextViewBinding extends ViewBinding {
 
     public void setTextColor(@ColorRes int colorRes) {
         setAttrResource(ATTR_TEXT_COLOR, colorRes,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     public void setHintTextColor(@NonNull ColorRef color) {
@@ -89,7 +89,7 @@ public class TextViewBinding extends ViewBinding {
 
     public void setHintTextColor(@ColorRes int colorRes) {
         setAttrResource(ATTR_TEXT_COLOR_HINT, colorRes,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     public void setCompoundDrawableTint(@NonNull ColorRef tint) {
@@ -102,7 +102,7 @@ public class TextViewBinding extends ViewBinding {
 
     public void setCompoundDrawableTint(@ColorRes int tint) {
         setAttrResource(ATTR_DRAWABLE_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     public void setCompoundDrawablesWithIntrinsicBounds(

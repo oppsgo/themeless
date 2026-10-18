@@ -1,6 +1,5 @@
 package io.github.oppsgo.android.theme.binding;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 

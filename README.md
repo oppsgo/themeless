@@ -3,7 +3,7 @@
 [![](https://jitpack.io/v/oppsgo/themeless.svg)](https://jitpack.io/#oppsgo/themeless)
 
 Android **运行时换肤**库：在不重建 Activity 的前提下，按资源 id 绑定并刷新 View。  
-支持普通 `Activity` / `FragmentActivity`，以及 AndroidX / Support 的 AppCompat。
+支持普通 `Activity` / `FragmentActivity`，以及 AndroidX 的 AppCompat / Material。
 
 文档暂时只提供中文。
 
@@ -12,27 +12,26 @@ Android **运行时换肤**库：在不重建 Activity 的前提下，按资源 
 - LayoutInflater.Factory2 拦截 inflate，自动记录布局里的资源引用
 - `ThemeManager.apply` 切换 `ResourceResolver` 并刷新内容树与已登记浮层
 - 日夜 Resolver 基于 Application `createConfigurationContext`，不改写 Activity Configuration
-- AndroidX / Support 双栈扩展（Binding + Resolver + Kotlin 扩展）
+- AndroidX 栈扩展（Binding + Resolver）：AppCompat / RecyclerView / ViewPager2 / Material 组件
+- 外部皮肤包 `SkinPackageResolver`：宿主资源按「同名同类型」映射到皮肤 APK
+- Activity / View 两级主题更新回调（`OnThemeUpdateListener` / `OnViewThemeUpdateListener`）
 - Demo：底部 Tab（首页 / 演示 / 设置），皮肤状态本地持久化
 
 ## 模块
 
 | 模块 | 说明 |
 |------|------|
-| `:core` | 核心：`ThemeManager`、`ResourceBinding`、日夜与 Context 系 `ResourceResolver` |
-| `:core-ktx` | `:core` 的 Kotlin 扩展（`installTheme` / `edit` / `theme` 等） |
-| `:androidx` | AndroidX AppCompat / RecyclerView 扩展绑定与 Resolver |
-| `:androidx-ktx` | `:androidx` 的 Kotlin 扩展 |
-| `:appcompat` | 旧版 Support Library（`appcompat-v7` / `recyclerview-v7` / `support-v4` ViewPager）扩展 |
-| `:appcompat-ktx` | `:appcompat` 的 Kotlin 扩展 |
-| `:app` | Demo（不发布） |
+| `:core` | 核心：`ThemeManager`、`IViewBinding` / `*Binding`、日夜 / Context / 皮肤包 `ResourceResolver` |
+| `:androidx` | AndroidX AppCompat / RecyclerView / ViewPager2 / Material 扩展绑定与 Resolver |
+| `:sample` | Demo（不发布） |
+| `:skin:purple` | 外部皮肤包示例「紫晶」（不发布，只带 res 的 APK） |
 
 接入约定：
 
-- 已迁 AndroidX → `:core` + `:androidx`（可选 ktx）
-- 仍用 Support → `:core` + `:appcompat`（可选 ktx）
-- ktx / 扩展模块对底层使用 `implementation`，**不会**把 `core` 等传递给消费者，请显式声明
-- **不要**在同一个 APK 里同时引入 `:androidx` 与 `:appcompat`（及其 ktx）
+- 依赖组合：`:core` + `:androidx`
+- `:androidx` 以 `api` 暴露 `:core`；仍建议在应用里显式声明 `:core`
+- `:androidx` 对 AppCompat / RecyclerView / ViewPager2 / Material 均为 `compileOnly`，控件 Binding 走 `ThemeAndroidX.registerAvailable()` 按 classpath 尽力登记，缺依赖自动跳过
+- `ThemeAndroidX.registerAvailable()` 须在**首次 inflate 前**调用
 
 ## 安装（JitPack）
 
@@ -40,7 +39,7 @@ Android **运行时换肤**库：在不重建 Activity 的前提下，按资源 
 
 ```kotlin
 group = "com.github.oppsgo"
-version = "0.2.1-SNAPSHOT"
+version = "1.0.5"
 ```
 
 库模块经 convention 插件配置 `maven-publish`；`jitpack.yml` 使用 **JDK 17**。
@@ -50,30 +49,25 @@ version = "0.2.1-SNAPSHOT"
 | 用途 | 用什么 |
 |------|--------|
 | 写入 POM / 本地工程版本 | 根工程 `version`（SemVer，预发布用大写 `-SNAPSHOT`） |
-| 别人依赖的版本 | **Git 标签**（如 `0.2.1`）、**`main-SNAPSHOT`**、或 commit |
+| 别人依赖的版本 | **Git 标签**（如 `1.0.5`）、**`main-SNAPSHOT`**、或 commit |
 | JitPack 徽章 | 来自 GitHub **Release / tag**，不会自动扫仓库 `version` |
 
 仓库若没有 Git tag，JitPack 只会按 commit 构建，版本会变成类似 `-8381f653c8-1`。
 
 发布正式版：
 
-1. 把根 `build.gradle.kts` 的 `version` 改成 `0.2.1`（去掉 `-SNAPSHOT`）
-2. 打同名 tag：`git tag 0.2.1 && git push --tags`
+1. 把根 `build.gradle.kts` 的 `version` 改成正式 SemVer（去掉 `-SNAPSHOT`）
+2. 打同名 tag：`git tag 1.0.5 && git push --tags`
 3. 在 [JitPack](https://jitpack.io/#oppsgo/themeless) 选该 tag 触发构建
 
 ```kotlin
 maven { url = uri("https://jitpack.io") }
 
-implementation("com.github.oppsgo.themeless:core:0.2.1")
-implementation("com.github.oppsgo.themeless:core-ktx:0.2.1")       // 可选
-implementation("com.github.oppsgo.themeless:androidx:0.2.1")
-implementation("com.github.oppsgo.themeless:androidx-ktx:0.2.1")   // 可选
-// Support：
-// implementation("com.github.oppsgo.themeless:appcompat:0.2.1")
-// implementation("com.github.oppsgo.themeless:appcompat-ktx:0.2.1")
+implementation("com.github.oppsgo.themeless:core:1.0.5")
+implementation("com.github.oppsgo.themeless:androidx:1.0.5")
 ```
 
-开发期未打 tag 时用分支快照（如 `main-SNAPSHOT`）。不要指望别人写 `0.2.1-SNAPSHOT` 就能从 JitPack 拉到（除非打了同名 tag）。
+开发期未打 tag 时用分支快照（如 `main-SNAPSHOT`）。不要指望别人写 `0.x.y-SNAPSHOT` 就能从 JitPack 拉到（除非打了同名 tag）。
 
 ## 快速接入
 
@@ -82,9 +76,7 @@ implementation("com.github.oppsgo.themeless:androidx-ktx:0.2.1")   // 可选
 ```kotlin
 dependencies {
     implementation(project(":core"))
-    implementation(project(":androidx")) // 或 :appcompat
-    // implementation(project(":core-ktx"))
-    // implementation(project(":androidx-ktx"))
+    implementation(project(":androidx"))
 }
 ```
 
@@ -102,20 +94,20 @@ AppCompat（把 `AppCompatDelegate` 当作 Factory2 传入；控件 Binding 须�
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
-    ThemeManager.get().install(this, delegate as? LayoutInflater.Factory2)
-    // 按 classpath 尽力登记（无 ViewPager2 / Material TabLayout 等依赖则自动跳过）
     ThemeAndroidX.registerAvailable()
+    ThemeManager.get().install(this, delegate as? LayoutInflater.Factory2)
     super.onCreate(savedInstanceState)
 }
 ```
 
-Support 栈用 `ThemeAppCompat.registerAvailable()`。
-
+`installDayNight(activity)` 系列重载会在 install 的同时装上日夜 Resolver。  
 若 LayoutInflater 上已有其它 Factory，install 会失败（打 error 日志）且不覆盖。
 
 ### 3. 应用主题
 
 ```kotlin
+ThemeManager.get().applyDayNight(this, night = true)
+// 或自行构造 Resolver：
 ThemeManager.get().apply(this, DayNightResourceResolver.followSystem(this))
 ThemeManager.get().apply(this, DayNightResourceResolver.light(this))
 ThemeManager.get().apply(this, DayNightResourceResolver.night(this))
@@ -123,7 +115,7 @@ ThemeManager.get().apply(this, DayNightResourceResolver.night(this))
 ```
 
 布局使用资源引用（如 `@color/skin_page_bg`），inflate 时记入 Binding；`apply` 后按当前 Resolver 写回。  
-某个 View 不参与换肤时可写 `app:themeAttributeEnable="false"`（对应 `ResourceBinding.setEnable`；仍会记录属性，只是 `apply` / `refresh` 不写回）。
+某个 View 不参与换肤时可写 `app:themeViewAttrEnable="false"`（对应 `IViewBinding.setEnabled(false)`；仍会记录属性，只是 `apply` / `refresh` 不写回）。
 
 ## 日夜与 Force Dark
 
@@ -132,7 +124,7 @@ ThemeManager.get().apply(this, DayNightResourceResolver.night(this))
 - 强制亮色 → `values/`；强制暗色 → `values-night/`；跟随 → 按 Application uiMode
 - **不会**改写 Activity 自身 Configuration
 
-自定义固定色板（如 Demo「晴空蓝」）用亮色底座 Resolver + id 重映射（`MappedResourceResolver`），不要为自定义主题单独建 `values-night`。嵌套 `@color` 不会自动跟映射，需额外映射内层 id。
+自定义固定色板（如 Demo「晴空蓝」）用亮色底座 Resolver + id 重映射（示例见 `:sample` 的 `MappedResourceResolver`），不要为自定义主题单独建 `values-night`。嵌套 `@color` 不会自动跟映射，需额外映射内层 id；或直接用下面的外部皮肤包。
 
 ### 系统夜间下的浅色肤
 
@@ -143,82 +135,64 @@ ThemeManager.get().apply(this, DayNightResourceResolver.night(this))
 3. 肤色只通过 `ThemeManager.apply(…, DayNightResourceResolver.light / Mapped…)` 绘制
 4. **不要**为了「看起来亮」去切 `MODE_NIGHT_NO`
 
+## 外部皮肤包
+
+`SkinPackageResolver` 把宿主资源按「同名同类型」映射到只带 res 的皮肤 APK；皮肤包没有的自动回退被包装的 Resolver：
+
+```kotlin
+val base = DayNightResourceResolver.light(this)
+val skin = SkinPackageResolver.load(base, this, "/sdcard/skins/purple.apk")
+if (skin != null) ThemeManager.get().apply(this, skin)
+```
+
+- 皮肤包内的 selector / vector 引用在皮肤包内闭环解析（`applicationId` 即资源包名）
+- `load` 失败（apk 不存在 / 损坏 / 反射建 Resources 失败）返回 `null`，由调用方降级提示
+- id 映射按宿主 id 缓存；换肤时整体替换 Resolver 实例即可
+
 ## 常用 API
 
 | API | 作用 |
 |-----|------|
-| `ThemeManager.install` | 挂 Factory2，须在 `super.onCreate` 前 |
-| `ThemeManager.apply` | 换 Resolver、递增代数、刷新内容树与已登记浮层 |
+| `ThemeManager.install` / `installDayNight` | 挂 Factory2，须在 `super.onCreate` 前 |
+| `ThemeManager.apply` / `applyDayNight` | 换 Resolver、递增代数、刷新内容树与已登记浮层 |
 | `ThemeManager.setRefreshOnInflate` | 新 inflate 的 View 立刻刷一遍（Dialog / Popup 常用） |
-| `ThemeManager.refresh` | 仅刷新，不换 Resolver |
-| `ThemeManager.registry` | Binding 注册表 |
-| `ThemeManager.edit` / `obtain` / `find` | 取 Binding（临时 / 取或建不挂 / 只查） |
-| `ThemeManager.ensureAttach` | 有则复用，无则 create + `attach`（接近旧 obtain） |
-| `ResourceBinding.attach` / `detach` | 挂载（可替换旧 Binding）/ 卸载容器钩子与 tag |
-| `TextViewResourceBinding.setDefaultTrackTextSize` | **全局**：inflate 是否跟踪 `android:textSize`（默认关；须在 inflate 前设） |
-| `TextViewResourceBinding.setTrackTextSize` | **实例**开关 |
-| `TextViewResourceBinding.of(view).setTextColor(…)` | 手动绑定并立刻写 View |
-
-### core-ktx
-
-```kotlin
-import io.github.oppsgo.android.theme.ktx.*
-
-installTheme()
-applyTheme(dayNightNight())
-refreshTheme()
-registry { register(MyView::class.java, ::MyBinding) }
-
-textView.edit().setTextColor(R.color.skin_text_primary)
-textView.theme { setTextColor(R.color.skin_text_primary) }
-
-// 任意已 register 的类型（不必再写扩展）：
-view.binding<MyBinding>().setBackground(R.color.skin_page_bg)
-view.themeAs<MyBinding> { setBackground(R.color.skin_page_bg) }
-```
-
-AndroidX：Binding 登记在 `:androidx`，DayNight 扩展在 `:androidx-ktx`：
-
-```kotlin
-import io.github.oppsgo.android.theme.androidx.ThemeAndroidX
-import io.github.oppsgo.android.theme.androidx.ktx.*
-import io.github.oppsgo.android.theme.ktx.*
-
-ThemeAndroidX.registerAvailable()
-applyAppCompatDayNight(dark = true)
-appCompatTextView.theme { setTextColor(R.color.skin_text_primary) } // 走 core-ktx TextView 重载
-viewPager.themeAs<ViewPagerResourceBinding> { }
-viewPager2.themeAs<ViewPager2ResourceBinding> { }
-tabLayout.themeAs<TabLayoutResourceBinding> { }
-```
-
-Support：`ThemeAppCompat.registerAvailable()` + `:appcompat-ktx` DayNight 扩展（无 `AppCompatToggleButton`）。
+| `ThemeManager.refresh(Context)` / `refresh(View)` | 仅刷新，不换 Resolver |
+| `ThemeManager.getModCount` / `MOD_COUNT_NONE` | 该页刷新代数；未 install 返回 `MOD_COUNT_NONE` |
+| `ThemeManager.registry` | Binding 注册表（`register` / `resolve` / `isRegistered`） |
+| `ThemeManager.of(view)` / `of(view, Class)` | 取 Binding：已挂载复用，否则按注册表创建并挂 tag |
+| `ThemeManager.find(view)` / `detach(view)` | 只查已挂载的 Binding / 卸下（含容器钩子） |
+| `ThemeManager.addOnThemeUpdateListener` | 整页刷新完成回调（可多个，随页面回收） |
+| `IViewBinding.setOnViewThemeUpdateListener` | 单 View 刷新完成回调（后设覆盖先设） |
+| `ViewBinding.setBackground / setBackgroundTint` | 手动绑定并立刻写 View（`ColorRef` / `DrawableRef` / 资源 id 重载） |
+| `TextViewBinding.setTextColor / setCompoundDrawableTint / setCompoundDrawables…` | TextView 系手动入口 |
+| `DrawableRef.of / tinted / none` | drawable 引用、一行式着色、显式清空某方向 |
+| `ColorStateListRef.fromColors` | 状态表 + 各态 provider 拼 `ColorStateList` |
+| `ViewGroupBinding.setTraverseDepth` | 级联子 View 的穿透层数（`TRAVERSE_INFINITE` / `0` / 正整数） |
 
 ## 自定义 Binding
 
-1. 继承对应 `*ResourceBinding`，在 `getViewStyleable()` 声明要跟踪的 attr  
-2. `ThemeManager.get().registry().register(YourView.class, YourBinding::new)`  
-3. 完全自写、不继承库内 Binding 时，属性列表与开关需自行实现
+1. 继承对应 `*Binding`（如 `TextViewBinding`），在构造器里用 `bindRaw`（常规属性）/ `bindSpecial`（整组写入等特殊处理）逐 attr 登记，`alias` 把 `app:` 兼容属性归一到平台同名 attr  
+2. 登记集即布局读取集，无需另声明 styleable  
+3. `ThemeManager.get().registry().register(YourView.class, YourBinding::new)`（须在首次 inflate 前）  
+4. 完全自写、不继承 `ViewBinding` 时实现 `IViewBinding`，属性表与开关自行维护
 
 ## AbsListView 特殊情况
 
-`ListView` / `GridView` / `ExpandableListView` 由 `AbsListViewResourceBinding` 处理：换肤后 item 复用滑回来时补刷，避免仍是旧色。
+`ListView` / `GridView` / `ExpandableListView` 由 `AbsListViewBinding` 处理：换肤后 item 复用滑回来时补刷，避免仍是旧色。
 
-**默认行为**：inflate（`obtain` + `attach`）后占用 `ViewGroup.setOnHierarchyChangeListener`，子 View 挂上时补刷该 child。`ViewGroup` 对该 listener 只有 setter、无 getter，直接对 View 再 `set` 会覆盖 Binding。
+**默认行为**：Binding 挂载（`ThemeManager.of` / inflate）后占用 `ViewGroup.setOnHierarchyChangeListener`，子 View 挂上时补刷该 child。`ViewGroup` 对该 listener 只有 setter、无 getter，直接对 View 再 `set` 会覆盖 Binding。
 
-**外部也要 hierarchy 回调时**：用 Binding 代理，勿直接对 View 设置；须先 `attach`；子项挂上时**先回调外部，再补刷**：
+**外部也要 hierarchy 回调时**：用 Binding 代理，勿直接对 View 设置；子项挂上时**先回调外部，再补刷**：
 
 ```kotlin
-AbsListViewResourceBinding.of(list)
-    .attach()
+ThemeManager.get().of(list, AbsListViewBinding::class.java)
     .setOnHierarchyChangeListener { parent, child -> /* 你的逻辑 */ }
 ```
 
-**三方 SDK 已占用该槽位时**：构造传入 `hierarchy = false` 不占用：
+**三方 SDK 已占用该槽位时**：注册不占用的构造：
 
 ```kotlin
-AbsListViewResourceBinding(list, false).attach()
-// 或注册：registry.register(AbsListView::class.java) { AbsListViewResourceBinding(it, false) }
+ThemeManager.get().registry().register(AbsListView::class.java) { AbsListViewBinding(it, false) }
 ```
 
 此时优先在 Adapter `getView` 里对 item / convertView 自行 `refresh()`（只碰正在绑定的那一项，最贴复用）。
@@ -234,7 +208,7 @@ AbsListViewResourceBinding(list, false).attach()
 
 ## Demo
 
-`:app` 结构：
+`:sample` 结构：
 
 | 页面 | 内容 |
 |------|------|
@@ -245,7 +219,7 @@ AbsListViewResourceBinding(list, false).attach()
 冷启动由 `ThemelessApp` 恢复皮肤与宿主日夜。需要 **JDK 17+**：
 
 ```bash
-./gradlew :app:assembleDebug
+./gradlew :sample:assembleDebug
 ```
 
 ## License

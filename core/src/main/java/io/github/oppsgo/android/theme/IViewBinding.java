@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.AttrRes;
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -19,7 +20,10 @@ import io.github.oppsgo.android.theme.resource.ResourceRef;
  * <p>
  * 不带 View 泛型：具体 Binding 用协变 {@link #getView()} 暴露真实类型
  * （如 {@code SwitchBinding#getView()} 返回 {@code Switch}），避免继承链把类型收窄。
+ * <p>
+ * 仅主线程使用，契约见 {@link ThemeManager}。
  */
+@MainThread
 public interface IViewBinding {
 
     @NonNull
@@ -27,8 +31,9 @@ public interface IViewBinding {
 
     /**
      * 从布局 AttributeSet 记下资源引用，不立刻刷到 View。
-     * 只读已登记（带 {@link ResourceFactory}）的属性；手动 {@link #bind(int, ResourceRef, AttrSetter)}
-     * 绑过的值不会被 XML 覆盖。
+     * 只读已登记（带 {@link ResourceFactory}）的属性；布局里有值的以 XML 为准，
+     * 包括覆盖此前手动 {@link #bind(int, ResourceRef, AttrSetter)} 绑过的值
+     * （手动绑定不清掉 {@code factory} 登记，见下）。
      */
     void bind(@Nullable AttributeSet attrs);
 
@@ -39,7 +44,8 @@ public interface IViewBinding {
     <T> void bind(@AttrRes int attr, @NonNull ResourceFactory<T> factory, @NonNull AttrSetter<T> setter);
 
     /**
-     * 手动绑定一个值并立刻写回 View。登记里的 {@code factory} 会被清掉，布局 XML 不会再覆盖它。
+     * 手动绑定一个值并立刻写回 View：是对登记的**扩展**，只替换写回 {@code setter} 与当前值，
+     * 登记里的 {@code factory} 保留；之后再次 {@link #bind(AttributeSet)} 读布局时以 XML 值为准。
      */
     <T> void bind(@AttrRes int attr, @NonNull ResourceRef<T> ref, @NonNull AttrSetter<T> setter);
 

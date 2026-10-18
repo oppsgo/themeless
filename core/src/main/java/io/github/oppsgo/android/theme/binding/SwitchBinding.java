@@ -31,8 +31,8 @@ public class SwitchBinding extends CompoundButtonBinding {
         super(view);
         bindRaw(ATTR_THUMB, DrawableRef::of, this::applyThumb);
         bindRaw(ATTR_TRACK, DrawableRef::of, this::applyTrack);
-        bindRaw(ATTR_THUMB_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyThumbTint);
-        bindRaw(ATTR_TRACK_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyTrackTint);
+        bindRaw(ATTR_THUMB_TINT, colorFactory(), this::applyThumbTint);
+        bindRaw(ATTR_TRACK_TINT, colorFactory(), this::applyTrackTint);
     }
 
     @NonNull
@@ -66,7 +66,7 @@ public class SwitchBinding extends CompoundButtonBinding {
     }
 
     public void setThumbTint(@ColorRes int tint) {
-        setAttrResource(ATTR_THUMB_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_THUMB_TINT, tint, colorFactory());
     }
 
     public void setTrackTint(@NonNull ColorRef tint) {
@@ -78,7 +78,7 @@ public class SwitchBinding extends CompoundButtonBinding {
     }
 
     public void setTrackTint(@ColorRes int tint) {
-        setAttrResource(ATTR_TRACK_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_TRACK_TINT, tint, colorFactory());
     }
 
     private void applyThumb(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

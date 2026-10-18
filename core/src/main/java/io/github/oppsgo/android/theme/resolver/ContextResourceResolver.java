@@ -47,8 +47,9 @@ public class ContextResourceResolver implements ResourceResolver {
     @Override
     public int getColor(@ColorRes int id) {
         Resources res = getResources();
-        // 纯 color 资源只看 Resources 的 Configuration；不要带 Theme，
-        // 避免 Theme.AppCompat.DayNight 在系统暗色时干扰。
+        // M+ 带上本 Resolver 自己 Context 的 Theme，让 `?attr/` 引用的颜色可解析。
+        // 日夜切换传入的是隔离的 Application Context，其 Theme 不含 Activity 上
+        // AppCompat DayNight 的干扰；直接 new 本类的调用方需自行保证 Context 选得对。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return res.getColor(id, getTheme());
         }

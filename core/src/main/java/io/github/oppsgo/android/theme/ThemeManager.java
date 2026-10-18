@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -19,7 +20,11 @@ import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver;
  * 主题入口，全局一个实例。
  * 每个 Activity 在 {@code super.onCreate()} 之前 {@link #install}。
  * 该 Activity 的 {@link ResourceResolver}、刷新代数挂在它的 {@link ThemeDelegate} 上，不再另建 Session。
+ * <p>
+ * 仅主线程使用：Binding 表、委托与浮层登记均无并发保护（{@link ViewBinding} 相应字段已按此契约降级），
+ * View 树操作本身也只能在主线程。
  */
+@MainThread
 public class ThemeManager {
 
     private static final String TAG = "ThemeManager";
@@ -54,15 +59,7 @@ public class ThemeManager {
      *                    AppCompatActivity 多写这一步即可：把它的 {@code AppCompatDelegate} 传进来，实现类本身就是 Factory2。
      */
     public void install(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory) {
-        LayoutInflater layoutInflater = LayoutInflater.from(activity);
-        if (layoutInflater.getFactory2() instanceof ThemeDelegate) {
-            return;
-        }
-        if (layoutInflater.getFactory() != null) {
-            Log.e(TAG, "LayoutInflater already has a Factory. Call ThemeManager.install() before super.onCreate().");
-            return;
-        }
-        layoutInflater.setFactory2(createDelegate(activity, viewFactory));
+        prepareDelegate(activity, viewFactory);
     }
 
     public void installDayNight(@NonNull Activity activity) {
@@ -80,22 +77,42 @@ public class ThemeManager {
 
 
     public void installDayNight(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory, boolean night) {
+        ThemeDelegate factory = prepareDelegate(activity, viewFactory);
+        if (factory != null) {
+            factory.resolver = DayNightResourceResolver.of(activity, night);
+        }
+    }
+
+    /**
+     * install / installDayNight 共用：Factory 槽位可用则创建委托并挂上；
+     * 已安装或被占用（打 error 日志）时返回 {@code null}。
+     */
+    @Nullable
+    private ThemeDelegate prepareDelegate(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory) {
         LayoutInflater layoutInflater = LayoutInflater.from(activity);
         if (layoutInflater.getFactory2() instanceof ThemeDelegate) {
-            return;
+            return null;
         }
         if (layoutInflater.getFactory() != null) {
             Log.e(TAG, "LayoutInflater already has a Factory. Call ThemeManager.install() before super.onCreate().");
-            return;
+            return null;
         }
         ThemeDelegate factory = createDelegate(activity, viewFactory);
-        factory.resolver = DayNightResourceResolver.of(activity, night);
         layoutInflater.setFactory2(factory);
+        return factory;
     }
 
     @NonNull
     protected ThemeDelegate createDelegate(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory) {
         return new ThemeDelegate(activity, viewFactory);
+    }
+
+    /**
+     * 该 Context（含其包装链）上是否已安装 {@link ThemeDelegate}。
+     * {@link #install} 遇到 Factory 槽位被占用时只打 error 日志、不抛异常，可用本方法排查这类静默失败。
+     */
+    public boolean isInstalled(@Nullable Context context) {
+        return findDelegate(context) != null;
     }
 
     /**
@@ -107,7 +124,8 @@ public class ThemeManager {
         if (installed == null) return;
         installed.resolver = resolver;
         installed.modCount.incrementAndGet();
-        refresh(installed.activity);
+        // 委托刚查到，直接复用，不再按 Activity 重复 findDelegate。
+        refreshDelegate(installed);
     }
 
     public void applyDayNight(Context context, boolean night) {
@@ -172,6 +190,13 @@ public class ThemeManager {
     public void refresh(@Nullable Context context) {
         ThemeDelegate installed = findDelegate(context);
         if (installed == null) return;
+        refreshDelegate(installed);
+    }
+
+    /**
+     * 刷已定位委托对应的那一页：内容树 + 已登记浮层根 + 整页回调。
+     */
+    private void refreshDelegate(@NonNull ThemeDelegate installed) {
         Activity activity = installed.activity;
         // isDestroyed() 是 API 17；低版本只靠 isFinishing() 判断。
         if (activity.isFinishing()
@@ -291,42 +316,28 @@ public class ThemeManager {
     /**
      * Dialog、{@code ContextThemeWrapper} 上的 LayoutInflater 不一定带 Factory。
      * 沿 {@code baseContext} 找到 Activity 上那一个。
+     * <p>
+     * {@code ContextWrapper} 链按构造方式天然无环，深度上限只是防自引用等异常拓扑
+     * 的兜底；正常链（Activity / Dialog / {@code ContextThemeWrapper} 包装）远达不到，
+     * 因此不再做防环双指针遍历。
      */
     @Nullable
     ThemeDelegate findDelegate(@Nullable Context context) {
-        Context slow = context;
-        Context fast = context;
-        // 防环检查
-        while (slow != null) {
-            LayoutInflater.Factory2 factory2 = LayoutInflater.from(slow).getFactory2();
+        final int maxHops = 64;
+        Context current = context;
+        for (int hop = 0; current != null && hop < maxHops; hop++) {
+            LayoutInflater.Factory2 factory2 = LayoutInflater.from(current).getFactory2();
             if (factory2 instanceof ThemeDelegate) {
                 return (ThemeDelegate) factory2;
             }
-            if (!(slow instanceof ContextWrapper)) {
+            if (!(current instanceof ContextWrapper)) {
                 return null;
             }
-            Context next = ((ContextWrapper) slow).getBaseContext();
-            if (next == null || next == slow) {
+            Context next = ((ContextWrapper) current).getBaseContext();
+            if (next == null || next == current) {
                 return null;
             }
-            slow = next;
-
-            // fast 每次走两步；追上 slow 说明有环
-            for (int step = 0; step < 2 && fast != null; step++) {
-                if (!(fast instanceof ContextWrapper)) {
-                    fast = null;
-                    break;
-                }
-                Context fNext = ((ContextWrapper) fast).getBaseContext();
-                if (fNext == null || fNext == fast) {
-                    fast = null;
-                    break;
-                }
-                fast = fNext;
-            }
-            if (fast != null && fast == slow) {
-                return null;
-            }
+            current = next;
         }
         return null;
     }

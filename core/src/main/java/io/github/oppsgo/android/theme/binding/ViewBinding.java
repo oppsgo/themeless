@@ -1,7 +1,6 @@
 package io.github.oppsgo.android.theme.binding;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -58,8 +57,9 @@ public class ViewBinding implements IViewBinding {
     /**
      * 上次 {@link #apply(ResourceResolver)} 时记录的 {@link ThemeManager#getModCount(Context)}。
      * {@link #refresh()} 据此判断是否需要重刷：一致则跳过。
+     * 主线程专用（{@link ThemeManager} 的契约），无需 volatile。
      */
-    protected volatile int modCount = ThemeManager.MOD_COUNT_NONE;
+    protected int modCount = ThemeManager.MOD_COUNT_NONE;
 
     /**
      * 同一张表同时服务有 attr 和没有 attr 的 View；key 是归一化（别名展开）后的 attr。
@@ -78,14 +78,15 @@ public class ViewBinding implements IViewBinding {
 
     /**
      * 临时 Binding 在未 apply 时复用的 Context Resolver，避免每次 setXxx 都 new。
+     * 主线程专用，无锁。
      */
     @Nullable
-    private transient volatile ResourceResolver fallbackResolver;
+    private ResourceResolver fallbackResolver;
 
     public ViewBinding(@NonNull View view) {
         this.view = view;
         bindRaw(ATTR_BACKGROUND, resourceId -> ResourceRef.fromColorOrDrawable(resourceTable(), resourceId), this::applyBackground);
-        bindRaw(ATTR_BACKGROUND_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyBackgroundTint);
+        bindRaw(ATTR_BACKGROUND_TINT, colorFactory(), this::applyBackgroundTint);
     }
 
     /**
@@ -142,6 +143,16 @@ public class ViewBinding implements IViewBinding {
     }
 
     /**
+     * 通用颜色 {@link IViewBinding.ResourceFactory}：按当前资源表判定类型，
+     * 造 {@link ColorRef} 或 {@link ColorStateListRef}。各 Binding 的颜色 / tint 登记
+     * 统一用它，替代逐个书写的 {@code resourceId -> ResourceRef.fromColor(...)}。
+     */
+    @NonNull
+    protected final IViewBinding.ResourceFactory<Object> colorFactory() {
+        return resourceId -> ResourceRef.fromColor(resourceTable(), resourceId);
+    }
+
+    /**
      * 把 {@code aliasAttr} 归一到已登记的 {@code canonicalAttr}（如 {@code app:srcCompat} → {@code src}）。
      */
     public final void alias(@AttrRes int aliasAttr, @AttrRes int canonicalAttr) {
@@ -184,23 +195,17 @@ public class ViewBinding implements IViewBinding {
     @Override
     public void bind(@Nullable AttributeSet set) {
         if (set == null) return;
-        bindEnabled(set);
 
         int[] xmlAttrs = getXmlAttrs();
         try (TypedArray ta = view.getContext().obtainStyledAttributes(set, xmlAttrs)) {
+            // {@link #ATTR_ENABLED} 随主表一次读回，省一次 obtainStyledAttributes；
+            // 布局未写出则保持当前 {@link #isEnabled()}（默认 true）。
+            int enabledIndex = Arrays.binarySearch(xmlAttrs, ATTR_ENABLED);
+            if (enabledIndex >= 0 && ta.hasValue(enabledIndex)) {
+                setEnabled(ta.getBoolean(enabledIndex, true));
+            }
             readXmlAttrs(ta, xmlAttrs, false);
             readXmlAttrs(ta, xmlAttrs, true);
-        }
-    }
-
-    /**
-     * 读 {@link #ATTR_ENABLED}；未写出则保持当前 {@link #isEnabled()}（默认 true）。
-     */
-    private void bindEnabled(@NonNull AttributeSet set) {
-        try (TypedArray ta = view.getContext().obtainStyledAttributes(set, new int[]{ATTR_ENABLED})) {
-            if (ta.hasValue(0)) {
-                setEnabled(ta.getBoolean(0, true));
-            }
         }
     }
 
@@ -220,11 +225,12 @@ public class ViewBinding implements IViewBinding {
     }
 
     /**
-     * 布局要读的 attr：登记的 + 别名，升序（{@code obtainStyledAttributes} 要求）。
+     * 布局要读的 attr：登记的 + 别名 + {@link #ATTR_ENABLED}，升序（{@code obtainStyledAttributes} 要求）。
+     * 常规流程每个 View 只在 inflate 时 {@link #bind(AttributeSet)} 一次，不做实例级缓存。
      */
     @NonNull
     private int[] getXmlAttrs() {
-        int[] xmlAttrs = new int[attrs.size() + aliases.size()];
+        int[] xmlAttrs = new int[attrs.size() + aliases.size() + 1];
         int index = 0;
         for (int i = 0; i < attrs.size(); i++) {
             xmlAttrs[index++] = attrs.keyAt(i);
@@ -232,6 +238,7 @@ public class ViewBinding implements IViewBinding {
         for (int i = 0; i < aliases.size(); i++) {
             xmlAttrs[index++] = aliases.keyAt(i);
         }
+        xmlAttrs[index] = ATTR_ENABLED;
         Arrays.sort(xmlAttrs);
         return xmlAttrs;
     }
@@ -410,6 +417,7 @@ public class ViewBinding implements IViewBinding {
     /**
      * 已 {@link ThemeManager#apply(Context, ResourceResolver)} 时用安装好的 Resolver；
      * 否则懒缓存一份基于 View Context 的 Resolver，供 setXxx 立刻取值。
+     * 主线程专用（{@link ThemeManager} 的契约），无需双重检查锁。
      */
     @Nullable
     protected ResourceResolver currentResolver() {
@@ -418,11 +426,7 @@ public class ViewBinding implements IViewBinding {
             return resolver;
         }
         if (fallbackResolver == null) {
-            synchronized (this) {
-                if (fallbackResolver == null) {
-                    fallbackResolver = new ContextResourceResolver(view.getContext());
-                }
-            }
+            fallbackResolver = new ContextResourceResolver(view.getContext());
         }
         return fallbackResolver;
     }
@@ -467,8 +471,7 @@ public class ViewBinding implements IViewBinding {
     }
 
     public void setBackgroundTint(@ColorRes int tint) {
-        setAttrResource(ATTR_BACKGROUND_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_BACKGROUND_TINT, tint, colorFactory());
     }
 
     private void applyBackground(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

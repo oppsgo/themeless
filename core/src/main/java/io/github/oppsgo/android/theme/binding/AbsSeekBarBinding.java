@@ -26,7 +26,7 @@ public class AbsSeekBarBinding extends ProgressBarBinding {
     public AbsSeekBarBinding(@NonNull AbsSeekBar view) {
         super(view);
         bindRaw(ATTR_THUMB, DrawableRef::of, this::applyThumb);
-        bindRaw(ATTR_THUMB_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyThumbTint);
+        bindRaw(ATTR_THUMB_TINT, colorFactory(), this::applyThumbTint);
     }
 
     @NonNull
@@ -52,7 +52,7 @@ public class AbsSeekBarBinding extends ProgressBarBinding {
     }
 
     public void setThumbTint(@ColorRes int tint) {
-        setAttrResource(ATTR_THUMB_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_THUMB_TINT, tint, colorFactory());
     }
 
     private void applyThumb(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

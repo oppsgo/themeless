@@ -1,7 +1,7 @@
 // Signature format: 4.0
 package io.github.oppsgo.android.theme {
 
-  public interface IViewBinding {
+  @androidx.annotation.MainThread public interface IViewBinding {
     method public void apply(io.github.oppsgo.android.theme.ResourceResolver!);
     method public void bind(android.util.AttributeSet?);
     method public <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
@@ -64,7 +64,7 @@ package io.github.oppsgo.android.theme {
     method protected android.view.View? tryCreateView(android.view.LayoutInflater, String, android.util.AttributeSet);
   }
 
-  public class ThemeManager {
+  @androidx.annotation.MainThread public class ThemeManager {
     ctor protected ThemeManager();
     method public void addOnThemeUpdateListener(android.content.Context!, io.github.oppsgo.android.theme.OnThemeUpdateListener);
     method public void apply(android.content.Context!, io.github.oppsgo.android.theme.ResourceResolver);
@@ -82,6 +82,7 @@ package io.github.oppsgo.android.theme {
     method public void installDayNight(android.app.Activity, android.view.LayoutInflater.Factory2?);
     method public void installDayNight(android.app.Activity, android.view.LayoutInflater.Factory2?, boolean);
     method public void installDayNight(android.app.Activity, boolean);
+    method public boolean isInstalled(android.content.Context?);
     method public io.github.oppsgo.android.theme.IViewBinding of(android.view.View);
     method public <T extends io.github.oppsgo.android.theme.IViewBinding> T of(android.view.View, Class<T>);
     method public void refresh(android.content.Context?);
@@ -236,6 +237,7 @@ package io.github.oppsgo.android.theme.binding {
     method public final <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
     method protected final void bindRaw(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<? extends java.lang.Object!>, io.github.oppsgo.android.theme.binding.ViewBinding.AttributeApplier);
     method protected final void bindSpecial(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<? extends java.lang.Object!>);
+    method protected final io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<java.lang.Object!> colorFactory();
     method protected io.github.oppsgo.android.theme.ResourceResolver? currentResolver();
     method protected final io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>? getAttrValue(@AttrRes int);
     method public android.view.View getView();
@@ -260,7 +262,7 @@ package io.github.oppsgo.android.theme.binding {
     method public void unbind(@AttrRes int);
     field public static final int ATTR_BACKGROUND = 16842964; // 0x10100d4
     field public static final int ATTR_BACKGROUND_TINT = 16843883; // 0x101046b
-    field protected volatile int modCount;
+    field protected int modCount;
     field protected final android.view.View view;
   }
 
@@ -312,6 +314,7 @@ package io.github.oppsgo.android.theme.resolver {
 
   public class SkinPackageResolver implements io.github.oppsgo.android.theme.ResourceResolver {
     ctor public SkinPackageResolver(io.github.oppsgo.android.theme.ResourceResolver, android.content.res.Resources, String);
+    method public void close();
     method public int getColor(@ColorRes int);
     method public android.content.res.ColorStateList? getColorStateList(@ColorRes int);
     method public float getDimension(@DimenRes int);

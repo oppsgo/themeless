@@ -30,7 +30,7 @@ public class CompoundButtonBinding extends TextViewBinding {
                 DrawableRef::of,
                 this::applyButtonDrawable);
         bindRaw(ATTR_BUTTON_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
+                colorFactory(),
                 (resolver, ref) ->
                         resolver.getViewCompat().setButtonTintList(getView(), resolveTint(resolver, ref)));
     }
@@ -59,7 +59,7 @@ public class CompoundButtonBinding extends TextViewBinding {
 
     public void setButtonTint(@ColorRes int tint) {
         setAttrResource(ATTR_BUTTON_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     private void applyButtonDrawable(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

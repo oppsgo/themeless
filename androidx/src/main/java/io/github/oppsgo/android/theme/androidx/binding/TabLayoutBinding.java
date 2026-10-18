@@ -31,14 +31,10 @@ public class TabLayoutBinding extends ViewBinding {
     public TabLayoutBinding(@NonNull TabLayout view) {
         super(view);
         bindRaw(ATTR_TAB_INDICATOR_COLOR, ColorRef::of, this::applyIndicatorColor);
-        bindSpecial(ATTR_TAB_TEXT_COLOR,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        bindSpecial(ATTR_TAB_SELECTED_TEXT_COLOR,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        bindSpecial(ATTR_TAB_RIPPLE_COLOR,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        bindSpecial(ATTR_TAB_ICON_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        bindSpecial(ATTR_TAB_TEXT_COLOR, colorFactory());
+        bindSpecial(ATTR_TAB_SELECTED_TEXT_COLOR, colorFactory());
+        bindSpecial(ATTR_TAB_RIPPLE_COLOR, colorFactory());
+        bindSpecial(ATTR_TAB_ICON_TINT, colorFactory());
     }
 
     @NonNull
@@ -48,13 +44,23 @@ public class TabLayoutBinding extends ViewBinding {
     }
 
     @Override
-    protected void applySpecialAttrs( ResourceResolver resolver) {
+    protected void applySpecialAttrs(ResourceResolver resolver) {
+        if (resolver == null) {
+            return;
+        }
+
         ResourceRef<?> normalRef = getAttrValue(ATTR_TAB_TEXT_COLOR);
         ResourceRef<?> selectedRef = getAttrValue(ATTR_TAB_SELECTED_TEXT_COLOR);
         if (normalRef != null || selectedRef != null) {
-            int normal = resolveColor(resolver, normalRef);
-            int selected = selectedRef != null ? resolveColor(resolver, selectedRef) : normal;
-            getView().setTabTextColors(normal, selected);
+            Integer normal = resolveColorOrNull(resolver, normalRef);
+            Integer selected = resolveColorOrNull(resolver, selectedRef);
+            // 只跟踪到一侧时两侧同色；取不到值（资源缺失 / provider 返回 null）跳过写入，
+            // 不能以 0（全透明黑）静默写进 View。
+            if (normal == null) normal = selected;
+            if (selected == null) selected = normal;
+            if (normal != null) {
+                getView().setTabTextColors(normal, selected);
+            }
         }
 
         ColorStateList ripple = resolveTint(resolver, ATTR_TAB_RIPPLE_COLOR);
@@ -69,12 +75,9 @@ public class TabLayoutBinding extends ViewBinding {
     }
 
     public void setTabTextColors(@ColorRes int normalColor, @ColorRes int selectedColor) {
-        setAttrResource(ATTR_TAB_TEXT_COLOR, normalColor,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        setAttrResource(ATTR_TAB_SELECTED_TEXT_COLOR, selectedColor,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        ResourceResolver resolver = currentResolver();
-        applySpecialAttrs(resolver);
+        setAttrResource(ATTR_TAB_TEXT_COLOR, normalColor, colorFactory());
+        setAttrResource(ATTR_TAB_SELECTED_TEXT_COLOR, selectedColor, colorFactory());
+        applySpecialAttrs(currentResolver());
     }
 
     public void setTabIndicatorColor(@ColorRes int colorRes) {
@@ -82,17 +85,13 @@ public class TabLayoutBinding extends ViewBinding {
     }
 
     public void setTabRippleColor(@ColorRes int colorRes) {
-        setAttrResource(ATTR_TAB_RIPPLE_COLOR, colorRes,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        ResourceResolver resolver = currentResolver();
-        if (resolver != null) applySpecialAttrs(resolver);
+        setAttrResource(ATTR_TAB_RIPPLE_COLOR, colorRes, colorFactory());
+        applySpecialAttrs(currentResolver());
     }
 
     public void setTabIconTint(@ColorRes int colorRes) {
-        setAttrResource(ATTR_TAB_ICON_TINT, colorRes,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
-        ResourceResolver resolver = currentResolver();
-        if (resolver != null) applySpecialAttrs(resolver);
+        setAttrResource(ATTR_TAB_ICON_TINT, colorRes, colorFactory());
+        applySpecialAttrs(currentResolver());
     }
 
     private void applyIndicatorColor(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
@@ -105,11 +104,6 @@ public class TabLayoutBinding extends ViewBinding {
     /**
      * 从 ColorRef / ColorStateListRef 取出单个 color int（ColorStateList 取默认色）。
      */
-    private int resolveColor(@NonNull ResourceResolver resolver, @Nullable ResourceRef<?> ref) {
-        Integer color = resolveColorOrNull(resolver, ref);
-        return color == null ? 0 : color;
-    }
-
     @Nullable
     private Integer resolveColorOrNull(@NonNull ResourceResolver resolver, @Nullable ResourceRef<?> ref) {
         if (ref instanceof ColorRef) {
@@ -121,6 +115,4 @@ public class TabLayoutBinding extends ViewBinding {
         }
         return null;
     }
-
-
 }

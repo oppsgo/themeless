@@ -24,7 +24,13 @@ package io.github.oppsgo.android.theme.androidx.binding {
   public class AppCompatTextViewBinding extends io.github.oppsgo.android.theme.binding.TextViewBinding {
     ctor public AppCompatTextViewBinding(android.widget.TextView);
     field public static final int ATTR_BACKGROUND_TINT_COMPAT;
+    field public static final int ATTR_DRAWABLE_BOTTOM_COMPAT;
+    field public static final int ATTR_DRAWABLE_END_COMPAT;
+    field public static final int ATTR_DRAWABLE_LEFT_COMPAT;
+    field public static final int ATTR_DRAWABLE_RIGHT_COMPAT;
+    field public static final int ATTR_DRAWABLE_START_COMPAT;
     field public static final int ATTR_DRAWABLE_TINT_COMPAT;
+    field public static final int ATTR_DRAWABLE_TOP_COMPAT;
   }
 
   public class RecyclerViewBinding extends io.github.oppsgo.android.theme.binding.ViewGroupBinding implements androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener {
@@ -57,6 +63,7 @@ package io.github.oppsgo.android.theme.androidx.binding {
 
   public class TabLayoutBinding extends io.github.oppsgo.android.theme.binding.ViewBinding {
     ctor public TabLayoutBinding(com.google.android.material.tabs.TabLayout);
+    method protected void applySpecialAttrs(io.github.oppsgo.android.theme.ResourceResolver);
     method public com.google.android.material.tabs.TabLayout getView();
     method public void setTabIconTint(@ColorRes int);
     method public void setTabIndicatorColor(@ColorRes int);

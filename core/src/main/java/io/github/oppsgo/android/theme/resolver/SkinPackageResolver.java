@@ -17,6 +17,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
@@ -69,7 +70,12 @@ public class SkinPackageResolver implements ResourceResolver {
         try {
             AssetManager assets = AssetManager.class.getDeclaredConstructor().newInstance();
             Method addAssetPath = AssetManager.class.getMethod("addAssetPath", String.class);
-            addAssetPath.invoke(assets, apkPath);
+            Object cookie = addAssetPath.invoke(assets, apkPath);
+            // 返回 0 表示路径没进 AssetManager（如 apk 损坏）。此时 skin Resources 照样能建，
+            // 但 getIdentifier 全部落空、静默回退宿主主题——按「解析失败」处理。
+            if (!(cookie instanceof Integer) || (Integer) cookie == 0) {
+                return null;
+            }
             Resources skin = createSkinResources(assets, context.getResources());
             return new SkinPackageResolver(delegate, skin, info.packageName);
         } catch (Exception e) {
@@ -139,6 +145,21 @@ public class SkinPackageResolver implements ResourceResolver {
     @Override
     public ThemeViewCompat getViewCompat() {
         return delegate.getViewCompat();
+    }
+
+    /**
+     * 释放皮肤包资源：清空 id 映射缓存；API 31+ 显式 {@code AssetManager.close()} 归还 native 内存，
+     * 低版本只断引用、靠 GC。整体替换皮肤包 Resolver 后，宿主应对旧实例调用，避免多套皮肤 assets 滞留。
+     */
+    public void close() {
+        idCache.clear();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                skinResources.getAssets().close();
+            } catch (Exception ignored) {
+                // 关闭失败 / 已关闭：静默，兜底路径本来就是交给 GC。
+            }
+        }
     }
 
     /**

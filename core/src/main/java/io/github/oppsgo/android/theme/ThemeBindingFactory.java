@@ -36,6 +36,11 @@ public final class ThemeBindingFactory {
 
     private final ConcurrentHashMap<Class<? extends View>, Creator<? extends View>> registry = new ConcurrentHashMap<>();
 
+    /**
+     * {@link #resolve} 沿继承链解析的结果缓存；{@link #register} 改动注册表时整体失效。
+     */
+    private final ConcurrentHashMap<Class<? extends View>, Creator<? extends View>> resolved = new ConcurrentHashMap<>();
+
     public interface Creator<VIEW extends View> {
         @NonNull
         IViewBinding create(@NonNull VIEW view);
@@ -55,6 +60,7 @@ public final class ThemeBindingFactory {
 
     public <V extends View> void register(@NonNull Class<V> viewType, @NonNull Creator<V> creator) {
         registry.put(viewType, creator);
+        resolved.clear();
     }
 
     /**
@@ -75,24 +81,27 @@ public final class ThemeBindingFactory {
     }
 
     /**
-     * 从具体类往父类找。{@link View} 的注册不能摘掉，否则没有匹配时无法兜底。
+     * 从具体类往父类找，结果按类型记忆化（{@link #register} 时失效重建）。
+     * {@link View} 的注册不能摘掉，否则没有匹配时无法兜底。
      */
     @NonNull
     public Creator<?> resolve(@NonNull Class<? extends View> viewClass) {
+        Creator<? extends View> cached = resolved.get(viewClass);
+        if (cached != null) {
+            return cached;
+        }
+        Creator<? extends View> creator = null;
         for (Class<?> current = viewClass; current != null; current = current.getSuperclass()) {
-            Creator<?> creator = registry.get(current);
-            if (creator != null) {
-                return creator;
-            }
-            if (current == View.class) {
+            creator = registry.get(current);
+            if (creator != null || current == View.class) {
                 break;
             }
         }
-        Creator<?> fallback = registry.get(View.class);
-        if (fallback == null) {
+        if (creator == null) {
             throw new IllegalStateException("View.class binding must remain registered.");
         }
-        return fallback;
+        resolved.put(viewClass, creator);
+        return creator;
     }
 
     /** 按注册表创建 Binding（不挂 tag）。 */

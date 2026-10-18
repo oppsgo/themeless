@@ -17,8 +17,8 @@ import io.github.oppsgo.android.theme.resolver.ContextResourceResolver;
  * 在 {@link ContextResourceResolver} 上把 color state list / drawable 的读取换成
  * {@link AppCompatResources}，让 vector / animated-vector 等也能在低版本上取到。
  * <p>
- * 纯颜色 {@code getColor} 不走 AppCompat：color 资源只看 Resources 的 Configuration，
- * 带 Theme 反而会被 AppCompat DayNight 干扰，沿用父类实现。
+ * 纯颜色 {@code getColor} 沿用父类：AppCompat 对 color 资源没有额外解码能力，
+ * 解析只依赖 Resources（M+ 带上本 Resolver 自己 Context 的 Theme）。
  */
 public class AppCompatContextResourceResolver extends ContextResourceResolver {
 

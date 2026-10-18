@@ -6,7 +6,7 @@ plugins {
 android {
     namespace = "io.github.oppsgo.android.theme.androidx"
     defaultConfig {
-        // appcompat-resources 1.7.0 要求 minSdk 21；core 仍保持 19。
+        // appcompat-resources 1.7.0 要求 minSdk 21；core 仍保持 16。
         minSdk = 21
     }
     testOptions {

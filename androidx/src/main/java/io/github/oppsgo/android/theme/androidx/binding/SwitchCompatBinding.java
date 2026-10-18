@@ -33,14 +33,14 @@ public class SwitchCompatBinding extends AppCompatCompoundButtonBinding {
 
     public SwitchCompatBinding(@NonNull SwitchCompat view) {
         super(view);
-        bindRaw(ATTR_THUMB, DrawableRef::of, (resolver, ref) -> applyThumb(resolver, ref));
-        bindRaw(ATTR_TRACK, DrawableRef::of, (resolver, ref) -> applyTrack(resolver, ref));
+        bindRaw(ATTR_THUMB, DrawableRef::of, this::applyThumb);
+        bindRaw(ATTR_TRACK, DrawableRef::of, this::applyTrack);
         bindRaw(ATTR_THUMB_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyThumbTint(resolver, ref));
+                colorFactory(),
+                this::applyThumbTint);
         bindRaw(ATTR_TRACK_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
-                (resolver, ref) -> applyTrackTint(resolver, ref));
+                colorFactory(),
+                this::applyTrackTint);
         alias(ATTR_THUMB_TINT_COMPAT, ATTR_THUMB_TINT);
         alias(ATTR_TRACK_TINT_COMPAT, ATTR_TRACK_TINT);
     }
@@ -77,7 +77,7 @@ public class SwitchCompatBinding extends AppCompatCompoundButtonBinding {
 
     public void setThumbTint(@ColorRes int tint) {
         setAttrResource(ATTR_THUMB_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     public void setTrackTint(@NonNull ColorRef tint) {
@@ -90,7 +90,7 @@ public class SwitchCompatBinding extends AppCompatCompoundButtonBinding {
 
     public void setTrackTint(@ColorRes int tint) {
         setAttrResource(ATTR_TRACK_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     private void applyThumb(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

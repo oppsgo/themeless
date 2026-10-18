@@ -27,7 +27,7 @@ public class ImageViewBinding extends ViewBinding {
                 DrawableRef::of,
                 (resolver, ref) -> applySrc(resolver, ref));
         bindRaw(ATTR_TINT,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId),
+                colorFactory(),
                 (resolver, ref) ->
                         resolver.getViewCompat().setImageTintList(getView(), resolveTint(resolver, ref)));
     }
@@ -56,7 +56,7 @@ public class ImageViewBinding extends ViewBinding {
 
     public void setImageTint(@ColorRes int tint) {
         setAttrResource(ATTR_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     private void applySrc(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

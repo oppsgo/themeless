@@ -33,10 +33,10 @@ public class ProgressBarBinding extends ViewBinding {
         super(view);
         bindRaw(ATTR_PROGRESS_DRAWABLE, DrawableRef::of, this::applyProgressDrawable);
         bindRaw(ATTR_INDETERMINATE_DRAWABLE, DrawableRef::of, this::applyIndeterminateDrawable);
-        bindRaw(ATTR_PROGRESS_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyProgressTint);
-        bindRaw(ATTR_INDETERMINATE_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyIndeterminateTint);
-        bindRaw(ATTR_PROGRESS_BACKGROUND_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applyProgressBackgroundTint);
-        bindRaw(ATTR_SECONDARY_PROGRESS_TINT, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId), this::applySecondaryProgressTint);
+        bindRaw(ATTR_PROGRESS_TINT, colorFactory(), this::applyProgressTint);
+        bindRaw(ATTR_INDETERMINATE_TINT, colorFactory(), this::applyIndeterminateTint);
+        bindRaw(ATTR_PROGRESS_BACKGROUND_TINT, colorFactory(), this::applyProgressBackgroundTint);
+        bindRaw(ATTR_SECONDARY_PROGRESS_TINT, colorFactory(), this::applySecondaryProgressTint);
     }
 
     @NonNull
@@ -71,7 +71,7 @@ public class ProgressBarBinding extends ViewBinding {
 
     public void setProgressTint(@ColorRes int tint) {
         setAttrResource(ATTR_PROGRESS_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     public void setIndeterminateTint(@NonNull ColorRef tint) {
@@ -83,7 +83,7 @@ public class ProgressBarBinding extends ViewBinding {
     }
 
     public void setIndeterminateTint(@ColorRes int tint) {
-        setAttrResource(ATTR_INDETERMINATE_TINT, tint, resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+        setAttrResource(ATTR_INDETERMINATE_TINT, tint, colorFactory());
     }
 
     public void setProgressBackgroundTint(@NonNull ColorRef tint) {
@@ -96,7 +96,7 @@ public class ProgressBarBinding extends ViewBinding {
 
     public void setProgressBackgroundTint(@ColorRes int tint) {
         setAttrResource(ATTR_PROGRESS_BACKGROUND_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     public void setSecondaryProgressTint(@NonNull ColorRef tint) {
@@ -109,7 +109,7 @@ public class ProgressBarBinding extends ViewBinding {
 
     public void setSecondaryProgressTint(@ColorRes int tint) {
         setAttrResource(ATTR_SECONDARY_PROGRESS_TINT, tint,
-                resourceId -> ResourceRef.fromColor(resourceTable(), resourceId));
+                colorFactory());
     }
 
     private void applyProgressDrawable(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

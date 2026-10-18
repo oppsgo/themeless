@@ -117,7 +117,8 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
         IViewBinding binding = manager.of(view);
         binding.bind(attrs);
         if (!refreshOnInflate) return;
-        ResourceResolver current = manager.getResolver(view.getContext());
+        // 自己就是这一页的委托：直接取当前 resolver，不再按 View Context 回查。
+        ResourceResolver current = resolver;
         if (current != null) {
             binding.apply(current);
         }

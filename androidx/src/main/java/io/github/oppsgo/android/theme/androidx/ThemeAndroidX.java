@@ -60,6 +60,7 @@ public final class ThemeAndroidX {
             registry.register(AppCompatTextView.class, AppCompatTextViewBinding::new);
             registry.register(AppCompatButton.class, AppCompatTextViewBinding::new);
             registry.register(AppCompatEditText.class, AppCompatTextViewBinding::new);
+            registry.register(AppCompatAutoCompleteTextView.class, AppCompatTextViewBinding::new);
             registry.register(AppCompatMultiAutoCompleteTextView.class, AppCompatTextViewBinding::new);
         });
 
@@ -77,6 +78,17 @@ public final class ThemeAndroidX {
         });
 
         tryRegister(() -> registry.register(SwitchCompat.class, SwitchCompatBinding::new));
+
+        // Material 系：显式登记到对应 AppCompat Binding；没引 Material 依赖时整块跳过。
+        tryRegister(() -> {
+            registry.register(MaterialTextView.class, AppCompatTextViewBinding::new);
+            registry.register(MaterialButton.class, AppCompatTextViewBinding::new);
+            registry.register(MaterialCheckBox.class, AppCompatCompoundButtonBinding::new);
+            registry.register(MaterialRadioButton.class, AppCompatCompoundButtonBinding::new);
+            registry.register(ShapeableImageView.class, AppCompatImageViewBinding::new);
+            registry.register(SwitchMaterial.class, SwitchCompatBinding::new);
+        });
+
         tryRegister(() -> registry.register(RecyclerView.class, RecyclerViewBinding::new));
         tryRegister(() -> registry.register(ViewPager2.class, ViewPager2Binding::new));
 
