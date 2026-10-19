@@ -63,7 +63,6 @@ package io.github.oppsgo.android.theme.androidx.binding {
 
   public class TabLayoutBinding extends io.github.oppsgo.android.theme.binding.ViewBinding {
     ctor public TabLayoutBinding(com.google.android.material.tabs.TabLayout);
-    method protected void applySpecialAttrs(io.github.oppsgo.android.theme.ResourceResolver);
     method public com.google.android.material.tabs.TabLayout getView();
     method public void setTabIconTint(@ColorRes int);
     method public void setTabIndicatorColor(@ColorRes int);

@@ -245,8 +245,8 @@ package io.github.oppsgo.android.theme.binding {
     method public void onAttached();
     method public void onDetached();
     method public void refresh();
-    method protected android.content.res.ColorStateList? resolveTint(io.github.oppsgo.android.theme.ResourceResolver, int);
-    method protected android.content.res.ColorStateList? resolveTint(io.github.oppsgo.android.theme.ResourceResolver, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
+    method protected io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!> resolveTint(io.github.oppsgo.android.theme.ResourceResolver, int);
+    method protected io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!> resolveTint(io.github.oppsgo.android.theme.ResourceResolver, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
     method protected final android.content.res.Resources resourceTable();
     method protected final void setAttr(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
     method protected final void setAttrAndApply(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
@@ -374,7 +374,7 @@ package io.github.oppsgo.android.theme.resource {
   }
 
   @java.lang.FunctionalInterface public interface ResourceProvider<T> {
-    method public T? provide(io.github.oppsgo.android.theme.ResourceResolver);
+    method public io.github.oppsgo.android.theme.resource.ResourceValue<T> provide(io.github.oppsgo.android.theme.ResourceResolver);
   }
 
   public abstract class ResourceRef<T> implements io.github.oppsgo.android.theme.resource.ResourceProvider<T> {
@@ -385,8 +385,15 @@ package io.github.oppsgo.android.theme.resource {
     method public boolean hasProvider();
     method public boolean isEmpty();
     method protected abstract T? load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
-    method public T? provide(io.github.oppsgo.android.theme.ResourceResolver);
+    method public io.github.oppsgo.android.theme.resource.ResourceValue<T> provide(io.github.oppsgo.android.theme.ResourceResolver);
     field public static final int ID_NULL = 0; // 0x0
+  }
+
+  public final class ResourceValue<T> {
+    method public static <T> io.github.oppsgo.android.theme.resource.ResourceValue<T> empty();
+    method public T? get();
+    method public boolean isPresent();
+    method public static <T> io.github.oppsgo.android.theme.resource.ResourceValue<T> of(T?);
   }
 
 }

@@ -1,6 +1,8 @@
 package io.github.oppsgo.android.theme.binding;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.widget.CompoundButton;
 
 import androidx.annotation.ColorRes;
@@ -12,6 +14,7 @@ import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * {@link CompoundButton} 绑定：在 TextView 之上跟踪 {@code button} / {@code buttonTint}。
@@ -31,8 +34,7 @@ public class CompoundButtonBinding extends TextViewBinding {
                 this::applyButtonDrawable);
         bindRaw(ATTR_BUTTON_TINT,
                 colorFactory(),
-                (resolver, ref) ->
-                        resolver.getViewCompat().setButtonTintList(getView(), resolveTint(resolver, ref)));
+                this::applyButtonTint);
     }
 
     @NonNull
@@ -62,9 +64,19 @@ public class CompoundButtonBinding extends TextViewBinding {
                 colorFactory());
     }
 
+    private void applyButtonTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            resolver.getViewCompat().setButtonTintList(getView(), tint.get());
+        }
+    }
+
     private void applyButtonDrawable(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof DrawableRef) {
-            getView().setButtonDrawable(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> button = ((DrawableRef) ref).provide(resolver);
+            if (button.isPresent()) {
+                getView().setButtonDrawable(button.get());
+            }
         }
     }
 }

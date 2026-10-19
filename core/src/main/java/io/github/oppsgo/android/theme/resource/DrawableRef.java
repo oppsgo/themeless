@@ -18,15 +18,15 @@ import io.github.oppsgo.android.theme.ResourceResolver;
  */
 public class DrawableRef extends ResourceRef<Drawable> {
 
-    /** 显式空 Drawable：provide 恒为 null，用于清除已跟踪的 compound drawable 等。 */
-    private static final DrawableRef NONE = new DrawableRef(ID_NULL, resolver -> null);
+    /** 显式空 Drawable：provide 恒为「有值但值为 null」，用于清除已跟踪的 drawable。 */
+    private static final DrawableRef NONE = new DrawableRef(ID_NULL, resolver -> ResourceValue.of(null));
 
     protected DrawableRef(@DrawableRes int resourceId, @Nullable ResourceProvider<Drawable> provider) {
         super(resourceId, provider);
     }
 
     /**
-     * 标记「这里就是 null」：会写入 Binding，刷新时 {@link #provide} 返回 null。
+     * 标记「这里就是 null」：会写入 Binding，刷新时 {@link #provide} 返回有值但值为 null。
      * 用于 compound drawable 等需要显式占位空方向的场景（与传入 {@code null} 等价）。
      */
     @NonNull
@@ -66,7 +66,7 @@ public class DrawableRef extends ResourceRef<Drawable> {
         return new DrawableRef(drawableId, resolver -> {
             Drawable drawable = resolver.getDrawable(drawableId);
             if (drawable == null) {
-                return null;
+                return ResourceValue.empty();
             }
             int color = resolver.getColor(colorId);
             // 资源 Drawable 共享 constant state，先 mutate 再染，避免污染其它使用者。
@@ -77,7 +77,7 @@ public class DrawableRef extends ResourceRef<Drawable> {
             } else {
                 setColorFilterCompat(target, color, mode);
             }
-            return target;
+            return ResourceValue.of(target);
         });
     }
 

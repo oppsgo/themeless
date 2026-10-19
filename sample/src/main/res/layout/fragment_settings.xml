@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -101,5 +101,35 @@
                 android:textColor="@color/skin_text_primary"
                 app:buttonTint="@color/skin_accent" />
         </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/skin_divider" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/settings_repo_title"
+            android:textColor="@color/skin_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="46dp"
+            android:autoLink="web"
+            android:gravity="center"
+            android:text="@string/settings_repo_links"
+            android:textColor="@color/skin_text_secondary"
+            android:textColorLink="@color/skin_accent" />
     </LinearLayout>
 </ScrollView>

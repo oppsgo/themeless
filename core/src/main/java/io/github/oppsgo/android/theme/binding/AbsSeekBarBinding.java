@@ -1,6 +1,8 @@
 package io.github.oppsgo.android.theme.binding;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.AbsSeekBar;
 
@@ -13,6 +15,7 @@ import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * {@link AbsSeekBar}（SeekBar / RatingBar）：在 {@link ProgressBarBinding} 之上跟踪 thumb / thumbTint。
@@ -57,12 +60,18 @@ public class AbsSeekBarBinding extends ProgressBarBinding {
 
     private void applyThumb(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof DrawableRef) {
-            getView().setThumb(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> thumb = ((DrawableRef) ref).provide(resolver);
+            if (thumb.isPresent()) {
+                getView().setThumb(thumb.get());
+            }
         }
     }
 
     private void applyThumbTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        getView().setThumbTintList(resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            getView().setThumbTintList(tint.get());
+        }
     }
 }

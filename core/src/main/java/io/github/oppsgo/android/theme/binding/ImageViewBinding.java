@@ -1,5 +1,7 @@
 package io.github.oppsgo.android.theme.binding;
 
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import androidx.annotation.ColorRes;
@@ -11,6 +13,7 @@ import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * {@link ImageView} 绑定，额外跟踪 src 和 tint。
@@ -25,11 +28,10 @@ public class ImageViewBinding extends ViewBinding {
         super(view);
         bindRaw(ATTR_SRC,
                 DrawableRef::of,
-                (resolver, ref) -> applySrc(resolver, ref));
+                this::applySrc);
         bindRaw(ATTR_TINT,
                 colorFactory(),
-                (resolver, ref) ->
-                        resolver.getViewCompat().setImageTintList(getView(), resolveTint(resolver, ref)));
+                this::applyImageTint);
     }
 
     @NonNull
@@ -59,9 +61,19 @@ public class ImageViewBinding extends ViewBinding {
                 colorFactory());
     }
 
+    private void applyImageTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            resolver.getViewCompat().setImageTintList(getView(), tint.get());
+        }
+    }
+
     private void applySrc(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof DrawableRef) {
-            getView().setImageDrawable(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> src = ((DrawableRef) ref).provide(resolver);
+            if (src.isPresent()) {
+                getView().setImageDrawable(src.get());
+            }
         }
     }
 }

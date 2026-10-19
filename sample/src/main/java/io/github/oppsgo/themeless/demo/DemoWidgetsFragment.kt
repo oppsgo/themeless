@@ -19,6 +19,7 @@ import io.github.oppsgo.android.theme.binding.ImageViewBinding
 import io.github.oppsgo.android.theme.binding.TextViewBinding
 import io.github.oppsgo.android.theme.resource.ColorRef
 import io.github.oppsgo.android.theme.resource.DrawableRef
+import io.github.oppsgo.android.theme.resource.ResourceValue
 import io.github.oppsgo.themeless.R
 
 class DemoWidgetsFragment : Fragment() {
@@ -38,9 +39,9 @@ class DemoWidgetsFragment : Fragment() {
         val size = (72 * resources.displayMetrics.density).toInt()
         binding.setImage(
             DrawableRef.of(R.drawable.mail_star_fill) { resolver ->
-                val drawable = resolver.getDrawable(R.drawable.mail_star_fill)?.mutate() ?: return@of null
+                val drawable = resolver.getDrawable(R.drawable.mail_star_fill)?.mutate() ?: return@of ResourceValue.empty()
                 drawable.setBounds(0, 0, size, size)
-                drawable
+                ResourceValue.of(drawable)
             },
         )
 
@@ -72,14 +73,16 @@ class DemoWidgetsFragment : Fragment() {
             createdBinding.setTextColor(ColorRef.of(R.color.skin_accent))
             createdBinding.setBackground(
                 DrawableRef.of { resolver ->
-                    GradientDrawable().apply {
-                        cornerRadius = 15F
-                        orientation = GradientDrawable.Orientation.LEFT_RIGHT
-                        colors = intArrayOf(
-                            resolver.getColor(R.color.skin_card_bg),
-                            resolver.getColor(R.color.skin_panel_bg_blue),
-                        )
-                    }
+                    ResourceValue.of(
+                        GradientDrawable().apply {
+                            cornerRadius = 15F
+                            orientation = GradientDrawable.Orientation.LEFT_RIGHT
+                            colors = intArrayOf(
+                                resolver.getColor(R.color.skin_card_bg),
+                                resolver.getColor(R.color.skin_panel_bg_blue),
+                            )
+                        }
+                    )
                 },
             )
         }

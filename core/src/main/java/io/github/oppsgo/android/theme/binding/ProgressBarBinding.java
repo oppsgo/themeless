@@ -1,6 +1,8 @@
 package io.github.oppsgo.android.theme.binding;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.ProgressBar;
 
@@ -13,6 +15,7 @@ import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * {@link ProgressBar}：跟踪 progress / indeterminate drawable 及其 tint。
@@ -114,33 +117,51 @@ public class ProgressBarBinding extends ViewBinding {
 
     private void applyProgressDrawable(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof DrawableRef) {
-            getView().setProgressDrawable(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> drawable = ((DrawableRef) ref).provide(resolver);
+            if (drawable.isPresent()) {
+                getView().setProgressDrawable(drawable.get());
+            }
         }
     }
 
     private void applyIndeterminateDrawable(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof DrawableRef) {
-            getView().setIndeterminateDrawable(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> drawable = ((DrawableRef) ref).provide(resolver);
+            if (drawable.isPresent()) {
+                getView().setIndeterminateDrawable(drawable.get());
+            }
         }
     }
 
     private void applyProgressTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        getView().setProgressTintList(resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            getView().setProgressTintList(tint.get());
+        }
     }
 
     private void applyIndeterminateTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        getView().setIndeterminateTintList(resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            getView().setIndeterminateTintList(tint.get());
+        }
     }
 
     private void applyProgressBackgroundTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        getView().setProgressBackgroundTintList(resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            getView().setProgressBackgroundTintList(tint.get());
+        }
     }
 
     private void applySecondaryProgressTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        getView().setSecondaryProgressTintList(resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            getView().setSecondaryProgressTintList(tint.get());
+        }
     }
 }

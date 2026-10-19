@@ -40,6 +40,7 @@ public class ColorStateListRef extends ResourceRef<ColorStateList> {
      * 用状态表 + 各态颜色拼 {@link ColorStateList}。
      * {@code states.length} 须等于 {@code colors.length}；换肤时再分别 provide。
      * 传入 {@link ColorRef}，或自定义 {@link ResourceProvider}（例如对 CSL 取 default）。
+     * 任一颜色取不到值时整体视为取不到值。
      */
     @NonNull
     @SafeVarargs
@@ -53,11 +54,11 @@ public class ColorStateListRef extends ResourceRef<ColorStateList> {
         return of(resolver -> {
             int[] resolved = new int[colors.length];
             for (int i = 0; i < colors.length; i++) {
-                Integer c = colors[i].provide(resolver);
-                if (c == null) return null;
-                resolved[i] = c;
+                ResourceValue<Integer> c = colors[i].provide(resolver);
+                if (!c.isPresent() || c.get() == null) return ResourceValue.empty();
+                resolved[i] = c.get();
             }
-            return new ColorStateList(states, resolved);
+            return ResourceValue.of(new ColorStateList(states, resolved));
         });
     }
 

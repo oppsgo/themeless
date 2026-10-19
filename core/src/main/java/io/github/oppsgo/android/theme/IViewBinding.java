@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.binding.ViewBinding;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * 一个 View 上的主题绑定。记下要随主题变化的属性，刷新时再写回 View。
@@ -40,6 +41,9 @@ public interface IViewBinding {
     /**
      * 声明式登记一个属性：刷新时用 {@code factory} 按资源 id 造 {@link ResourceRef}，
      * 再把解析出的值交给 {@code setter} 写回 View。自定义 View 接入用它，一行一个属性。
+     * <p>
+     * 写回时机见 {@link ResourceValue}：解析出「有值」才调 {@code setter}，
+     * 显式 null 也照常传入（如清除 drawable）；「取不到值」（未绑定 / 资源缺失）则跳过，不动 View。
      */
     <T> void bind(@AttrRes int attr, @NonNull ResourceFactory<T> factory, @NonNull AttrSetter<T> setter);
 
@@ -84,6 +88,7 @@ public interface IViewBinding {
 
     /**
      * 把解析出的值写回 View。
+     * 可能收到显式 {@code null}（绑定有效但就是要置空），不会因「取不到值」被调用。
      */
     @FunctionalInterface
     interface AttrSetter<T> {

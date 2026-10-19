@@ -1,6 +1,8 @@
 package io.github.oppsgo.android.theme.binding;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.Switch;
 
@@ -13,6 +15,7 @@ import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * 系统 {@link Switch}：在 CompoundButton 之上跟踪 thumb / track 及其 tint。
@@ -83,23 +86,35 @@ public class SwitchBinding extends CompoundButtonBinding {
 
     private void applyThumb(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof DrawableRef) {
-            getView().setThumbDrawable(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> thumb = ((DrawableRef) ref).provide(resolver);
+            if (thumb.isPresent()) {
+                getView().setThumbDrawable(thumb.get());
+            }
         }
     }
 
     private void applyTrack(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof DrawableRef) {
-            getView().setTrackDrawable(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> track = ((DrawableRef) ref).provide(resolver);
+            if (track.isPresent()) {
+                getView().setTrackDrawable(track.get());
+            }
         }
     }
 
     private void applyThumbTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        getView().setThumbTintList(resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            getView().setThumbTintList(tint.get());
+        }
     }
 
     private void applyTrackTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        getView().setTrackTintList(resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            getView().setTrackTintList(tint.get());
+        }
     }
 }

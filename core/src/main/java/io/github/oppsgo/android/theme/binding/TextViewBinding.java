@@ -19,6 +19,7 @@ import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * {@link TextView} 绑定：textColor / textColorHint / drawableTint 与 compound drawable。
@@ -50,8 +51,7 @@ public class TextViewBinding extends ViewBinding {
                 (resolver, ref) -> applyTextColor(true, resolver, ref));
         bindRaw(ATTR_DRAWABLE_TINT,
                 colorFactory(),
-                (resolver, ref) ->
-                        resolver.getViewCompat().setCompoundDrawableTintList(getView(), resolveTint(resolver, ref)));
+                this::applyCompoundDrawableTint);
         bindSpecial(ATTR_DRAWABLE_LEFT, DrawableRef::of);
         bindSpecial(ATTR_DRAWABLE_TOP, DrawableRef::of);
         bindSpecial(ATTR_DRAWABLE_RIGHT, DrawableRef::of);
@@ -209,7 +209,9 @@ public class TextViewBinding extends ViewBinding {
     private Drawable resolveDrawable(@NonNull ResourceResolver resolver, @AttrRes int attr) {
         ResourceRef<?> ref = getAttrValue(attr);
         if (ref instanceof DrawableRef) {
-            return ((DrawableRef) ref).provide(resolver);
+            ResourceValue<Drawable> value = ((DrawableRef) ref).provide(resolver);
+            // 整组写入按方向取值：取不到值与显式 null（如 DrawableRef.none()）都落在 null 方向上。
+            return value.isPresent() ? value.get() : null;
         }
         return null;
     }
@@ -236,23 +238,30 @@ public class TextViewBinding extends ViewBinding {
         drawable.setBounds(0, 0, width, height);
     }
 
+    private void applyCompoundDrawableTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            resolver.getViewCompat().setCompoundDrawableTintList(getView(), tint.get());
+        }
+    }
+
     private void applyTextColor(
             boolean hint,
             @NonNull ResourceResolver resolver,
             @NonNull ResourceRef<?> ref
     ) {
         if (ref instanceof ColorRef) {
-            Integer color = ((ColorRef) ref).provide(resolver);
-            if (color == null) return;
-            if (hint) getView().setHintTextColor(color);
-            else getView().setTextColor(color);
+            ResourceValue<Integer> color = ((ColorRef) ref).provide(resolver);
+            if (!color.isPresent() || color.get() == null) return;
+            if (hint) getView().setHintTextColor(color.get());
+            else getView().setTextColor(color.get());
             return;
         }
         if (ref instanceof ColorStateListRef) {
-            ColorStateList colors = ((ColorStateListRef) ref).provide(resolver);
-            if (colors == null) return;
-            if (hint) getView().setHintTextColor(colors);
-            else getView().setTextColor(colors);
+            ResourceValue<ColorStateList> colors = ((ColorStateListRef) ref).provide(resolver);
+            if (!colors.isPresent() || colors.get() == null) return;
+            if (hint) getView().setHintTextColor(colors.get());
+            else getView().setTextColor(colors.get());
         }
     }
 }

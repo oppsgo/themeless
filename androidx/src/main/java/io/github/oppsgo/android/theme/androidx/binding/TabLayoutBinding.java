@@ -13,6 +13,7 @@ import io.github.oppsgo.android.theme.binding.ViewBinding;
 import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * Material {@link TabLayout}：跟踪 tab 文字 / 指示器 / 水波纹 / 图标 tint。
@@ -54,7 +55,7 @@ public class TabLayoutBinding extends ViewBinding {
         if (normalRef != null || selectedRef != null) {
             Integer normal = resolveColorOrNull(resolver, normalRef);
             Integer selected = resolveColorOrNull(resolver, selectedRef);
-            // 只跟踪到一侧时两侧同色；取不到值（资源缺失 / provider 返回 null）跳过写入，
+            // 只跟踪到一侧时两侧同色；取不到值（资源缺失 / 颜色解析不到）跳过写入，
             // 不能以 0（全透明黑）静默写进 View。
             if (normal == null) normal = selected;
             if (selected == null) selected = normal;
@@ -63,14 +64,14 @@ public class TabLayoutBinding extends ViewBinding {
             }
         }
 
-        ColorStateList ripple = resolveTint(resolver, ATTR_TAB_RIPPLE_COLOR);
-        if (ripple != null) {
-            getView().setTabRippleColor(ripple);
+        ResourceValue<ColorStateList> ripple = resolveTint(resolver, ATTR_TAB_RIPPLE_COLOR);
+        if (ripple.isPresent() && ripple.get() != null) {
+            getView().setTabRippleColor(ripple.get());
         }
 
-        ColorStateList iconTint = resolveTint(resolver, ATTR_TAB_ICON_TINT);
-        if (iconTint != null) {
-            getView().setTabIconTint(iconTint);
+        ResourceValue<ColorStateList> iconTint = resolveTint(resolver, ATTR_TAB_ICON_TINT);
+        if (iconTint.isPresent() && iconTint.get() != null) {
+            getView().setTabIconTint(iconTint.get());
         }
     }
 
@@ -103,15 +104,19 @@ public class TabLayoutBinding extends ViewBinding {
 
     /**
      * 从 ColorRef / ColorStateListRef 取出单个 color int（ColorStateList 取默认色）。
+     * 取不到值（{@link ResourceValue#empty()}）或显式 null 都返回 {@code null}——
+     * 颜色没有「写 null」的语义，调用方按取不到值跳过。
      */
     @Nullable
     private Integer resolveColorOrNull(@NonNull ResourceResolver resolver, @Nullable ResourceRef<?> ref) {
         if (ref instanceof ColorRef) {
-            return ((ColorRef) ref).provide(resolver);
+            ResourceValue<Integer> color = ((ColorRef) ref).provide(resolver);
+            return color.isPresent() ? color.get() : null;
         }
         if (ref instanceof ColorStateListRef) {
-            ColorStateList colors = ((ColorStateListRef) ref).provide(resolver);
-            return colors == null ? null : colors.getDefaultColor();
+            ResourceValue<ColorStateList> colors = ((ColorStateListRef) ref).provide(resolver);
+            if (!colors.isPresent() || colors.get() == null) return null;
+            return colors.get().getDefaultColor();
         }
         return null;
     }

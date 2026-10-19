@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -28,6 +29,7 @@ import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
 import io.github.oppsgo.android.theme.resource.ResourceRef;
+import io.github.oppsgo.android.theme.resource.ResourceValue;
 
 /**
  * Binding 基础设施与 View 级属性（{@code background} / {@code backgroundTint}）。
@@ -382,22 +384,24 @@ public class ViewBinding implements IViewBinding {
     @NonNull
     private static <T> AttributeApplier providerSetter(@NonNull IViewBinding.AttrSetter<T> setter) {
         return (resolver, ref) -> {
-            T value = provideValue(resolver, ref);
-            if (value != null)
-                setter.set(value);
+            ResourceValue<T> value = provideValue(resolver, ref);
+            // 有值才调 setter：显式 null 也照常传入（如清除 drawable）；取不到值跳过。
+            if (value.isPresent()) {
+                setter.set(value.get());
+            }
         };
     }
 
-    @Nullable
-    private static <T> T provideValue(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
+    @NonNull
+    private static <T> ResourceValue<T> provideValue(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         @SuppressWarnings("unchecked")
-        T value = (T) ref.provide(resolver);
+        ResourceValue<T> value = (ResourceValue<T>) ref.provide(resolver);
         return value;
     }
 
     @Nullable
     private static ResourceRef<?> normalize(@Nullable ResourceRef<?> ref) {
-        if (ref == null || ref.isEmpty()) {
+        if (ref == null || ref.isUnspecified()) {
             return null;
         }
         return ref;
@@ -476,37 +480,46 @@ public class ViewBinding implements IViewBinding {
 
     private void applyBackground(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof ColorRef) {
-            Integer color = ((ColorRef) ref).provide(resolver);
-            if (color != null) {
-                view.setBackgroundColor(color);
+            ResourceValue<Integer> color = ((ColorRef) ref).provide(resolver);
+            if (color.isPresent() && color.get() != null) {
+                view.setBackgroundColor(color.get());
             }
         } else if (ref instanceof DrawableRef) {
-            view.setBackground(((DrawableRef) ref).provide(resolver));
+            ResourceValue<Drawable> background = ((DrawableRef) ref).provide(resolver);
+            if (background.isPresent()) {
+                view.setBackground(background.get());
+            }
         }
     }
 
     private void applyBackgroundTint(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
-        resolver.getViewCompat().setBackgroundTintList(view, resolveTint(resolver, ref));
+        ResourceValue<ColorStateList> tint = resolveTint(resolver, ref);
+        if (tint.isPresent()) {
+            resolver.getViewCompat().setBackgroundTintList(view, tint.get());
+        }
     }
 
     /**
      * {@link ColorRef} 与 {@link ColorStateListRef} 都收成 {@link ColorStateList}。
+     * 返回 {@link ResourceValue}：有值（可为显式 null，清 tint）才写回。
      */
-    @Nullable
-    protected ColorStateList resolveTint(@NonNull ResourceResolver resolver, ResourceRef<?> ref) {
+    @NonNull
+    protected ResourceValue<ColorStateList> resolveTint(@NonNull ResourceResolver resolver, ResourceRef<?> ref) {
         if (ref instanceof ColorRef) {
-            Integer color = ((ColorRef) ref).provide(resolver);
-            return color == null ? null : ColorStateList.valueOf(color);
+            ResourceValue<Integer> color = ((ColorRef) ref).provide(resolver);
+            if (color.isPresent() && color.get() != null) {
+                return ResourceValue.of(ColorStateList.valueOf(color.get()));
+            }
+            return ResourceValue.empty();
         }
         if (ref instanceof ColorStateListRef) {
             return ((ColorStateListRef) ref).provide(resolver);
         }
-        return null;
+        return ResourceValue.empty();
     }
 
-    @Nullable
-    protected ColorStateList resolveTint(@NonNull ResourceResolver resolver, int attr) {
-        ResourceRef<?> ref = getAttrValue(attr);
-        return resolveTint(resolver, ref);
+    @NonNull
+    protected ResourceValue<ColorStateList> resolveTint(@NonNull ResourceResolver resolver, int attr) {
+        return resolveTint(resolver, getAttrValue(attr));
     }
 }

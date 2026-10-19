@@ -13,6 +13,7 @@ import io.github.oppsgo.android.theme.ResourceResolver;
 /**
  * 绑在 View 上的资源引用。记下资源 id，主题变化时再取出具体值。
  * 自定义 {@link ResourceProvider} 不为空时直接使用其返回值，否则按 id 从 {@link ResourceResolver} 读取。
+ * 两者统一经 {@link #provide} 产出 {@link ResourceValue}：有值（可为显式 null）还是取不到值。
  */
 public abstract class ResourceRef<T> implements ResourceProvider<T> {
 
@@ -79,23 +80,38 @@ public abstract class ResourceRef<T> implements ResourceProvider<T> {
     /**
      * 没有资源 id，也没有自定义 {@link ResourceProvider}，刷新时跳过。
      */
-    public boolean isEmpty() {
+    public boolean isUnspecified() {
         return resourceId == ID_NULL && provider == null;
     }
 
     /**
-     * 自定义 {@link ResourceProvider} 优先。没有时按 {@link #getResourceId()} 调用 {@link #load}。
+     * 取值结果，用 {@link ResourceValue} 区分「显式 null」与「取不到值」：
+     * <ul>
+     *   <li>自定义 {@link ResourceProvider} 优先，其结果原样透传——
+     *       {@link ResourceValue#of(Object) of(null)} 即「就是要设置成 null」；</li>
+     *   <li>没绑定 id、或按 id 调 {@link #load} 解析不到（如皮肤包缺该资源），
+     *       返回 {@link ResourceValue#empty() empty()}，调用方跳过写入。</li>
+     * </ul>
      */
-    @Nullable
+    @NonNull
     @Override
-    public T provide(@NonNull ResourceResolver resolver) {
+    public ResourceValue<T> provide(@NonNull ResourceResolver resolver) {
         if (provider != null) {
-            return provider.provide(resolver);
+            ResourceValue<T> value = provider.provide(resolver);
+            // provider 违约返回 null 包装时按「取不到值」处理，不当作显式 null 写进 View。
+            if (value == null) {
+                return ResourceValue.empty();
+            }
+            return value;
         }
         if (resourceId == ID_NULL) {
-            return null;
+            return ResourceValue.empty();
         }
-        return load(resolver, resourceId);
+        T value = load(resolver, resourceId);
+        if (value == null) {
+            return ResourceValue.empty();
+        }
+        return ResourceValue.of(value);
     }
 
     @Nullable
