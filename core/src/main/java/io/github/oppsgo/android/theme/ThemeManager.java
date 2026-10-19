@@ -71,15 +71,24 @@ public class ThemeManager {
     }
 
     public void installDayNight(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory) {
-        boolean night = DayNightResourceResolver.isSystemNight(activity);
-        installDayNight(activity, viewFactory, night);
+        installDayNightInternal(activity, viewFactory, null);
     }
 
 
     public void installDayNight(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 viewFactory, boolean night) {
-        ThemeDelegate factory = prepareDelegate(activity, viewFactory);
+        installDayNightInternal(activity, viewFactory, night);
+    }
+
+    /**
+     *
+     * @param night null 的时候跟随界面
+     */
+    void installDayNightInternal(@NonNull Activity activity, @Nullable LayoutInflater.Factory2 factory2, Boolean night) {
+        ThemeDelegate factory = prepareDelegate(activity, factory2);
         if (factory != null) {
-            factory.resolver = DayNightResourceResolver.of(activity, night);
+            boolean flowSystem = night == null;
+            factory.resolver = flowSystem ? DayNightResourceResolver.followSystem(activity) : DayNightResourceResolver.of(activity, night);
+            factory.refreshOnInflate = !flowSystem;
         }
     }
 

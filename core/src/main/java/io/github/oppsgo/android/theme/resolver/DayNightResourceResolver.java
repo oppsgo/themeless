@@ -35,7 +35,7 @@ public class DayNightResourceResolver extends ContextResourceResolver {
      */
     @NonNull
     public static DayNightResourceResolver followSystem(@NonNull Context context) {
-        return of(context, isSystemNight(context));
+        return new DayNightResourceResolver(context);
     }
 
     @NonNull
@@ -56,8 +56,7 @@ public class DayNightResourceResolver extends ContextResourceResolver {
      * 不读 Activity：AppCompat {@code DefaultNightMode}/{@code localNightMode} 会改掉 Activity 的 uiMode。
      */
     public static boolean isSystemNight(@NonNull Context context) {
-        Context app = context.getApplicationContext();
-        int nightBits = app.getResources().getConfiguration().uiMode
+        int nightBits = context.getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK;
         return nightBits == Configuration.UI_MODE_NIGHT_YES;
     }
