@@ -1,6 +1,5 @@
 package io.github.oppsgo.android.theme.binding;
 
-import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -14,6 +13,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import io.github.oppsgo.android.theme.R2;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
@@ -30,16 +30,15 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  */
 public class TextViewBinding extends ViewBinding {
 
-    public static final int ATTR_TEXT_COLOR = android.R.attr.textColor;
-    public static final int ATTR_TEXT_COLOR_HINT = android.R.attr.textColorHint;
-    @SuppressLint("InlinedApi")
-    public static final int ATTR_DRAWABLE_TINT = android.R.attr.drawableTint;
-    public static final int ATTR_DRAWABLE_LEFT = android.R.attr.drawableLeft;
-    public static final int ATTR_DRAWABLE_TOP = android.R.attr.drawableTop;
-    public static final int ATTR_DRAWABLE_RIGHT = android.R.attr.drawableRight;
-    public static final int ATTR_DRAWABLE_BOTTOM = android.R.attr.drawableBottom;
-    public static final int ATTR_DRAWABLE_START = android.R.attr.drawableStart;
-    public static final int ATTR_DRAWABLE_END = android.R.attr.drawableEnd;
+    public static final int ATTR_TEXT_COLOR = R2.attr.textColor;
+    public static final int ATTR_TEXT_COLOR_HINT = R2.attr.textColorHint;
+    public static final int ATTR_DRAWABLE_TINT = R2.attr.drawableTint;
+    public static final int ATTR_DRAWABLE_LEFT = R2.attr.drawableLeft;
+    public static final int ATTR_DRAWABLE_TOP = R2.attr.drawableTop;
+    public static final int ATTR_DRAWABLE_RIGHT = R2.attr.drawableRight;
+    public static final int ATTR_DRAWABLE_BOTTOM = R2.attr.drawableBottom;
+    public static final int ATTR_DRAWABLE_START = R2.attr.drawableStart;
+    public static final int ATTR_DRAWABLE_END = R2.attr.drawableEnd;
 
     public TextViewBinding(@NonNull TextView view) {
         super(view);
@@ -252,14 +251,14 @@ public class TextViewBinding extends ViewBinding {
     ) {
         if (ref instanceof ColorRef) {
             ResourceValue<Integer> color = ((ColorRef) ref).provide(resolver);
-            if (!color.isPresent() || color.get() == null) return;
-            if (hint) getView().setHintTextColor(color.get());
-            else getView().setTextColor(color.get());
+            if (!color.hasValue()) return;
+            if (hint) getView().setHintTextColor(color.require());
+            else getView().setTextColor(color.require());
             return;
         }
         if (ref instanceof ColorStateListRef) {
             ResourceValue<ColorStateList> colors = ((ColorStateListRef) ref).provide(resolver);
-            if (!colors.isPresent() || colors.get() == null) return;
+            if (!colors.isPresent()) return;
             if (hint) getView().setHintTextColor(colors.get());
             else getView().setTextColor(colors.get());
         }

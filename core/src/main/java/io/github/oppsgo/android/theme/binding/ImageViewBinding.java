@@ -8,6 +8,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
+import io.github.oppsgo.android.theme.R2;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
@@ -21,8 +22,8 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  */
 public class ImageViewBinding extends ViewBinding {
 
-    public static final int ATTR_SRC = android.R.attr.src;
-    public static final int ATTR_TINT = android.R.attr.tint;
+    public static final int ATTR_SRC = R2.attr.src;
+    public static final int ATTR_TINT = R2.attr.tint;
 
     public ImageViewBinding(@NonNull ImageView view) {
         super(view);

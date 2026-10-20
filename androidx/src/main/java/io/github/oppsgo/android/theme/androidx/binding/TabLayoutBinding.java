@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.tabs.TabLayout;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
+import io.github.oppsgo.android.theme.androidx.R2;
 import io.github.oppsgo.android.theme.binding.ViewBinding;
 import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
@@ -23,11 +24,11 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  */
 public class TabLayoutBinding extends ViewBinding {
 
-    public static final int ATTR_TAB_TEXT_COLOR = com.google.android.material.R.attr.tabTextColor;
-    public static final int ATTR_TAB_SELECTED_TEXT_COLOR = com.google.android.material.R.attr.tabSelectedTextColor;
-    public static final int ATTR_TAB_INDICATOR_COLOR = com.google.android.material.R.attr.tabIndicatorColor;
-    public static final int ATTR_TAB_RIPPLE_COLOR = com.google.android.material.R.attr.tabRippleColor;
-    public static final int ATTR_TAB_ICON_TINT = com.google.android.material.R.attr.tabIconTint;
+    public static final int ATTR_TAB_TEXT_COLOR = R2.material.attr.tabTextColor;
+    public static final int ATTR_TAB_SELECTED_TEXT_COLOR = R2.material.attr.tabSelectedTextColor;
+    public static final int ATTR_TAB_INDICATOR_COLOR = R2.material.attr.tabIndicatorColor;
+    public static final int ATTR_TAB_RIPPLE_COLOR = R2.material.attr.tabRippleColor;
+    public static final int ATTR_TAB_ICON_TINT = R2.material.attr.tabIconTint;
 
     public TabLayoutBinding(@NonNull TabLayout view) {
         super(view);
@@ -65,12 +66,12 @@ public class TabLayoutBinding extends ViewBinding {
         }
 
         ResourceValue<ColorStateList> ripple = resolveTint(resolver, ATTR_TAB_RIPPLE_COLOR);
-        if (ripple.isPresent() && ripple.get() != null) {
+        if (ripple.isPresent()) {
             getView().setTabRippleColor(ripple.get());
         }
 
         ResourceValue<ColorStateList> iconTint = resolveTint(resolver, ATTR_TAB_ICON_TINT);
-        if (iconTint.isPresent() && iconTint.get() != null) {
+        if (iconTint.isPresent()) {
             getView().setTabIconTint(iconTint.get());
         }
     }
@@ -115,8 +116,8 @@ public class TabLayoutBinding extends ViewBinding {
         }
         if (ref instanceof ColorStateListRef) {
             ResourceValue<ColorStateList> colors = ((ColorStateListRef) ref).provide(resolver);
-            if (!colors.isPresent() || colors.get() == null) return null;
-            return colors.get().getDefaultColor();
+            if (!colors.hasValue()) return null;
+            return colors.require().getDefaultColor();
         }
         return null;
     }

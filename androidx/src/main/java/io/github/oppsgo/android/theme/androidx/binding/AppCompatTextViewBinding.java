@@ -5,6 +5,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import io.github.oppsgo.android.theme.androidx.R2;
 import io.github.oppsgo.android.theme.binding.TextViewBinding;
 
 /**
@@ -17,21 +18,21 @@ import io.github.oppsgo.android.theme.binding.TextViewBinding;
 public class AppCompatTextViewBinding extends TextViewBinding {
 
     /** {@code app:backgroundTint} → 平台 {@code android:backgroundTint}。 */
-    public static final int ATTR_BACKGROUND_TINT_COMPAT = androidx.appcompat.R.attr.backgroundTint;
+    public static final int ATTR_BACKGROUND_TINT_COMPAT = R2.appcompat.attr.backgroundTint;
     /** {@code app:drawableTint} → 平台 {@code android:drawableTint}。 */
-    public static final int ATTR_DRAWABLE_TINT_COMPAT = androidx.appcompat.R.attr.drawableTint;
+    public static final int ATTR_DRAWABLE_TINT_COMPAT = R2.appcompat.attr.drawableTint;
     /** {@code app:drawableLeftCompat} → 平台 {@code android:drawableLeft}。 */
-    public static final int ATTR_DRAWABLE_LEFT_COMPAT = androidx.appcompat.R.attr.drawableLeftCompat;
+    public static final int ATTR_DRAWABLE_LEFT_COMPAT = R2.appcompat.attr.drawableLeftCompat;
     /** {@code app:drawableTopCompat} → 平台 {@code android:drawableTop}。 */
-    public static final int ATTR_DRAWABLE_TOP_COMPAT = androidx.appcompat.R.attr.drawableTopCompat;
+    public static final int ATTR_DRAWABLE_TOP_COMPAT = R2.appcompat.attr.drawableTopCompat;
     /** {@code app:drawableRightCompat} → 平台 {@code android:drawableRight}。 */
-    public static final int ATTR_DRAWABLE_RIGHT_COMPAT = androidx.appcompat.R.attr.drawableRightCompat;
+    public static final int ATTR_DRAWABLE_RIGHT_COMPAT = R2.appcompat.attr.drawableRightCompat;
     /** {@code app:drawableBottomCompat} → 平台 {@code android:drawableBottom}。 */
-    public static final int ATTR_DRAWABLE_BOTTOM_COMPAT = androidx.appcompat.R.attr.drawableBottomCompat;
+    public static final int ATTR_DRAWABLE_BOTTOM_COMPAT = R2.appcompat.attr.drawableBottomCompat;
     /** {@code app:drawableStartCompat} → 平台 {@code android:drawableStart}。 */
-    public static final int ATTR_DRAWABLE_START_COMPAT = androidx.appcompat.R.attr.drawableStartCompat;
+    public static final int ATTR_DRAWABLE_START_COMPAT = R2.appcompat.attr.drawableStartCompat;
     /** {@code app:drawableEndCompat} → 平台 {@code android:drawableEnd}。 */
-    public static final int ATTR_DRAWABLE_END_COMPAT = androidx.appcompat.R.attr.drawableEndCompat;
+    public static final int ATTR_DRAWABLE_END_COMPAT = R2.appcompat.attr.drawableEndCompat;
 
     public AppCompatTextViewBinding(@NonNull TextView view) {
         super(view);

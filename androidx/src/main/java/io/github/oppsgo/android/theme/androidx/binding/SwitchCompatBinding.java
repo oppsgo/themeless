@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
+import io.github.oppsgo.android.theme.androidx.R2;
 import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
 import io.github.oppsgo.android.theme.resource.DrawableRef;
@@ -25,15 +26,15 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  */
 public class SwitchCompatBinding extends AppCompatCompoundButtonBinding {
 
-    public static final int ATTR_THUMB = android.R.attr.thumb;
-    public static final int ATTR_TRACK = android.R.attr.track;
-    public static final int ATTR_THUMB_TINT = android.R.attr.thumbTint;
-    public static final int ATTR_TRACK_TINT = android.R.attr.trackTint;
+    public static final int ATTR_THUMB = io.github.oppsgo.android.theme.R2.attr.thumb;
+    public static final int ATTR_TRACK = io.github.oppsgo.android.theme.R2.attr.track;
+    public static final int ATTR_THUMB_TINT = io.github.oppsgo.android.theme.R2.attr.thumbTint;
+    public static final int ATTR_TRACK_TINT = io.github.oppsgo.android.theme.R2.attr.trackTint;
 
     /** {@code app:thumbTint} → 平台 {@code android:thumbTint}。 */
-    public static final int ATTR_THUMB_TINT_COMPAT = androidx.appcompat.R.attr.thumbTint;
+    public static final int ATTR_THUMB_TINT_COMPAT = R2.appcompat.attr.thumbTint;
     /** {@code app:trackTint} → 平台 {@code android:trackTint}。 */
-    public static final int ATTR_TRACK_TINT_COMPAT = androidx.appcompat.R.attr.trackTint;
+    public static final int ATTR_TRACK_TINT_COMPAT = R2.appcompat.attr.trackTint;
 
     public SwitchCompatBinding(@NonNull SwitchCompat view) {
         super(view);

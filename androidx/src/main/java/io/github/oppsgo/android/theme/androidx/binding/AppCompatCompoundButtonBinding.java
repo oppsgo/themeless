@@ -4,6 +4,7 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 
+import io.github.oppsgo.android.theme.androidx.R2;
 import io.github.oppsgo.android.theme.binding.CompoundButtonBinding;
 
 /**
@@ -13,7 +14,7 @@ import io.github.oppsgo.android.theme.binding.CompoundButtonBinding;
 public class AppCompatCompoundButtonBinding extends CompoundButtonBinding {
 
     /** {@code app:buttonTint} → 平台 {@code android:buttonTint}。 */
-    public static final int ATTR_BUTTON_TINT_COMPAT = androidx.appcompat.R.attr.buttonTint;
+    public static final int ATTR_BUTTON_TINT_COMPAT = R2.appcompat.attr.buttonTint;
 
     public AppCompatCompoundButtonBinding(@NonNull CompoundButton view) {
         super(view);

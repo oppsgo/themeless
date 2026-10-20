@@ -1,6 +1,5 @@
 package io.github.oppsgo.android.theme.binding;
 
-import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -10,6 +9,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
+import io.github.oppsgo.android.theme.R2;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
@@ -22,15 +22,14 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  * {@link android.widget.AbsSeekBar} 见 {@link AbsSeekBarBinding}。
  */
 // 各 tint attr ID（API 21 引入）在低版本上查询落空，写回另有 SDK 守卫。
-@SuppressLint("InlinedApi")
 public class ProgressBarBinding extends ViewBinding {
 
-    public static final int ATTR_PROGRESS_DRAWABLE = android.R.attr.progressDrawable;
-    public static final int ATTR_INDETERMINATE_DRAWABLE = android.R.attr.indeterminateDrawable;
-    public static final int ATTR_PROGRESS_TINT = android.R.attr.progressTint;
-    public static final int ATTR_INDETERMINATE_TINT = android.R.attr.indeterminateTint;
-    public static final int ATTR_PROGRESS_BACKGROUND_TINT = android.R.attr.progressBackgroundTint;
-    public static final int ATTR_SECONDARY_PROGRESS_TINT = android.R.attr.secondaryProgressTint;
+    public static final int ATTR_PROGRESS_DRAWABLE = R2.attr.progressDrawable;
+    public static final int ATTR_INDETERMINATE_DRAWABLE = R2.attr.indeterminateDrawable;
+    public static final int ATTR_PROGRESS_TINT = R2.attr.progressTint;
+    public static final int ATTR_INDETERMINATE_TINT = R2.attr.indeterminateTint;
+    public static final int ATTR_PROGRESS_BACKGROUND_TINT = R2.attr.progressBackgroundTint;
+    public static final int ATTR_SECONDARY_PROGRESS_TINT = R2.attr.secondaryProgressTint;
 
     public ProgressBarBinding(@NonNull ProgressBar view) {
         super(view);

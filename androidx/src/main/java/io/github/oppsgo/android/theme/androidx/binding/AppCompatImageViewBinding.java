@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import io.github.oppsgo.android.theme.androidx.R2;
 import io.github.oppsgo.android.theme.binding.ImageViewBinding;
 
 /**
@@ -15,11 +16,11 @@ import io.github.oppsgo.android.theme.binding.ImageViewBinding;
 public class AppCompatImageViewBinding extends ImageViewBinding {
 
     /** {@code app:srcCompat} → 平台 {@code android:src}。 */
-    public static final int ATTR_SRC_COMPAT = androidx.appcompat.R.attr.srcCompat;
+    public static final int ATTR_SRC_COMPAT = R2.appcompat.attr.srcCompat;
     /** {@code app:tint} → 平台 {@code android:tint}。 */
-    public static final int ATTR_TINT_COMPAT = androidx.appcompat.R.attr.tint;
+    public static final int ATTR_TINT_COMPAT = R2.appcompat.attr.tint;
     /** {@code app:backgroundTint} → 平台 {@code android:backgroundTint}。 */
-    public static final int ATTR_BACKGROUND_TINT_COMPAT = androidx.appcompat.R.attr.backgroundTint;
+    public static final int ATTR_BACKGROUND_TINT_COMPAT = R2.appcompat.attr.backgroundTint;
 
     public AppCompatImageViewBinding(@NonNull ImageView view) {
         super(view);

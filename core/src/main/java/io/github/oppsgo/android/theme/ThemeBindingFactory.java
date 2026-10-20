@@ -24,7 +24,6 @@ import io.github.oppsgo.android.theme.binding.SwitchBinding;
 import io.github.oppsgo.android.theme.binding.TextViewBinding;
 import io.github.oppsgo.android.theme.binding.ViewBinding;
 import io.github.oppsgo.android.theme.binding.ViewGroupBinding;
-import io.github.oppsgo.android.theme.core.R;
 
 /**
  * 沿 View 继承链查找并创建最具体的已注册 Binding。
@@ -32,7 +31,7 @@ import io.github.oppsgo.android.theme.core.R;
  */
 public final class ThemeBindingFactory {
 
-    private static final int TAG_BINDING = R.id.theme_view_attr_binding_tag;
+    private static final int TAG_BINDING = R2.id.theme_view_attr_binding_tag;
 
     private final ConcurrentHashMap<Class<? extends View>, Creator<? extends View>> registry = new ConcurrentHashMap<>();
 

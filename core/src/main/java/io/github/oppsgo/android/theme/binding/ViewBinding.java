@@ -1,6 +1,6 @@
 package io.github.oppsgo.android.theme.binding;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -20,10 +20,10 @@ import java.util.Arrays;
 
 import io.github.oppsgo.android.theme.IViewBinding;
 import io.github.oppsgo.android.theme.OnViewThemeUpdateListener;
+import io.github.oppsgo.android.theme.R2;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeBindingFactory;
 import io.github.oppsgo.android.theme.ThemeManager;
-import io.github.oppsgo.android.theme.core.R;
 import io.github.oppsgo.android.theme.resolver.ContextResourceResolver;
 import io.github.oppsgo.android.theme.resource.ColorRef;
 import io.github.oppsgo.android.theme.resource.ColorStateListRef;
@@ -44,14 +44,13 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  */
 public class ViewBinding implements IViewBinding {
 
-    public static final int ATTR_BACKGROUND = android.R.attr.background;
-    @SuppressLint("InlinedApi")
-    public static final int ATTR_BACKGROUND_TINT = android.R.attr.backgroundTint;
+    public static final int ATTR_BACKGROUND = R2.attr.background;
+    public static final int ATTR_BACKGROUND_TINT = R2.attr.backgroundTint;
 
     /**
      * {@code app:themeViewAttrEnable} → {@link #setEnabled(boolean)}
      */
-    private static final int ATTR_ENABLED = R.attr.themeViewAttrEnable;
+    private static final int ATTR_ENABLED = R2.attr.themeViewAttrEnable;
 
     @NonNull
     protected final View view;
@@ -481,8 +480,8 @@ public class ViewBinding implements IViewBinding {
     private void applyBackground(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {
         if (ref instanceof ColorRef) {
             ResourceValue<Integer> color = ((ColorRef) ref).provide(resolver);
-            if (color.isPresent() && color.get() != null) {
-                view.setBackgroundColor(color.get());
+            if (color.hasValue()) {
+                view.setBackgroundColor(color.require());
             }
         } else if (ref instanceof DrawableRef) {
             ResourceValue<Drawable> background = ((DrawableRef) ref).provide(resolver);
@@ -507,8 +506,8 @@ public class ViewBinding implements IViewBinding {
     protected ResourceValue<ColorStateList> resolveTint(@NonNull ResourceResolver resolver, ResourceRef<?> ref) {
         if (ref instanceof ColorRef) {
             ResourceValue<Integer> color = ((ColorRef) ref).provide(resolver);
-            if (color.isPresent() && color.get() != null) {
-                return ResourceValue.of(ColorStateList.valueOf(color.get()));
+            if (color.hasValue()) {
+                return ResourceValue.of(ColorStateList.valueOf(color.require()));
             }
             return ResourceValue.empty();
         }
