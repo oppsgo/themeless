@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
  * </ul>
  * 判断「显式 null」必须先看 {@link #isPresent()}：没值时 {@link #get()} 也返回 {@code null}。
  */
-public final class ResourceValue<T> {
+public class ResourceValue<T> {
 
     private static final ResourceValue<?> EMPTY = new ResourceValue<>(false, null);
 
@@ -27,7 +27,7 @@ public final class ResourceValue<T> {
     @Nullable
     private final T value;
 
-    private ResourceValue(boolean present, @Nullable T value) {
+    protected ResourceValue(boolean present, @Nullable T value) {
         this.present = present;
         this.value = value;
     }
@@ -59,6 +59,19 @@ public final class ResourceValue<T> {
      */
     @Nullable
     public T get() {
+        return value;
+    }
+
+    public boolean hasValue() {
+        return value != null;
+    }
+
+    @NonNull
+    public T require() {
+        T value = this.value;
+        if (value == null) {
+            throw new IllegalArgumentException("value is null.");
+        }
         return value;
     }
 

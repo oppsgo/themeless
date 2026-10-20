@@ -55,8 +55,8 @@ public class ColorStateListRef extends ResourceRef<ColorStateList> {
             int[] resolved = new int[colors.length];
             for (int i = 0; i < colors.length; i++) {
                 ResourceValue<Integer> c = colors[i].provide(resolver);
-                if (!c.isPresent() || c.get() == null) return ResourceValue.empty();
-                resolved[i] = c.get();
+                if (!c.hasValue()) return ResourceValue.empty();
+                resolved[i] = c.require();
             }
             return ResourceValue.of(new ColorStateList(states, resolved));
         });

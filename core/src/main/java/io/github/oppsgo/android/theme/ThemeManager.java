@@ -7,13 +7,13 @@ import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import io.github.oppsgo.android.theme.binding.ViewBinding;
 import io.github.oppsgo.android.theme.resolver.DayNightResourceResolver;
 
 /**
@@ -245,21 +245,7 @@ public class ThemeManager {
     }
 
     private void applyRoot(@NonNull ResourceResolver resolver, @NonNull View root) {
-        IViewBinding binding = registry.find(root);
-        if (binding != null) {
-            binding.apply(resolver);
-            return;
-        }
-        if (root instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) root;
-            int childCount = group.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                IViewBinding child = registry.find(group.getChildAt(i));
-                if (child != null) {
-                    child.apply(resolver);
-                }
-            }
-        }
+        this.of(root).apply(resolver);
     }
 
     /**

@@ -8,7 +8,9 @@ import androidx.annotation.Nullable;
 
 import io.github.oppsgo.android.theme.ResourceResolver;
 
-/** 纯色引用，对应 {@code setTextColor(int)}、{@code setBackgroundColor}。 */
+/**
+ * 纯色引用，对应 {@code setTextColor(int)}、{@code setBackgroundColor}。
+ */
 public class ColorRef extends ResourceRef<Integer> {
 
     protected ColorRef(@ColorRes int resourceId, @Nullable ResourceProvider<Integer> provider) {
@@ -28,6 +30,13 @@ public class ColorRef extends ResourceRef<Integer> {
     @NonNull
     public static ColorRef of(@NonNull ResourceProvider<Integer> provider) {
         return new ColorRef(ID_NULL, provider);
+    }
+
+    @NonNull
+    @Override
+    public ResourceValue<Integer> provide(@NonNull ResourceResolver resolver) {
+        ResourceValue<Integer> provide = super.provide(resolver);
+        return provide.hasValue() ? provide : ResourceValue.empty();
     }
 
     @ColorInt
