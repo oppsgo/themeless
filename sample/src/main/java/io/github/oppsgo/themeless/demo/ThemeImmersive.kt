@@ -31,18 +31,21 @@ internal fun Activity.setupImmersiveTitleBar() {
         ?: findViewById(R.id.themeRoot)
         ?: findViewById(R.id.vp2StressRoot)
         ?: findViewById(R.id.vpStressRoot)
+        ?: findViewById(R.id.webDayNightRoot)
         ?: return
     val titleBar = findViewById<View>(R.id.mainTitleBar)
         ?: findViewById(R.id.settingsTitleBar)
         ?: findViewById(R.id.themeTitleBar)
         ?: findViewById(R.id.vp2StressTitleBar)
         ?: findViewById(R.id.vpStressTitleBar)
+        ?: findViewById(R.id.webDayNightTitleBar)
         ?: return
     val content = findViewById<View>(R.id.homeRoot)
         ?: findViewById(R.id.settingsRoot)
         ?: findViewById(R.id.demoPager)
         ?: findViewById(R.id.vp2StressBody)
         ?: findViewById(R.id.vpStressBody)
+        ?: findViewById(R.id.webDayNightBody)
         ?: return
 
     // 记录初始 padding，避免多次 insets 叠加

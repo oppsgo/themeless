@@ -13,10 +13,14 @@ import io.github.oppsgo.android.theme.ThemeViewCompat;
 /**
  * 在 {@link ContextResourceResolver} 上只多做一件事：按亮 / 暗 / 跟随系统造一套 Configuration。
  * <p>
- * 取值 Context 必须与 Activity / AppCompat DayNight 隔离：只能从
- * {@link Context#getApplicationContext()} 调 {@link Context#createConfigurationContext}。
- * 对 Activity 调会被 AppCompat 再盖回「跟随系统夜间」；用共用 {@code AssetManager} 的
- * {@code new Resources(...)} 在新系统上也不会按 uiMode 选 values / values-night。
+ * Resources 必须与 Activity uiMode 隔离：从 {@link Context#getApplicationContext()} 调
+ * {@link Context#createConfigurationContext}。对 Activity 调会被 AppCompat 再盖回
+ * 「跟随系统夜间」；共用 {@code AssetManager} 的 {@code new Resources(...)} 在新系统上
+ * 也不会按 uiMode 选 values / values-night。
+ * <p>
+ * Theme 则拷贝调用方（通常是 Activity）：隔离 Context 默认只有 Application 主题，
+ * Material / AppCompat 控件自带的 {@code ?attr/} tint 会解析失败；拷贝后
+ * Resources 仍按隔离 uiMode 取色，attr 仍走宿主主题。
  */
 public class DayNightResourceResolver extends ContextResourceResolver {
 
@@ -74,17 +78,22 @@ public class DayNightResourceResolver extends ContextResourceResolver {
     }
 
     /**
-     * 造一个只按 {@code config.uiMode} 解析 values / values-night 的 Context。
-     * 从 Application 创建，不修改 Activity，也不对 Activity 调 {@code createConfigurationContext}。
+     * 造一个按 {@code config.uiMode} 解析 values / values-night 的 Context。
+     * Resources 从 Application {@code createConfigurationContext} 来；Theme 拷贝自
+     * {@code context}（见类注释）。不修改 Activity，也不对 Activity 调
+     * {@code createConfigurationContext}。
      * <p>
      * {@code createConfigurationContext} 是 API 17；API 16 回退到共用 {@code AssetManager}
-     * 的 {@code new Resources(...)}（在 {@code ResourcesImpl} 之前的旧实现上会按传入 config 选 night）。
+     * 的 {@code new Resources(...)}（旧实现上会按传入 config 选 night；该路径不拷 Theme，
+     * 避免改到 Application 共用 Theme）。
      */
     @NonNull
     public static Context wrapContext(@NonNull Context context, @NonNull Configuration config) {
         Context app = context.getApplicationContext();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return app.createConfigurationContext(config);
+            Context isolated = app.createConfigurationContext(config);
+            isolated.getTheme().setTo(context.getTheme());
+            return isolated;
         }
         return wrapContextApi16(app, config);
     }

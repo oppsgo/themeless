@@ -104,6 +104,11 @@
     <string name="vp_banner_page_format">Banner %1$d</string>
 
     <string name="main_entry_vp2_stress_title">ViewPager2 多tab</string>
+    <string name="main_entry_webview_day_night_title">WebView 暗黑切换</string>
+
+    <string name="webview_day_night_title">WebView 暗黑</string>
+    <string name="webview_day_night_subtitle">分段按钮：亮色 / 暗色 / 跟随系统，同时刷原生皮肤与 WebView。assets HTML 跟 prefers-color-scheme；可进 B 页，系统返回后退。</string>
+    <string name="webview_file_chooser_unavailable">找不到可用的文件选择器</string>
     <string name="vp2_stress_title">ViewPager2 多tab</string>
     <string name="vp2_stress_subtitle">上：多 Tab · 下：Banner peek · 切肤应刷可见/露出页</string>
     <string name="vp2_stress_section_tabs">多 Tab</string>

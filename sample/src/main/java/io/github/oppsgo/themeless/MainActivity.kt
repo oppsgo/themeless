@@ -17,6 +17,7 @@ import io.github.oppsgo.themeless.demo.ThemeDemoActivity
 import io.github.oppsgo.themeless.demo.ThemeDemoPage
 import io.github.oppsgo.themeless.demo.ViewPager2StressActivity
 import io.github.oppsgo.themeless.demo.ViewPagerStressActivity
+import io.github.oppsgo.themeless.demo.WebViewDayNightActivity
 import io.github.oppsgo.themeless.demo.restoreDemoTheme
 import io.github.oppsgo.themeless.demo.setupImmersiveTitleBar
 
@@ -65,6 +66,9 @@ class MainActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnOpenVp2Stress).setOnClickListener {
             startActivity(Intent(this, ViewPager2StressActivity::class.java))
+        }
+        findViewById<Button>(R.id.btnOpenWebViewDayNight).setOnClickListener {
+            startActivity(Intent(this, WebViewDayNightActivity::class.java))
         }
 
         restoreDemoTheme()

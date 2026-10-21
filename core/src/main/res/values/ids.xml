@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="theme_view_attr_binding_tag" type="id" />
+    <item name="webview_dark_mode_compat_tag" type="id" />
 </resources>

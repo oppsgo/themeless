@@ -117,6 +117,18 @@
                 android:text="@string/main_entry_vp2_stress_title"
                 android:textColor="@color/skin_button_text"
                 app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnOpenWebViewDayNight"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/main_entry_webview_day_night_title"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

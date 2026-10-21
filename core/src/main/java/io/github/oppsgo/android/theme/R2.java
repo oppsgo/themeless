@@ -72,5 +72,6 @@ public final class R2 {
     public static final class id {
 
         public static int theme_view_attr_binding_tag = R.id.theme_view_attr_binding_tag;
+        public static int webview_dark_mode_compat_tag = R.id.webview_dark_mode_compat_tag;
     }
 }

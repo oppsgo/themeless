@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>WebView 暗黑 · A</title>
+  <style>
+    /* 跟 WebView 下发的 prefers-color-scheme（宿主主题 isLightTheme / force dark）。 */
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --fg: #1a1a1a;
+      --muted: #5c6570;
+      --card: #ffffff;
+      --accent: #1565c0;
+      --accent-fg: #ffffff;
+      --border: #d0d7de;
+      --input-bg: #ffffff;
+      --danger: #c62828;
+      --ok: #2e7d32;
+      --warn: #ef6c00;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #121418;
+        --fg: #e8eaed;
+        --muted: #9aa0a6;
+        --card: #1e2228;
+        --accent: #8ab4f8;
+        --accent-fg: #0d1117;
+        --border: #3c4043;
+        --input-bg: #2a2f36;
+        --danger: #ef9a9a;
+        --ok: #81c784;
+        --warn: #ffcc80;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.55;
+      padding: 16px;
+      padding-bottom: 48px;
+    }
+    header.top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    header.top h1 { font-size: 1.25rem; margin: 0; }
+    .scheme {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .scheme strong { color: var(--accent); }
+    nav.tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      margin: 0 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card h3 { font-size: 0.95rem; margin: 12px 0 6px; }
+    p { margin: 0 0 10px; color: var(--muted); }
+    p.lead { color: var(--fg); }
+    a { color: var(--accent); }
+    code, kbd {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.9em;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+    a.btn, button.btn, input.btn {
+      display: inline-block;
+      margin: 0 8px 8px 0;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    a.btn.primary, button.btn.primary {
+      background: var(--accent);
+      color: var(--accent-fg);
+    }
+    a.btn.danger { border-color: var(--danger); color: var(--danger); }
+    ul, ol { margin: 0 0 10px; padding-left: 1.3rem; color: var(--fg); }
+    li { margin: 4px 0; }
+    blockquote {
+      margin: 0 0 12px;
+      padding: 10px 14px;
+      border-left: 4px solid var(--accent);
+      background: var(--bg);
+      color: var(--muted);
+      border-radius: 0 8px 8px 0;
+    }
+    hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+    }
+    th { background: var(--bg); }
+    tr:nth-child(even) td { background: color-mix(in srgb, var(--bg) 55%, transparent); }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .badge.ok { border-color: var(--ok); color: var(--ok); }
+    .badge.warn { border-color: var(--warn); color: var(--warn); }
+    .badge.danger { border-color: var(--danger); color: var(--danger); }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .thumb {
+      width: 96px;
+      height: 72px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--accent), var(--bg));
+      flex-shrink: 0;
+    }
+    label.field {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: var(--fg);
+    }
+    label.field > span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--fg);
+      font: inherit;
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    .checks label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      color: var(--fg);
+    }
+    input[type="range"] { width: 100%; }
+    progress { width: 100%; height: 12px; }
+    details {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: var(--bg);
+    }
+    summary { cursor: pointer; color: var(--accent); }
+    figure { margin: 0; }
+    figcaption { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <h1>页面 A · 常用元素</h1>
+    <p class="scheme">prefers-color-scheme：<strong id="scheme">…</strong></p>
+  </header>
+
+  <nav class="tabs">
+    <a class="btn primary" href="page_a.html">本页 A</a>
+    <a class="btn" href="page_b.html">下一页 B</a>
+    <button class="btn" type="button" onclick="history.back()">返回上一页</button>
+  </nav>
+
+  <section class="card">
+    <h2>文案与链接</h2>
+    <p class="lead">本页用 <code>@media (prefers-color-scheme)</code> 适配亮/暗。上方原生分段按钮切换后，下列元素应一起变色。</p>
+    <p>普通段落：支持 <strong>加粗</strong>、<em>斜体</em>、<u>下划线</u>、<s>删除线</s>、<mark>高亮</mark>、<kbd>Ctrl</kbd>+<kbd>S</kbd>。</p>
+    <p>外链示例：<a href="https://developer.android.com/develop/ui/views/layout/webapps/dark-theme" target="_blank" rel="noopener">Android WebView 暗黑文档</a></p>
+    <blockquote>引用块：切到暗色后边框强调色与底色应明显变化。</blockquote>
+    <div class="chips">
+      <span class="badge">默认</span>
+      <span class="badge ok">成功</span>
+      <span class="badge warn">警告</span>
+      <span class="badge danger">危险</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>列表</h2>
+    <h3>无序</h3>
+    <ul>
+      <li>标题栏 / 面板背景</li>
+      <li>正文与次要文字</li>
+      <li>描边、输入框、表格</li>
+    </ul>
+    <h3>有序</h3>
+    <ol>
+      <li>切「亮色」→ 网页 light</li>
+      <li>切「暗色」→ 网页 dark</li>
+      <li>切「跟随系统」→ 跟宿主日夜</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>媒体与分割</h2>
+    <div class="row">
+      <div class="thumb" role="img" aria-label="渐变占位图"></div>
+      <div>
+        <p class="lead">渐变色块代替图片，暗黑下渐变端点会跟 accent / bg。</p>
+        <figure>
+          <svg width="160" height="48" viewBox="0 0 160 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="160" height="48" rx="8" fill="currentColor" opacity="0.12"/>
+            <text x="80" y="30" text-anchor="middle" fill="currentColor" font-size="14" font-family="system-ui">SVG Logo</text>
+          </svg>
+          <figcaption>内联 SVG（currentColor）</figcaption>
+        </figure>
+      </div>
+    </div>
+    <hr />
+    <details>
+      <summary>折叠面板 details / summary</summary>
+      <p style="margin-top:8px">展开后仍应使用当前明暗色板。</p>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>表格</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>组件</th>
+          <th>亮色</th>
+          <th>暗色</th>
+          <th>状态</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>标题</td>
+          <td>#1a1a1a</td>
+          <td>#e8eaed</td>
+          <td><span class="badge ok">OK</span></td>
+        </tr>
+        <tr>
+          <td>卡片</td>
+          <td>#ffffff</td>
+          <td>#1e2228</td>
+          <td><span class="badge ok">OK</span></td>
+        </tr>
+        <tr>
+          <td>强调色</td>
+          <td>#1565c0</td>
+          <td>#8ab4f8</td>
+          <td><span class="badge warn">注意对比度</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>表单控件</h2>
+    <form onsubmit="event.preventDefault(); alert('提交（演示）');">
+      <label class="field">
+        <span>文本</span>
+        <input type="text" name="name" placeholder="请输入昵称" value="Themeless" />
+      </label>
+      <label class="field">
+        <span>邮箱</span>
+        <input type="email" name="email" placeholder="name@example.com" />
+      </label>
+      <label class="field">
+        <span>密码</span>
+        <input type="password" name="pwd" value="secret" />
+      </label>
+      <label class="field">
+        <span>数字 / 搜索 / 电话</span>
+        <input type="number" name="age" min="1" max="120" value="18" style="margin-bottom:8px" />
+        <input type="search" name="q" placeholder="搜索…" style="margin-bottom:8px" />
+        <input type="tel" name="tel" placeholder="手机号" />
+      </label>
+      <label class="field">
+        <span>日期 / 时间</span>
+        <input type="date" name="day" style="margin-bottom:8px" />
+        <input type="time" name="time" />
+      </label>
+      <label class="field">
+        <span>下拉选择</span>
+        <select name="theme">
+          <option>跟随系统</option>
+          <option selected>亮色</option>
+          <option>暗色</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>多行文本</span>
+        <textarea name="bio" placeholder="简介…">切换暗黑后，输入框底色与文字应可读。</textarea>
+      </label>
+      <div class="checks">
+        <label><input type="checkbox" name="agree" checked /> 同意协议</label>
+        <label><input type="checkbox" name="push" /> 推送通知</label>
+        <label><input type="radio" name="sex" value="n" checked /> 保密</label>
+        <label><input type="radio" name="sex" value="m" /> 选项 A</label>
+        <label><input type="radio" name="sex" value="f" /> 选项 B</label>
+      </div>
+      <label class="field">
+        <span>滑块 range</span>
+        <input type="range" name="vol" min="0" max="100" value="42" />
+      </label>
+      <label class="field">
+        <span>进度 progress</span>
+        <progress max="100" value="68"></progress>
+      </label>
+      <label class="field">
+        <span>文件</span>
+        <input type="file" name="file" />
+      </label>
+      <fieldset style="border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin:0 0 12px;">
+        <legend>Fieldset</legend>
+        <p style="margin:0">分组说明文字。</p>
+      </fieldset>
+      <button class="btn primary" type="submit">提交</button>
+      <button class="btn" type="reset">重置</button>
+      <button class="btn danger" type="button">危险操作</button>
+    </form>
+  </section>
+
+  <nav class="tabs">
+    <a class="btn primary" href="page_b.html">去页面 B →</a>
+    <button class="btn" type="button" onclick="history.back()">← 返回</button>
+  </nav>
+
+  <script>
+    function paint() {
+      document.getElementById('scheme').textContent =
+        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    paint();
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', paint);
+    else mq.addListener(paint);
+  </script>
+</body>
+</html>

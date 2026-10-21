@@ -15,6 +15,7 @@
         <meta-data
             android:name="android.vivo_invert_splash"
             android:value="false" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode"
@@ -50,5 +51,8 @@
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize|uiMode"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".demo.WebViewDayNightActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize|uiMode" />
     </application>
 </manifest>

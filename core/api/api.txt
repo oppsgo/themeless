@@ -1,7 +1,7 @@
 // Signature format: 4.0
 package io.github.oppsgo.android.theme {
 
-  @androidx.annotation.MainThread public interface IViewBinding {
+  @MainThread public interface IViewBinding {
     method public void apply(io.github.oppsgo.android.theme.ResourceResolver!);
     method public void bind(android.util.AttributeSet?);
     method public <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
@@ -64,7 +64,7 @@ package io.github.oppsgo.android.theme {
     method protected android.view.View? tryCreateView(android.view.LayoutInflater, String, android.util.AttributeSet);
   }
 
-  @androidx.annotation.MainThread public class ThemeManager {
+  @MainThread public class ThemeManager {
     ctor protected ThemeManager();
     method public void addOnThemeUpdateListener(android.content.Context!, io.github.oppsgo.android.theme.OnThemeUpdateListener);
     method public void apply(android.content.Context!, io.github.oppsgo.android.theme.ResourceResolver);
@@ -280,6 +280,7 @@ package io.github.oppsgo.android.theme.binding {
     method protected void refreshTargetBindings(android.view.View?, int);
     method public void setTraverseDepth(int);
     method protected void updateChildBindings(android.view.ViewGroup, io.github.oppsgo.android.theme.ResourceResolver, int);
+    field public static final int TRAVERSE_INFINITE = 4096; // 0x1000
   }
 
 }
@@ -343,6 +344,7 @@ package io.github.oppsgo.android.theme.resource {
     method public static io.github.oppsgo.android.theme.resource.ColorRef of(@ColorRes int);
     method public static io.github.oppsgo.android.theme.resource.ColorRef of(@ColorRes int, io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
     method public static io.github.oppsgo.android.theme.resource.ColorRef of(io.github.oppsgo.android.theme.resource.ResourceProvider<java.lang.Integer!>);
+    method public io.github.oppsgo.android.theme.resource.ResourceValue<java.lang.Integer!> provide(io.github.oppsgo.android.theme.ResourceResolver);
   }
 
   public class ColorStateListRef extends io.github.oppsgo.android.theme.resource.ResourceRef<android.content.res.ColorStateList!> {
@@ -383,17 +385,41 @@ package io.github.oppsgo.android.theme.resource {
     method public static io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>? fromColorOrDrawable(android.content.res.Resources, @AnyRes int);
     method @AnyRes public int getResourceId();
     method public boolean hasProvider();
-    method public boolean isEmpty();
+    method public boolean isUnspecified();
     method protected abstract T? load(io.github.oppsgo.android.theme.ResourceResolver, @AnyRes int);
     method public io.github.oppsgo.android.theme.resource.ResourceValue<T> provide(io.github.oppsgo.android.theme.ResourceResolver);
     field public static final int ID_NULL = 0; // 0x0
   }
 
-  public final class ResourceValue<T> {
+  public class ResourceValue<T> {
+    ctor protected ResourceValue(boolean, T?);
     method public static <T> io.github.oppsgo.android.theme.resource.ResourceValue<T> empty();
     method public T? get();
+    method public boolean hasValue();
     method public boolean isPresent();
     method public static <T> io.github.oppsgo.android.theme.resource.ResourceValue<T> of(T?);
+    method public T require();
+  }
+
+}
+
+package io.github.oppsgo.android.theme.webview {
+
+  @MainThread public final class WebViewDayNightCompat {
+    method public static void apply(android.webkit.WebView);
+    method public static void apply(android.webkit.WebView, boolean);
+    method public static void apply(android.webkit.WebView, boolean, io.github.oppsgo.android.theme.webview.WebViewDayNightCompat.Strategy);
+    method public static boolean applyAndReload(android.webkit.WebView, boolean);
+    method public static boolean applyAndReload(android.webkit.WebView, boolean, io.github.oppsgo.android.theme.webview.WebViewDayNightCompat.Strategy);
+    method public static android.content.Context createWebViewContext(android.content.Context, boolean);
+    method public static android.content.Context createWebViewContext(android.content.Context, boolean, @StyleRes int, @StyleRes int);
+    method public static boolean isActivityNight(android.content.Context);
+    method public static boolean isThemeDriven(android.content.Context);
+  }
+
+  public enum WebViewDayNightCompat.Strategy {
+    enum_constant public static final io.github.oppsgo.android.theme.webview.WebViewDayNightCompat.Strategy PREFER_WEB_THEME;
+    enum_constant public static final io.github.oppsgo.android.theme.webview.WebViewDayNightCompat.Strategy WEB_THEME_ONLY;
   }
 
 }

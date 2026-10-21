@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>WebView 暗黑 · B</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --fg: #1a1a1a;
+      --muted: #5c6570;
+      --card: #ffffff;
+      --accent: #2e7d32;
+      --accent-fg: #ffffff;
+      --border: #d0d7de;
+      --input-bg: #ffffff;
+      --danger: #c62828;
+      --ok: #1565c0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #121418;
+        --fg: #e8eaed;
+        --muted: #9aa0a6;
+        --card: #1e2228;
+        --accent: #81c784;
+        --accent-fg: #0d1117;
+        --border: #3c4043;
+        --input-bg: #2a2f36;
+        --danger: #ef9a9a;
+        --ok: #8ab4f8;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.55;
+      padding: 16px;
+      padding-bottom: 48px;
+    }
+    header.top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    header.top h1 { font-size: 1.25rem; margin: 0; }
+    .scheme {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .scheme strong { color: var(--accent); }
+    nav.tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      margin: 0 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    p { margin: 0 0 10px; color: var(--muted); }
+    p.lead { color: var(--fg); }
+    a { color: var(--accent); }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.9em;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+    a.btn, button.btn {
+      display: inline-block;
+      margin: 0 8px 8px 0;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    a.btn.primary, button.btn.primary {
+      background: var(--accent);
+      color: var(--accent-fg);
+    }
+    ul { margin: 0 0 10px; padding-left: 1.3rem; }
+    li { margin: 4px 0; }
+    pre {
+      margin: 0;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      overflow: auto;
+      font-size: 0.85rem;
+      color: var(--fg);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 360px) { .grid { grid-template-columns: 1fr; } }
+    .tile {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: var(--bg);
+    }
+    .tile strong { display: block; margin-bottom: 4px; color: var(--fg); }
+    dialog {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--card);
+      color: var(--fg);
+      max-width: 90vw;
+    }
+    dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+    meter { width: 100%; height: 14px; }
+    label.field { display: block; margin-bottom: 10px; font-size: 0.9rem; }
+    label.field > span { display: block; margin-bottom: 4px; color: var(--muted); font-size: 0.85rem; }
+    input[type="url"], select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--fg);
+      font: inherit;
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <h1>页面 B · 其它控件</h1>
+    <p class="scheme">prefers-color-scheme：<strong id="scheme">…</strong></p>
+  </header>
+
+  <nav class="tabs">
+    <a class="btn" href="page_a.html">← 页面 A</a>
+    <a class="btn primary" href="page_b.html">本页 B</a>
+    <button class="btn" type="button" onclick="history.back()">返回上一页</button>
+  </nav>
+
+  <section class="card">
+    <h2>说明</h2>
+    <p class="lead">从 A 跳转而来。暗黑状态应与 A 一致；可用页内按钮或系统返回键回去。</p>
+    <p>本页强调色是绿色系，便于确认「换页后 scheme 仍正确」。</p>
+  </section>
+
+  <section class="card">
+    <h2>代码块</h2>
+    <pre><code>WebViewDayNightCompat.apply(webView, dark)
+// theme-driven → recreate + loadUrl
+// else → force dark / reload</code></pre>
+  </section>
+
+  <section class="card">
+    <h2>卡片网格</h2>
+    <div class="grid">
+      <div class="tile"><strong>列表项</strong><span style="color:var(--muted);font-size:0.85rem">次要说明文字</span></div>
+      <div class="tile"><strong>设置项</strong><span style="color:var(--muted);font-size:0.85rem">开关 / 入口</span></div>
+      <div class="tile"><strong>通知</strong><span style="color:var(--muted);font-size:0.85rem">未读 3</span></div>
+      <div class="tile"><strong>关于</strong><span style="color:var(--muted);font-size:0.85rem">版本 1.0</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Meter / Dialog / URL</h2>
+    <label class="field">
+      <span>meter（磁盘占用示意）</span>
+      <meter min="0" max="100" low="30" high="70" optimum="20" value="64"></meter>
+    </label>
+    <label class="field">
+      <span>URL</span>
+      <input type="url" placeholder="https://example.com" value="https://github.com/oppsgo/themeless" />
+    </label>
+    <label class="field">
+      <span>多选 select</span>
+      <select multiple size="3">
+        <option selected>Android</option>
+        <option selected>WebView</option>
+        <option>iOS</option>
+        <option>Flutter</option>
+      </select>
+    </label>
+    <button class="btn primary" type="button" onclick="document.getElementById('dlg').showModal()">打开 dialog</button>
+    <dialog id="dlg">
+      <p class="lead" style="margin-bottom:12px">原生 &lt;dialog&gt;，暗黑下卡片色应正确。</p>
+      <button class="btn" type="button" onclick="this.closest('dialog').close()">关闭</button>
+    </dialog>
+  </section>
+
+  <section class="card">
+    <h2>清单</h2>
+    <ul>
+      <li>系统返回：WebView <code>canGoBack</code> → <code>goBack</code></li>
+      <li>页内「返回上一页」：<code>history.back()</code></li>
+      <li>链到 A：普通导航，历史可回退</li>
+    </ul>
+  </section>
+
+  <nav class="tabs">
+    <a class="btn primary" href="page_a.html">← 回页面 A</a>
+    <button class="btn" type="button" onclick="history.back()">history.back()</button>
+  </nav>
+
+  <script>
+    function paint() {
+      document.getElementById('scheme').textContent =
+        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    paint();
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', paint);
+    else mq.addListener(paint);
+  </script>
+</body>
+</html>
