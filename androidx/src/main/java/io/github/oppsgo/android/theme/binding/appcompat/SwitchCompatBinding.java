@@ -1,4 +1,4 @@
-package io.github.oppsgo.android.theme.androidx.binding;
+package io.github.oppsgo.android.theme.binding.appcompat;
 
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;

@@ -24,10 +24,11 @@ metalava {
 
 dependencies {
     api(projects.core)
-    // 不传递、不锁版本；AppCompat / RV / ViewPager2 / Material 为可选能力，只参与编译。
+    // 不传递、不锁版本；AppCompat / RV / CardView / ViewPager2 / Material 为可选能力，只参与编译。
     compileOnly(libs.androidx.appcompat)
     compileOnly(libs.androidx.core.ktx)
     compileOnly(libs.androidx.recyclerview)
+    compileOnly(libs.androidx.cardview)
     compileOnly(libs.androidx.viewpager2)
     compileOnly(libs.androidx.material)
 
@@ -35,6 +36,7 @@ dependencies {
     testImplementation(libs.junit)
     testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(libs.androidx.recyclerview)
+    testImplementation(libs.androidx.cardview)
     testImplementation(libs.androidx.viewpager2)
     testImplementation(libs.androidx.material)
 }

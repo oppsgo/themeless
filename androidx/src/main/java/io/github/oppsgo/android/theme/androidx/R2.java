@@ -2,7 +2,7 @@ package io.github.oppsgo.android.theme.androidx;
 
 /**
  * androidx 模块内第三方库资源 id 引用的统一入口，按来源库组织内部类：
- * {@link appcompat} / {@link material}。
+ * {@link appcompat} / {@link cardview} / {@link material}。
  * <p>
  * 平台 {@code android.R.*} 属性统一收敛在 core 模块的
  * {@code io.github.oppsgo.android.theme.R2}，本类不再重复；
@@ -37,6 +37,15 @@ public final class R2 {
         }
     }
 
+    /** {@code androidx.cardview} 提供的属性。 */
+    public static final class cardview {
+
+        public static final class attr {
+
+            public static int cardBackgroundColor = androidx.cardview.R.attr.cardBackgroundColor;
+        }
+    }
+
     /** {@code com.google.android.material} 提供的属性。 */
     public static final class material {
 
@@ -47,6 +56,11 @@ public final class R2 {
             public static int tabIndicatorColor = com.google.android.material.R.attr.tabIndicatorColor;
             public static int tabRippleColor = com.google.android.material.R.attr.tabRippleColor;
             public static int tabIconTint = com.google.android.material.R.attr.tabIconTint;
+            public static int strokeColor = com.google.android.material.R.attr.strokeColor;
+            public static int rippleColor = com.google.android.material.R.attr.rippleColor;
+            public static int cardForegroundColor = com.google.android.material.R.attr.cardForegroundColor;
+            public static int checkedIcon = com.google.android.material.R.attr.checkedIcon;
+            public static int checkedIconTint = com.google.android.material.R.attr.checkedIconTint;
         }
     }
 }

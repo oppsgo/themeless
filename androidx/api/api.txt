@@ -7,7 +7,33 @@ package io.github.oppsgo.android.theme.androidx {
 
 }
 
-package io.github.oppsgo.android.theme.androidx.binding {
+package io.github.oppsgo.android.theme.androidx.resolver {
+
+  public class AppCompatContextResourceResolver extends io.github.oppsgo.android.theme.resolver.ContextResourceResolver {
+    ctor public AppCompatContextResourceResolver(android.content.Context);
+    ctor public AppCompatContextResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
+  }
+
+  public class AppCompatDayNightResourceResolver extends io.github.oppsgo.android.theme.androidx.resolver.AppCompatContextResourceResolver {
+    ctor public AppCompatDayNightResourceResolver(android.content.Context);
+    ctor public AppCompatDayNightResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
+    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver followSystem(android.content.Context);
+    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver light(android.content.Context);
+    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver night(android.content.Context);
+    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver of(android.content.Context, boolean);
+  }
+
+  public class ThemeViewCompatImpl implements io.github.oppsgo.android.theme.ThemeViewCompat {
+    ctor public ThemeViewCompatImpl();
+    method public void setBackgroundTintList(android.view.View, android.content.res.ColorStateList?);
+    method public void setButtonTintList(android.widget.CompoundButton, android.content.res.ColorStateList?);
+    method public void setCompoundDrawableTintList(android.widget.TextView, android.content.res.ColorStateList?);
+    method public void setImageTintList(android.widget.ImageView, android.content.res.ColorStateList?);
+  }
+
+}
+
+package io.github.oppsgo.android.theme.binding.appcompat {
 
   public class AppCompatCompoundButtonBinding extends io.github.oppsgo.android.theme.binding.CompoundButtonBinding {
     ctor public AppCompatCompoundButtonBinding(android.widget.CompoundButton);
@@ -33,14 +59,7 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_DRAWABLE_TOP_COMPAT;
   }
 
-  public class RecyclerViewBinding extends io.github.oppsgo.android.theme.binding.ViewGroupBinding implements androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener {
-    ctor public RecyclerViewBinding(androidx.recyclerview.widget.RecyclerView);
-    method public androidx.recyclerview.widget.RecyclerView getView();
-    method public void onChildViewAttachedToWindow(android.view.View);
-    method public void onChildViewDetachedFromWindow(android.view.View);
-  }
-
-  public class SwitchCompatBinding extends io.github.oppsgo.android.theme.androidx.binding.AppCompatCompoundButtonBinding {
+  public class SwitchCompatBinding extends io.github.oppsgo.android.theme.binding.appcompat.AppCompatCompoundButtonBinding {
     ctor public SwitchCompatBinding(androidx.appcompat.widget.SwitchCompat);
     method public androidx.appcompat.widget.SwitchCompat getView();
     method public void setThumb(io.github.oppsgo.android.theme.resource.DrawableRef);
@@ -61,6 +80,47 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_TRACK_TINT_COMPAT;
   }
 
+}
+
+package io.github.oppsgo.android.theme.binding.cardview {
+
+  public class CardViewBinding extends io.github.oppsgo.android.theme.binding.ViewGroupBinding {
+    ctor public CardViewBinding(androidx.cardview.widget.CardView);
+    method public androidx.cardview.widget.CardView getView();
+    method public void setCardBackgroundColor(@ColorRes int);
+    method public void setCardBackgroundColor(io.github.oppsgo.android.theme.resource.ColorRef!);
+    method public void setCardBackgroundColor(io.github.oppsgo.android.theme.resource.ColorStateListRef!);
+    field public static final int ATTR_CARD_BACKGROUND_COLOR;
+  }
+
+}
+
+package io.github.oppsgo.android.theme.binding.material {
+
+  public class MaterialCardViewBinding extends io.github.oppsgo.android.theme.binding.cardview.CardViewBinding {
+    ctor public MaterialCardViewBinding(com.google.android.material.card.MaterialCardView);
+    method public com.google.android.material.card.MaterialCardView getView();
+    method public void setCardForegroundColor(@ColorRes int);
+    method public void setCardForegroundColor(io.github.oppsgo.android.theme.resource.ColorRef!);
+    method public void setCardForegroundColor(io.github.oppsgo.android.theme.resource.ColorStateListRef!);
+    method public void setCheckedIcon(io.github.oppsgo.android.theme.resource.DrawableRef!);
+    method public void setCheckedIconResource(@DrawableRes int);
+    method public void setCheckedIconTint(@ColorRes int);
+    method public void setCheckedIconTint(io.github.oppsgo.android.theme.resource.ColorRef!);
+    method public void setCheckedIconTint(io.github.oppsgo.android.theme.resource.ColorStateListRef!);
+    method public void setRippleColor(@ColorRes int);
+    method public void setRippleColor(io.github.oppsgo.android.theme.resource.ColorRef!);
+    method public void setRippleColor(io.github.oppsgo.android.theme.resource.ColorStateListRef!);
+    method public void setStrokeColor(@ColorRes int);
+    method public void setStrokeColor(io.github.oppsgo.android.theme.resource.ColorRef!);
+    method public void setStrokeColor(io.github.oppsgo.android.theme.resource.ColorStateListRef!);
+    field public static final int ATTR_CARD_FOREGROUND_COLOR;
+    field public static final int ATTR_CHECKED_ICON;
+    field public static final int ATTR_CHECKED_ICON_TINT;
+    field public static final int ATTR_RIPPLE_COLOR;
+    field public static final int ATTR_STROKE_COLOR;
+  }
+
   public class TabLayoutBinding extends io.github.oppsgo.android.theme.binding.ViewBinding {
     ctor public TabLayoutBinding(com.google.android.material.tabs.TabLayout);
     method public com.google.android.material.tabs.TabLayout getView();
@@ -75,35 +135,24 @@ package io.github.oppsgo.android.theme.androidx.binding {
     field public static final int ATTR_TAB_TEXT_COLOR;
   }
 
-  public class ViewPager2Binding extends io.github.oppsgo.android.theme.binding.ViewGroupBinding {
-    ctor public ViewPager2Binding(androidx.viewpager2.widget.ViewPager2);
-    method public androidx.viewpager2.widget.ViewPager2 getView();
+}
+
+package io.github.oppsgo.android.theme.binding.recyclerview {
+
+  public class RecyclerViewBinding extends io.github.oppsgo.android.theme.binding.ViewGroupBinding implements androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener {
+    ctor public RecyclerViewBinding(androidx.recyclerview.widget.RecyclerView);
+    method public androidx.recyclerview.widget.RecyclerView getView();
+    method public void onChildViewAttachedToWindow(android.view.View);
+    method public void onChildViewDetachedFromWindow(android.view.View);
   }
 
 }
 
-package io.github.oppsgo.android.theme.androidx.resolver {
+package io.github.oppsgo.android.theme.binding.viewpager2 {
 
-  public class AppCompatContextResourceResolver extends io.github.oppsgo.android.theme.resolver.ContextResourceResolver {
-    ctor public AppCompatContextResourceResolver(android.content.Context);
-    ctor public AppCompatContextResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
-  }
-
-  public class AppCompatDayNightResourceResolver extends io.github.oppsgo.android.theme.androidx.resolver.AppCompatContextResourceResolver {
-    ctor public AppCompatDayNightResourceResolver(android.content.Context);
-    ctor public AppCompatDayNightResourceResolver(android.content.Context, io.github.oppsgo.android.theme.ThemeViewCompat);
-    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver followSystem(android.content.Context);
-    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver light(android.content.Context);
-    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver night(android.content.Context);
-    method public static io.github.oppsgo.android.theme.androidx.resolver.AppCompatDayNightResourceResolver of(android.content.Context, boolean);
-  }
-
-  public class ThemeViewCompatImpl implements io.github.oppsgo.android.theme.ThemeViewCompat {
-    ctor public ThemeViewCompatImpl();
-    method public void setBackgroundTintList(android.view.View, android.content.res.ColorStateList?);
-    method public void setButtonTintList(android.widget.CompoundButton, android.content.res.ColorStateList?);
-    method public void setCompoundDrawableTintList(android.widget.TextView, android.content.res.ColorStateList?);
-    method public void setImageTintList(android.widget.ImageView, android.content.res.ColorStateList?);
+  public class ViewPager2Binding extends io.github.oppsgo.android.theme.binding.ViewGroupBinding {
+    ctor public ViewPager2Binding(androidx.viewpager2.widget.ViewPager2);
+    method public androidx.viewpager2.widget.ViewPager2 getView();
   }
 
 }

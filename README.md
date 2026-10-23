@@ -30,7 +30,7 @@ Android **运行时换肤**库：在不重建 Activity 的前提下，按资源 
 
 - 依赖组合：`:core` + `:androidx`
 - `:androidx` 以 `api` 暴露 `:core`；仍建议在应用里显式声明 `:core`
-- `:androidx` 对 AppCompat / RecyclerView / ViewPager2 / Material 均为 `compileOnly`，控件 Binding 走 `ThemeAndroidX.registerAvailable()` 按 classpath 尽力登记，缺依赖自动跳过
+- `:androidx` 对 AppCompat / RecyclerView / CardView / ViewPager2 / Material 均为 `compileOnly`，控件 Binding 走 `ThemeAndroidX.registerAvailable()` 按 classpath 尽力登记，缺依赖自动跳过
 - `ThemeAndroidX.registerAvailable()` 须在**首次 inflate 前**调用
 
 ## 安装（JitPack）

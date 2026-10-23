@@ -1,4 +1,4 @@
-package io.github.oppsgo.android.theme.androidx.binding;
+package io.github.oppsgo.android.theme.binding.material;
 
 import android.content.res.ColorStateList;
 

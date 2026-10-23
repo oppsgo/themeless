@@ -357,6 +357,7 @@ public final class WebViewDayNightCompat {
                 if (!isForceDarkSupported()) {
                     return;
                 }
+                assert mSetForceDark != null;
                 mSetForceDark.invoke(null, settings, dark ? mForceDarkOn : mForceDarkOff);
                 applyStrategy(settings, strategy);
             } catch (Throwable ignored) {

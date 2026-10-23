@@ -12,8 +12,12 @@ import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.AppCompatToggleButton;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.radiobutton.MaterialRadioButton;
@@ -21,18 +25,17 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textview.MaterialTextView;
 
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
-
-import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.ThemeBindingFactory;
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatCompoundButtonBinding;
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatImageViewBinding;
-import io.github.oppsgo.android.theme.androidx.binding.AppCompatTextViewBinding;
-import io.github.oppsgo.android.theme.androidx.binding.RecyclerViewBinding;
-import io.github.oppsgo.android.theme.androidx.binding.SwitchCompatBinding;
-import io.github.oppsgo.android.theme.androidx.binding.TabLayoutBinding;
-import io.github.oppsgo.android.theme.androidx.binding.ViewPager2Binding;
+import io.github.oppsgo.android.theme.ThemeManager;
+import io.github.oppsgo.android.theme.binding.appcompat.AppCompatCompoundButtonBinding;
+import io.github.oppsgo.android.theme.binding.appcompat.AppCompatImageViewBinding;
+import io.github.oppsgo.android.theme.binding.appcompat.AppCompatTextViewBinding;
+import io.github.oppsgo.android.theme.binding.appcompat.SwitchCompatBinding;
+import io.github.oppsgo.android.theme.binding.cardview.CardViewBinding;
+import io.github.oppsgo.android.theme.binding.material.MaterialCardViewBinding;
+import io.github.oppsgo.android.theme.binding.material.TabLayoutBinding;
+import io.github.oppsgo.android.theme.binding.recyclerview.RecyclerViewBinding;
+import io.github.oppsgo.android.theme.binding.viewpager2.ViewPager2Binding;
 
 /**
  * AppCompat / Material 组件的 Binding 登记入口。
@@ -79,7 +82,8 @@ public final class ThemeAndroidX {
 
         tryRegister(() -> registry.register(SwitchCompat.class, SwitchCompatBinding::new));
 
-        // Material 系：显式登记到对应 AppCompat Binding；没引 Material 依赖时整块跳过。
+        // Material 系：文本/按钮等挂到对应 AppCompat Binding，卡片单独登记。
+        // 没引 Material 依赖时整块跳过。
         tryRegister(() -> {
             registry.register(MaterialTextView.class, AppCompatTextViewBinding::new);
             registry.register(MaterialButton.class, AppCompatTextViewBinding::new);
@@ -87,7 +91,10 @@ public final class ThemeAndroidX {
             registry.register(MaterialRadioButton.class, AppCompatCompoundButtonBinding::new);
             registry.register(ShapeableImageView.class, AppCompatImageViewBinding::new);
             registry.register(SwitchMaterial.class, SwitchCompatBinding::new);
+            registry.register(MaterialCardView.class, MaterialCardViewBinding::new);
         });
+
+        tryRegister(() -> registry.register(CardView.class, CardViewBinding::new));
 
         tryRegister(() -> registry.register(RecyclerView.class, RecyclerViewBinding::new));
         tryRegister(() -> registry.register(ViewPager2.class, ViewPager2Binding::new));
