@@ -51,7 +51,37 @@
     <string name="demo_extras_seek_title">SeekBar</string>
     <string name="demo_extras_seek_hint">progressTint / thumbTint 跟肤</string>
     <string name="demo_extras_seek_value_format">进度 %1$d</string>
-    <string name="demo_overlays_hint">先弹出 Dialog / Popup，再点顶部切肤，浮层应一起变。</string>
+    <string name="demo_overlays_hint">先打开某类浮层，再点顶部切肤：独立窗口内容根会登记进 ThemeDelegate，应与页面一起变。</string>
+
+    <string name="theme_demo_overlay_section_center">居中 Dialog</string>
+    <string name="theme_demo_overlay_section_center_hint">AlertDialog + 可再弹一层；验证嵌套 Dialog 跟肤。</string>
+    <string name="theme_demo_overlay_section_popup">标题栏 Popup</string>
+    <string name="theme_demo_overlay_section_popup_hint">PopupWindow 挂在标题栏下方，不挡顶部切肤按钮。</string>
+    <string name="theme_demo_overlay_section_sheet">底部 BottomSheet</string>
+    <string name="theme_demo_overlay_section_sheet_hint">Material BottomSheet：开关 / SeekBar / 列表行 / ThemeKey 色条；可再开居中 Dialog。</string>
+    <string name="theme_demo_overlay_sheet_tag">NEW</string>
+    <string name="theme_demo_overlay_sheet_preview">上方色块随皮肤变 · 点按钮从底部升起完整面板</string>
+    <string name="theme_demo_overlay_checklist_title">建议自测顺序</string>
+    <string name="theme_demo_overlay_checklist_body">1. 打开浮层 → 顶部切亮/暗/晴空蓝，浮层文字与强调色应变\n2. BottomSheet 内拖 SeekBar、点「切换色条」，再切肤，色条仍跟肤\n3. Sheet 内「再弹 Dialog」后切肤，两层都应变</string>
+
+    <string name="theme_demo_bottom_sheet">打开底部面板</string>
+    <string name="theme_demo_bottom_sheet_title">底部主题面板</string>
+    <string name="theme_demo_bottom_sheet_subtitle">独立窗口 · 切肤应一起刷</string>
+    <string name="theme_demo_bottom_sheet_badge">跟肤</string>
+    <string name="theme_demo_bottom_sheet_section_prefs">面板内控件</string>
+    <string name="theme_demo_bottom_sheet_switch">允许跟肤刷新</string>
+    <string name="theme_demo_bottom_sheet_check">显示强调色条</string>
+    <string name="theme_demo_bottom_sheet_seek_format">强度 %1$d</string>
+    <string name="theme_demo_bottom_sheet_section_rows">示例列表行</string>
+    <string name="theme_demo_bottom_sheet_row_a">panel 底</string>
+    <string name="theme_demo_bottom_sheet_row_a_sub">skin_panel_bg + accent 竖条</string>
+    <string name="theme_demo_bottom_sheet_row_b">card 底</string>
+    <string name="theme_demo_bottom_sheet_row_b_sub">skin_card_bg + secondary 竖条</string>
+    <string name="theme_demo_bottom_sheet_row_c">button 底</string>
+    <string name="theme_demo_bottom_sheet_row_c_sub">skin_button_bg + button_text 竖条</string>
+    <string name="theme_demo_bottom_sheet_nested">再弹 Dialog</string>
+    <string name="theme_demo_bottom_sheet_toggle_bar">切换色条</string>
+    <string name="theme_demo_bottom_sheet_close">关闭面板</string>
 
     <string name="theme_demo_title">主题演示</string>
     <string name="theme_demo_title_format">换肤 %1$s</string>
@@ -61,8 +91,11 @@
     <string name="theme_demo_resized">DrawableRef 放大</string>
     <string name="theme_demo_managed_sample">布局里的文字</string>
     <string name="theme_demo_dynamic">动态改色</string>
+    <string name="theme_demo_theme_key_title">ThemeKey 业务属性</string>
+    <string name="theme_demo_theme_key_hint">用 ThemeKey.of(\'accentBar\') 登记非 R.attr 槽位；切肤跟肤，点按钮只 set 换 ResourceRef。</string>
+    <string name="theme_demo_theme_key_toggle">切换 ThemeKey 色（accent ↔ panel）</string>
     <string name="theme_demo_unmanaged">未管理文字</string>
-    <string name="theme_demo_unmanaged_line">new 出来的文字，需手动 Binding</string>
+    <string name="theme_demo_unmanaged_line">new + of 写当前肤色一次；再切肤应保持创建时颜色</string>
     <string name="theme_demo_dialog">对话框</string>
     <string name="theme_demo_popup">浮层</string>
     <string name="theme_demo_dialog_message">这一层会随亮色 / 暗色变</string>

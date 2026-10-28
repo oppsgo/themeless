@@ -6,16 +6,21 @@ package io.github.oppsgo.android.theme {
     method public void bind(android.util.AttributeSet?);
     method public <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
     method public <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
+    method public <T> void bind(io.github.oppsgo.android.theme.ThemeKey, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
+    method public <T> void bind(io.github.oppsgo.android.theme.ThemeKey, io.github.oppsgo.android.theme.resource.ResourceRef<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
     method public android.view.View getView();
     method public boolean isEnabled();
     method public void refresh();
+    method public void set(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
+    method public void set(io.github.oppsgo.android.theme.ThemeKey, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
     method public void setEnabled(boolean);
     method public void setOnViewThemeUpdateListener(io.github.oppsgo.android.theme.OnViewThemeUpdateListener?);
     method public void unbind(@AttrRes int);
+    method public void unbind(io.github.oppsgo.android.theme.ThemeKey);
   }
 
   @java.lang.FunctionalInterface public static interface IViewBinding.AttrSetter<T> {
-    method public void set(T);
+    method public void set(io.github.oppsgo.android.theme.resource.ResourceValue<T>);
   }
 
   @java.lang.FunctionalInterface public static interface IViewBinding.ResourceFactory<T> {
@@ -64,11 +69,20 @@ package io.github.oppsgo.android.theme {
     method protected android.view.View? tryCreateView(android.view.LayoutInflater, String, android.util.AttributeSet);
   }
 
+  public final class ThemeKey {
+    method @AttrRes public int getAttr();
+    method public Object? getToken();
+    method public boolean isAttr();
+    method public static io.github.oppsgo.android.theme.ThemeKey of(@AttrRes int);
+    method public static io.github.oppsgo.android.theme.ThemeKey of(Object);
+  }
+
   @MainThread public class ThemeManager {
     ctor protected ThemeManager();
     method public void addOnThemeUpdateListener(android.content.Context!, io.github.oppsgo.android.theme.OnThemeUpdateListener);
     method public void apply(android.content.Context!, io.github.oppsgo.android.theme.ResourceResolver);
     method public void applyDayNight(android.content.Context!, boolean);
+    method public void attach(android.view.View, io.github.oppsgo.android.theme.IViewBinding);
     method protected io.github.oppsgo.android.theme.ThemeDelegate createDelegate(android.app.Activity, android.view.LayoutInflater.Factory2?);
     method public boolean detach(android.view.View);
     method public io.github.oppsgo.android.theme.IViewBinding? find(android.view.View?);
@@ -235,6 +249,8 @@ package io.github.oppsgo.android.theme.binding {
     method public void bind(android.util.AttributeSet?);
     method public final <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
     method public final <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
+    method public final <T> void bind(io.github.oppsgo.android.theme.ThemeKey, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
+    method public final <T> void bind(io.github.oppsgo.android.theme.ThemeKey, io.github.oppsgo.android.theme.resource.ResourceRef<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
     method protected final void bindRaw(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<? extends java.lang.Object!>, io.github.oppsgo.android.theme.binding.ViewBinding.AttributeApplier);
     method protected final void bindSpecial(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<? extends java.lang.Object!>);
     method protected final io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<java.lang.Object!> colorFactory();
@@ -248,6 +264,8 @@ package io.github.oppsgo.android.theme.binding {
     method protected io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!> resolveTint(io.github.oppsgo.android.theme.ResourceResolver, int);
     method protected io.github.oppsgo.android.theme.resource.ResourceValue<android.content.res.ColorStateList!> resolveTint(io.github.oppsgo.android.theme.ResourceResolver, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>!);
     method protected final android.content.res.Resources resourceTable();
+    method public final void set(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
+    method public final void set(io.github.oppsgo.android.theme.ThemeKey, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
     method protected final void setAttr(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
     method protected final void setAttrAndApply(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<? extends java.lang.Object!>?);
     method protected final void setAttrResource(@AttrRes int, int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<? extends java.lang.Object!>);
@@ -260,6 +278,7 @@ package io.github.oppsgo.android.theme.binding {
     method public void setEnabled(boolean);
     method public void setOnViewThemeUpdateListener(io.github.oppsgo.android.theme.OnViewThemeUpdateListener?);
     method public void unbind(@AttrRes int);
+    method public void unbind(io.github.oppsgo.android.theme.ThemeKey);
     field public static final int ATTR_BACKGROUND = 16842964; // 0x10100d4
     field public static final int ATTR_BACKGROUND_TINT = 16843883; // 0x101046b
     field protected int modCount;

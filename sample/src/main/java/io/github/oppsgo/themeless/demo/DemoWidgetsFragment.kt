@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.github.oppsgo.android.theme.ResourceResolver
+import io.github.oppsgo.android.theme.ThemeKey
 import io.github.oppsgo.android.theme.ThemeManager
 import io.github.oppsgo.android.theme.binding.ImageViewBinding
 import io.github.oppsgo.android.theme.binding.TextViewBinding
@@ -45,6 +46,7 @@ class DemoWidgetsFragment : Fragment() {
             },
         )
 
+        bindThemeKeyDemo(view)
         bindCompoundDrawableDemo(view)
         bindSpannableDemo(view)
 
@@ -62,6 +64,7 @@ class DemoWidgetsFragment : Fragment() {
 
         val rows = view.findViewById<LinearLayout>(R.id.themeExtraRows)
         view.findViewById<Button>(R.id.btnThemeUnmanaged).setOnClickListener {
+            // new 出来未 inflate：of 临时 Binding 不挂 tag；setXxx 用当前 ResourceResolver 写一次，之后切肤不再跟。
             val created = TextView(requireContext()).apply {
                 text = getString(R.string.theme_demo_unmanaged_line)
                 textSize = 16f
@@ -75,16 +78,35 @@ class DemoWidgetsFragment : Fragment() {
                 DrawableRef.of { resolver ->
                     ResourceValue.of(
                         GradientDrawable().apply {
-                            cornerRadius = 15F
+                            cornerRadius = 15f
                             orientation = GradientDrawable.Orientation.LEFT_RIGHT
                             colors = intArrayOf(
                                 resolver.getColor(R.color.skin_card_bg),
                                 resolver.getColor(R.color.skin_panel_bg_blue),
                             )
-                        }
+                        },
                     )
                 },
             )
+        }
+    }
+
+    /**
+     * 非 [android.R.attr] 槽位：用 [ThemeKey.of] 业务 token 登记色条，
+     * 切肤走同表刷新；按钮只 [io.github.oppsgo.android.theme.IViewBinding.set] 换 ResourceRef。
+     */
+    private fun bindThemeKeyDemo(view: View) {
+        val bar = view.findViewById<View>(R.id.themeKeyAccentBar)
+        val binding = ThemeManager.get().of(bar)
+        binding.bind(KEY_ACCENT_BAR, ColorRef.of(R.color.skin_accent)) { value ->
+            bar.setBackgroundColor(value.require())
+        }
+
+        var usePanel = false
+        view.findViewById<Button>(R.id.btnThemeKeyToggle).setOnClickListener {
+            usePanel = !usePanel
+            val color = if (usePanel) R.color.skin_panel_bg else R.color.skin_accent
+            binding.set(KEY_ACCENT_BAR, ColorRef.of(color))
         }
     }
 
@@ -131,6 +153,11 @@ class DemoWidgetsFragment : Fragment() {
         ThemeManager.get().getResolver(requireContext())?.let { resolver ->
             spannable.text = buildThemedSpannable(resolver)
         }
+    }
+
+    companion object {
+        /** 业务侧 ThemeKey：与 R.attr 隔离，不进 XML 读取。 */
+        private val KEY_ACCENT_BAR: ThemeKey = ThemeKey.of("accentBar")
     }
 
     private fun buildThemedSpannable(resolver: ResourceResolver): CharSequence {

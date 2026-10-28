@@ -118,15 +118,17 @@ public final class ThemeBindingFactory {
         return tag instanceof IViewBinding ? (IViewBinding) tag : null;
     }
 
-    /** 挂 tag 并触发 {@link ViewBinding#onAttached()} 钩子。 */
-    void attach(@NonNull View view, @NonNull IViewBinding binding) {
+    /**
+     * 把 Binding 挂到 View tag（参与 {@link #find} / 换肤级联）。
+     * 不触发 {@link ViewBinding#onAttached()}；钩子由 {@link IViewBinding#bind(android.util.AttributeSet)} 安装。
+     */
+    void putTag(@NonNull View view, @NonNull IViewBinding binding) {
         view.setTag(TAG_BINDING, binding);
-        if (binding instanceof ViewBinding) {
-            ((ViewBinding) binding).onAttached();
-        }
     }
 
-    /** 触发 {@link ViewBinding#onDetached()} 后清 tag。未挂载返回 {@code false}。 */
+    /**
+     * 调用 {@link ViewBinding#onDetached()}（若有）并清 tag。未挂载返回 {@code false}。
+     */
     boolean detach(@NonNull View view) {
         IViewBinding binding = find(view);
         if (binding == null) {

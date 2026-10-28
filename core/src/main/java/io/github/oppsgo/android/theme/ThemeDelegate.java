@@ -19,10 +19,14 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.github.oppsgo.android.theme.binding.ViewBinding;
+
 /**
  * 挂到一个 Activity 上的主题委托，对应 {@link androidx.appcompat.app.AppCompatDelegate} 的角色。
  * 既创建 View，也保管这一页的 {@link ResourceResolver} 和刷新代数，不另建表。
  * 实现 {@link LayoutInflater.Factory2} 是为了挂进 LayoutInflater，方便按 Context 找回这一份。
+ * <p>
+ * inflate 时正式挂 Binding（tag + 容器钩子）；{@link ThemeManager#of} 临时创建不登记。
  */
 public class ThemeDelegate implements LayoutInflater.Factory2 {
 
@@ -115,6 +119,11 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
         if (view == null) return;
         ThemeManager manager = ThemeManager.get();
         IViewBinding binding = manager.of(view);
+        // inflate 才正式登记：挂 tag + 容器钩子；bind 只读 AttributeSet
+        manager.attach(view, binding);
+        if (binding instanceof ViewBinding) {
+            ((ViewBinding) binding).onAttached();
+        }
         binding.bind(attrs);
         if (!refreshOnInflate) return;
         // 自己就是这一页的委托：直接取当前 resolver，不再按 View Context 回查。

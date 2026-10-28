@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/themeBottomSheetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/skin_page_bg"
+    android:orientation="vertical"
+    android:paddingBottom="20dp">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@color/skin_divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/themeBottomSheetTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_demo_bottom_sheet_title"
+                android:textColor="@color/skin_text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/themeBottomSheetSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/theme_demo_bottom_sheet_subtitle"
+                android:textColor="@color/skin_text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/themeBottomSheetBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/skin_accent"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="@string/theme_demo_bottom_sheet_badge"
+            android:textColor="@color/skin_button_text"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/themeBottomSheetAccentBar"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="14dp"
+        android:background="@color/skin_accent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/theme_demo_bottom_sheet_section_prefs"
+        android:textColor="@color/skin_text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/skin_card_bg"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/themeBottomSheetSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/theme_demo_bottom_sheet_switch"
+            android:textColor="@color/skin_text_primary"
+            app:thumbTint="@color/skin_accent"
+            app:trackTint="@color/skin_divider" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/themeBottomSheetCheck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:checked="true"
+            android:text="@string/theme_demo_bottom_sheet_check"
+            android:textColor="@color/skin_text_primary"
+            app:buttonTint="@color/skin_accent" />
+
+        <TextView
+            android:id="@+id/themeBottomSheetSeekLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/theme_demo_bottom_sheet_seek_format"
+            android:textColor="@color/skin_text_secondary"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/themeBottomSheetSeek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="42"
+            android:progressTint="@color/skin_accent"
+            android:thumbTint="@color/skin_accent" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/theme_demo_bottom_sheet_section_rows"
+        android:textColor="@color/skin_text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/themeBottomSheetRows"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnBottomSheetNested"
+            style="@style/Widget.Themeless.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@color/skin_button_bg"
+            android:backgroundTint="@null"
+            android:text="@string/theme_demo_bottom_sheet_nested"
+            android:textColor="@color/skin_button_text"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnBottomSheetToggleBar"
+            style="@style/Widget.Themeless.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:background="@color/skin_button_bg"
+            android:backgroundTint="@null"
+            android:text="@string/theme_demo_bottom_sheet_toggle_bar"
+            android:textColor="@color/skin_button_text"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnBottomSheetClose"
+        style="@style/Widget.Themeless.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/skin_card_bg"
+        android:backgroundTint="@null"
+        android:text="@string/theme_demo_bottom_sheet_close"
+        android:textColor="@color/skin_text_primary"
+        app:backgroundTint="@null" />
+</LinearLayout>

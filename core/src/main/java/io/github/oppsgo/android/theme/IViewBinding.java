@@ -16,8 +16,12 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
 /**
  * 一个 View 上的主题绑定。记下要随主题变化的属性，刷新时再写回 View。
  * <p>
- * 实例挂在 View 的 tag 上，由 {@link ThemeBindingFactory} 创建、{@link ThemeManager#of(View)} 取用；
+ * 参与换肤的实例由 LayoutInflater（{@link ThemeDelegate}）挂到 View tag；
+ * {@link ThemeManager#of(View)} 可临时创建且不挂 tag（{@code setXxx} 只靠 fallback 写一次）。
  * 也可自行实现本接口（含代理包装），不必继承 {@link ViewBinding}。
+ * <p>
+ * 属性槽位统一用 {@link ThemeKey}：布局 {@code R.attr} 与业务自有 token 同一套
+ * {@link #bind} / {@link #set} / {@link #unbind}；{@code @AttrRes int} 重载为糖。
  * <p>
  * 不带 View 泛型：具体 Binding 用协变 {@link #getView()} 暴露真实类型
  * （如 {@code SwitchBinding#getView()} 返回 {@code Switch}），避免继承链把类型收窄。
@@ -32,29 +36,57 @@ public interface IViewBinding {
 
     /**
      * 从布局 AttributeSet 记下资源引用，不立刻刷到 View。
-     * 只读已登记（带 {@link ResourceFactory}）的属性；布局里有值的以 XML 为准，
-     * 包括覆盖此前手动 {@link #bind(int, ResourceRef, AttrSetter)} 绑过的值
+     * 只读已登记（带 {@link ResourceFactory}）且为 attr 形态的 {@link ThemeKey}；
+     * 布局里有值的以 XML 为准，包括覆盖此前手动
+     * {@link #bind(ThemeKey, ResourceRef, AttrSetter)} 绑过的值
      * （手动绑定不清掉 {@code factory} 登记，见下）。
      */
     void bind(@Nullable AttributeSet attrs);
 
     /**
-     * 声明式登记一个属性：刷新时用 {@code factory} 按资源 id 造 {@link ResourceRef}，
-     * 再把解析出的值交给 {@code setter} 写回 View。自定义 View 接入用它，一行一个属性。
+     * 声明式登记：刷新时用 {@code factory} 按资源 id 造 {@link ResourceRef}，
+     * 再把解析出的 {@link ResourceValue} 交给 {@code setter} 写回 View。
      * <p>
-     * 写回时机见 {@link ResourceValue}：解析出「有值」才调 {@code setter}，
-     * 显式 null 也照常传入（如清除 drawable）；「取不到值」（未绑定 / 资源缺失）则跳过，不动 View。
+     * 仅 {@link ThemeKey#isAttr()} 的 key 会被 {@link #bind(AttributeSet)} 读到；
+     * token 形态只参与后续 {@link #apply} / {@link #set}。
+     */
+    <T> void bind(@NonNull ThemeKey key, @NonNull ResourceFactory<T> factory, @NonNull AttrSetter<T> setter);
+
+    /**
+     * {@link #bind(ThemeKey, ResourceFactory, AttrSetter)} 的 {@code R.attr} 糖。
      */
     <T> void bind(@AttrRes int attr, @NonNull ResourceFactory<T> factory, @NonNull AttrSetter<T> setter);
 
     /**
-     * 手动绑定一个值并立刻写回 View：是对登记的**扩展**，只替换写回 {@code setter} 与当前值，
-     * 登记里的 {@code factory} 保留；之后再次 {@link #bind(AttributeSet)} 读布局时以 XML 值为准。
+     * 登记 setter + 当前 ref，并立刻写回 View。再次同 key 则替换 setter 与当前值；
+     * 登记里的 {@code factory} 保留（若曾声明式登记过）；之后再次
+     * {@link #bind(AttributeSet)} 读布局时以 XML 值为准（仅 attr 形态）。
+     */
+    <T> void bind(@NonNull ThemeKey key, @NonNull ResourceRef<T> ref, @NonNull AttrSetter<T> setter);
+
+    /**
+     * {@link #bind(ThemeKey, ResourceRef, AttrSetter)} 的 {@code R.attr} 糖。
      */
     <T> void bind(@AttrRes int attr, @NonNull ResourceRef<T> ref, @NonNull AttrSetter<T> setter);
 
     /**
-     * 清掉该属性当前的值（登记保留）。没有登记过返回 {@code false}。
+     * 只更新已登记属性的 {@link ResourceRef} 并立刻写回。
+     * 未登记过该 key → 空操作；{@code ref == null} → 等价 {@link #unbind(ThemeKey)}。
+     */
+    void set(@NonNull ThemeKey key, @Nullable ResourceRef<?> ref);
+
+    /**
+     * {@link #set(ThemeKey, ResourceRef)} 的 {@code R.attr} 糖。
+     */
+    void set(@AttrRes int attr, @Nullable ResourceRef<?> ref);
+
+    /**
+     * 清掉该 key 当前的值（登记保留）。
+     */
+    void unbind(@NonNull ThemeKey key);
+
+    /**
+     * {@link #unbind(ThemeKey)} 的 {@code R.attr} 糖。
      */
     void unbind(@AttrRes int attr);
 
@@ -87,12 +119,13 @@ public interface IViewBinding {
     void refresh();
 
     /**
-     * 把解析出的值写回 View。
-     * 可能收到显式 {@code null}（绑定有效但就是要置空），不会因「取不到值」被调用。
+     * 把解析出的 {@link ResourceValue} 写回 View。
+     * 仅在 {@link ResourceValue#isPresent()} 时调用；值可为显式 null（{@code of(null)}）。
+     * 取不到值（{@link ResourceValue#empty()}）不会回调。
      */
     @FunctionalInterface
     interface AttrSetter<T> {
-        void set(T value);
+        void set(@NonNull ResourceValue<T> value);
     }
 
     /**

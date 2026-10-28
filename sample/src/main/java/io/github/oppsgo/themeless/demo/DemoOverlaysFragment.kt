@@ -33,6 +33,10 @@ class DemoOverlaysFragment : Fragment() {
             )
         }
 
+        view.findViewById<Button>(R.id.btnThemeBottomSheet).setOnClickListener {
+            ThemeBottomSheetFragment.show(parentFragmentManager)
+        }
+
         val popupAnchor = view.findViewById<Button>(R.id.btnThemePopup)
         popupAnchor.setOnClickListener {
             popup?.dismiss()

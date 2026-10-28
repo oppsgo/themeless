@@ -257,9 +257,12 @@ public class ThemeManager {
     }
 
     /**
-     * 取 View 上的 Binding：已挂载则复用，否则按注册表创建并挂到 tag 上。
-     * 具体类型请用 {@link #of(View, Class)}，例如
-     * {@code ThemeManager.of(textView, TextViewBinding.class).setTextColor(...)}。
+     * 取 View 上的 Binding：tag 上已有则复用，否则按注册表<strong>临时创建、不挂 tag</strong>。
+     * <p>
+     * 正式挂载只发生在 LayoutInflater（{@link ThemeDelegate}）或显式 {@link #attach}。
+     * 临时 Binding 上的 {@code setXxx} 靠 fallback Resolver 立刻写一次，不进换肤级联。
+     * <p>
+     * 具体类型请用 {@link #of(View, Class)}。
      */
     @NonNull
     public IViewBinding of(@NonNull View view) {
@@ -267,9 +270,7 @@ public class ThemeManager {
         if (existing != null) {
             return existing;
         }
-        IViewBinding created = registry.create(view);
-        registry.attach(view, created);
-        return created;
+        return registry.create(view);
     }
 
     /**
@@ -282,6 +283,14 @@ public class ThemeManager {
             throw new IllegalStateException("Expected " + type.getName() + " but was " + binding.getClass().getName());
         }
         return type.cast(binding);
+    }
+
+    /**
+     * 把 Binding 挂到 View tag，使之参与换肤级联。
+     * 通常由 {@link ThemeDelegate} 在 inflate 时调用；{@link #of} 临时创建默认不挂。
+     */
+    public void attach(@NonNull View view, @NonNull IViewBinding binding) {
+        registry.putTag(view, binding);
     }
 
     /**
@@ -302,7 +311,7 @@ public class ThemeManager {
     }
 
     /**
-     * 卸下 View 上的 Binding（含容器钩子）。挂载过返回 {@code true}。
+     * 卸下 View 上的 Binding（含已安装的容器钩子）。挂载过返回 {@code true}。
      */
     public boolean detach(@NonNull View view) {
         return registry.detach(view);

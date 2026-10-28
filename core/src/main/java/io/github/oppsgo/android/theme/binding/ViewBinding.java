@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.View;
 
@@ -17,12 +16,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.github.oppsgo.android.theme.IViewBinding;
 import io.github.oppsgo.android.theme.OnViewThemeUpdateListener;
 import io.github.oppsgo.android.theme.R2;
 import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeBindingFactory;
+import io.github.oppsgo.android.theme.ThemeKey;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.resolver.ContextResourceResolver;
 import io.github.oppsgo.android.theme.resource.ColorRef;
@@ -63,9 +65,10 @@ public class ViewBinding implements IViewBinding {
     protected int modCount = ThemeManager.MOD_COUNT_NONE;
 
     /**
-     * 同一张表同时服务有 attr 和没有 attr 的 View；key 是归一化（别名展开）后的 attr。
+     * 统一属性表：{@link ThemeKey} 为 attr 或业务 token；attr 会先经别名归一。
+     * 数量很少，用 {@link HashMap} 即可（无需 SparseArray）。
      */
-    private final SparseArray<ViewAttr> attrs = new SparseArray<>();
+    private final Map<ThemeKey, ViewAttr> attrs = new HashMap<>();
 
     /**
      * 别名 attr → 平台 attr。布局里两者都有值时，别名覆盖。
@@ -101,17 +104,17 @@ public class ViewBinding implements IViewBinding {
      * 一个被跟踪属性的全部状态。
      */
     private static final class ViewAttr {
-        final int attr;
-        final AttributeApplier applier;
+        @NonNull
+        final ThemeKey key;
+        @Nullable
+        AttributeApplier applier;
         @Nullable
         IViewBinding.ResourceFactory<?> factory;
-
-
         @Nullable
         ResourceRef<?> ref;
 
-        ViewAttr(int attr, AttributeApplier applier) {
-            this.attr = attr;
+        ViewAttr(@NonNull ThemeKey key, @Nullable AttributeApplier applier) {
+            this.key = key;
             this.applier = applier;
         }
     }
@@ -132,7 +135,7 @@ public class ViewBinding implements IViewBinding {
             @NonNull IViewBinding.ResourceFactory<?> factory,
             @NonNull AttributeApplier applier
     ) {
-        define(attr, factory, applier).ref = null;
+        define(ThemeKey.of(attr), factory, applier).ref = null;
     }
 
     /**
@@ -140,7 +143,7 @@ public class ViewBinding implements IViewBinding {
      * （如 compound drawable 整组写入）。
      */
     protected final void bindSpecial(@AttrRes int attr, @NonNull IViewBinding.ResourceFactory<?> factory) {
-        define(attr, factory, null).ref = null;
+        define(ThemeKey.of(attr), factory, null).ref = null;
     }
 
     /**
@@ -157,7 +160,7 @@ public class ViewBinding implements IViewBinding {
      * 把 {@code aliasAttr} 归一到已登记的 {@code canonicalAttr}（如 {@code app:srcCompat} → {@code src}）。
      */
     public final void alias(@AttrRes int aliasAttr, @AttrRes int canonicalAttr) {
-        if (attrs.indexOfKey(canonicalAttr) < 0) {
+        if (!attrs.containsKey(ThemeKey.of(canonicalAttr))) {
             throw new IllegalArgumentException("Canonical attribute is not bound: 0x" + Integer.toHexString(canonicalAttr));
         }
         aliases.put(aliasAttr, canonicalAttr);
@@ -165,15 +168,17 @@ public class ViewBinding implements IViewBinding {
 
     @NonNull
     private ViewAttr define(
-            @AttrRes int attr,
+            @NonNull ThemeKey key,
             @Nullable IViewBinding.ResourceFactory<?> factory,
             @Nullable AttributeApplier applier
     ) {
-        int canonical = canonicalAttr(attr);
+        ThemeKey canonical = canonicalKey(key);
         ViewAttr target = attrs.get(canonical);
         if (target == null) {
             target = new ViewAttr(canonical, applier);
             attrs.put(canonical, target);
+        } else if (applier != null) {
+            target.applier = applier;
         }
         if (factory != null) {
             target.factory = factory;
@@ -182,8 +187,22 @@ public class ViewBinding implements IViewBinding {
     }
 
     @Nullable
+    private ViewAttr findAttr(@NonNull ThemeKey key) {
+        return attrs.get(canonicalKey(key));
+    }
+
+    @Nullable
     private ViewAttr findAttr(@AttrRes int attr) {
-        return attrs.get(canonicalAttr(attr));
+        return findAttr(ThemeKey.of(attr));
+    }
+
+    @NonNull
+    private ThemeKey canonicalKey(@NonNull ThemeKey key) {
+        if (!key.isAttr()) {
+            return key;
+        }
+        int canonical = canonicalAttr(key.getAttr());
+        return canonical == key.getAttr() ? key : ThemeKey.of(canonical);
     }
 
     @AttrRes
@@ -195,6 +214,7 @@ public class ViewBinding implements IViewBinding {
 
     @Override
     public void bind(@Nullable AttributeSet set) {
+        // 只读 AttributeSet；挂 tag / 容器钩子由 ThemeDelegate inflate 负责
         if (set == null) return;
 
         int[] xmlAttrs = getXmlAttrs();
@@ -226,15 +246,24 @@ public class ViewBinding implements IViewBinding {
     }
 
     /**
-     * 布局要读的 attr：登记的 + 别名 + {@link #ATTR_ENABLED}，升序（{@code obtainStyledAttributes} 要求）。
+     * 布局要读的 attr：仅 {@link ThemeKey#isAttr()} 的登记 + 别名 + {@link #ATTR_ENABLED}，
+     * 升序（{@code obtainStyledAttributes} 要求）。
      * 常规流程每个 View 只在 inflate 时 {@link #bind(AttributeSet)} 一次，不做实例级缓存。
      */
     @NonNull
     private int[] getXmlAttrs() {
-        int[] xmlAttrs = new int[attrs.size() + aliases.size() + 1];
+        int attrCount = 0;
+        for (ThemeKey key : attrs.keySet()) {
+            if (key.isAttr()) {
+                attrCount++;
+            }
+        }
+        int[] xmlAttrs = new int[attrCount + aliases.size() + 1];
         int index = 0;
-        for (int i = 0; i < attrs.size(); i++) {
-            xmlAttrs[index++] = attrs.keyAt(i);
+        for (ThemeKey key : attrs.keySet()) {
+            if (key.isAttr()) {
+                xmlAttrs[index++] = key.getAttr();
+            }
         }
         for (int i = 0; i < aliases.size(); i++) {
             xmlAttrs[index++] = aliases.keyAt(i);
@@ -246,11 +275,30 @@ public class ViewBinding implements IViewBinding {
 
     @Override
     public final <T> void bind(
+            @NonNull ThemeKey key,
+            @NonNull IViewBinding.ResourceFactory<T> factory,
+            @NonNull IViewBinding.AttrSetter<T> setter
+    ) {
+        define(key, factory, providerSetter(setter)).ref = null;
+    }
+
+    @Override
+    public final <T> void bind(
             @AttrRes int attr,
             @NonNull IViewBinding.ResourceFactory<T> factory,
             @NonNull IViewBinding.AttrSetter<T> setter
     ) {
-        define(attr, factory, providerSetter(setter)).ref = null;
+        bind(ThemeKey.of(attr), factory, setter);
+    }
+
+    @Override
+    public final <T> void bind(
+            @NonNull ThemeKey key,
+            @NonNull ResourceRef<T> ref,
+            @NonNull IViewBinding.AttrSetter<T> setter
+    ) {
+        ViewAttr target = define(key, null, providerSetter(setter));
+        putAndApply(target, ref);
     }
 
     @Override
@@ -259,18 +307,34 @@ public class ViewBinding implements IViewBinding {
             @NonNull ResourceRef<T> ref,
             @NonNull IViewBinding.AttrSetter<T> setter
     ) {
-        ViewAttr target = define(attr, null, providerSetter(setter));
-        target.ref = normalize(ref);
-        applyNow(target);
+        bind(ThemeKey.of(attr), ref, setter);
+    }
+
+    @Override
+    public final void set(@NonNull ThemeKey key, @Nullable ResourceRef<?> ref) {
+        ViewAttr target = findAttr(key);
+        if (target == null) {
+            return;
+        }
+        putAndApply(target, ref);
+    }
+
+    @Override
+    public final void set(@AttrRes int attr, @Nullable ResourceRef<?> ref) {
+        set(ThemeKey.of(attr), ref);
+    }
+
+    @Override
+    public void unbind(@NonNull ThemeKey key) {
+        ViewAttr target = findAttr(key);
+        if (target != null) {
+            target.ref = null;
+        }
     }
 
     @Override
     public void unbind(@AttrRes int attr) {
-        ViewAttr target = findAttr(attr);
-        if (target == null) {
-            return;
-        }
-        target.ref = null;
+        unbind(ThemeKey.of(attr));
     }
 
     @Override
@@ -309,8 +373,8 @@ public class ViewBinding implements IViewBinding {
      */
     protected void applyContent(@NonNull ResourceResolver resolver) {
         applySpecialAttrs(resolver);
-        for (int i = 0; i < attrs.size(); i++) {
-            applyAttr(resolver, attrs.valueAt(i));
+        for (ViewAttr attr : attrs.values()) {
+            applyAttr(resolver, attr);
         }
     }
 
@@ -332,7 +396,7 @@ public class ViewBinding implements IViewBinding {
     // ---- 手动 setXxx 的内部通路 ----
 
     /**
-     * 记值，不立刻刷。
+     * 记值，不立刻刷。不挂 tag；未 inflate 挂载的临时 Binding 只影响本次对象。
      */
     protected final void setAttr(@AttrRes int attr, @Nullable ResourceRef<?> ref) {
         ViewAttr target = findAttr(attr);
@@ -342,13 +406,10 @@ public class ViewBinding implements IViewBinding {
     }
 
     /**
-     * 记值并立刻写回 View。
+     * 记值并立刻写回 View。委托 {@link #set(ThemeKey, ResourceRef)}。
      */
     protected final void setAttrAndApply(@AttrRes int attr, @Nullable ResourceRef<?> ref) {
-        ViewAttr target = findAttr(attr);
-        if (target == null) return;
-        target.ref = normalize(ref);
-        applyNow(target);
+        set(ThemeKey.of(attr), ref);
     }
 
     /**
@@ -368,6 +429,13 @@ public class ViewBinding implements IViewBinding {
         return target == null ? null : target.ref;
     }
 
+    private void putAndApply(@NonNull ViewAttr target, @Nullable ResourceRef<?> ref) {
+        target.ref = normalize(ref);
+        if (ref != null) {
+            applyNow(target);
+        }
+    }
+
     private void applyNow(@NonNull ViewAttr attr) {
         ResourceResolver resolver;
         if (!enabled || attr.ref == null || (resolver = currentResolver()) == null) return;
@@ -384,9 +452,9 @@ public class ViewBinding implements IViewBinding {
     private static <T> AttributeApplier providerSetter(@NonNull IViewBinding.AttrSetter<T> setter) {
         return (resolver, ref) -> {
             ResourceValue<T> value = provideValue(resolver, ref);
-            // 有值才调 setter：显式 null 也照常传入（如清除 drawable）；取不到值跳过。
+            // 有值才调 setter：整份 ResourceValue 传入；取不到值跳过。
             if (value.isPresent()) {
-                setter.set(value.get());
+                setter.set(value);
             }
         };
     }
@@ -434,18 +502,20 @@ public class ViewBinding implements IViewBinding {
         return fallbackResolver;
     }
 
-    // ---- 挂载钩子 ----
+    // ---- 容器钩子 ----
 
     /**
-     * 挂载成功后由 {@link ThemeBindingFactory} 调用；容器 Binding 在此注册监听。
-     * 仅供库内回调，业务不要调用。
+     * 安装容器钩子（注册子项挂载监听等）。须幂等。
+     * <p>
+     * 由 {@link ThemeDelegate} 在 inflate 挂载时调用；{@link ThemeManager#of(View)} 临时创建不装钩子。
+     * 需要时也可显式调用。
      */
     public void onAttached() {
     }
 
     /**
-     * 卸载前由 {@link ThemeBindingFactory} 调用；容器 Binding 在此移除监听。
-     * 仅供库内回调，业务不要调用。
+     * 卸下容器钩子。须在从未 {@link #onAttached()} 时也安全（勿误清外部监听）。
+     * {@link ThemeManager#detach(View)} 会调用。
      */
     public void onDetached() {
     }

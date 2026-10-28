@@ -13,27 +13,174 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <Button
-            android:id="@+id/btnThemeDialog"
-            style="@style/Widget.Themeless.Button"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/skin_button_bg"
-            android:backgroundTint="@null"
-            android:text="@string/theme_demo_dialog"
-            android:textColor="@color/skin_button_text"
-            app:backgroundTint="@null" />
+            android:text="@string/demo_overlays_hint"
+            android:textColor="@color/skin_text_secondary"
+            android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/btnThemePopup"
-            style="@style/Widget.Themeless.Button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@color/skin_button_bg"
-            android:backgroundTint="@null"
-            android:text="@string/theme_demo_popup"
-            android:textColor="@color/skin_button_text"
-            app:backgroundTint="@null" />
+            android:layout_marginTop="14dp"
+            android:background="@color/skin_card_bg"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_demo_overlay_section_center"
+                android:textColor="@color/skin_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/theme_demo_overlay_section_center_hint"
+                android:textColor="@color/skin_text_secondary"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnThemeDialog"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_dialog"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@color/skin_card_bg"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_demo_overlay_section_popup"
+                android:textColor="@color/skin_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/theme_demo_overlay_section_popup_hint"
+                android:textColor="@color/skin_text_secondary"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnThemePopup"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_popup"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@color/skin_card_bg"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/theme_demo_overlay_section_sheet"
+                    android:textColor="@color/skin_text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/skin_accent"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:text="@string/theme_demo_overlay_sheet_tag"
+                    android:textColor="@color/skin_button_text"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/theme_demo_overlay_section_sheet_hint"
+                android:textColor="@color/skin_text_secondary"
+                android:textSize="12sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/skin_panel_bg" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/theme_demo_overlay_sheet_preview"
+                android:textColor="@color/skin_text_secondary"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/btnThemeBottomSheet"
+                style="@style/Widget.Themeless.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/skin_button_bg"
+                android:backgroundTint="@null"
+                android:text="@string/theme_demo_bottom_sheet"
+                android:textColor="@color/skin_button_text"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/theme_demo_overlay_checklist_title"
+            android:textColor="@color/skin_text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/theme_demo_overlay_checklist_body"
+            android:textColor="@color/skin_text_secondary"
+            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>
