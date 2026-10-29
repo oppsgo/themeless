@@ -11,11 +11,11 @@ import io.github.oppsgo.android.theme.ResourceResolver;
 import io.github.oppsgo.android.theme.ThemeManager;
 
 /**
- * {@link ViewGroup} 绑定：自身刷新后级联子 View，并提供浮层补刷入口。
+ * {@link ViewGroup} 绑定：自身刷完后按深度级联子 View，并提供指定节点的补刷入口。
  * <p>
  * 下探时没有挂 Binding 的中间 ViewGroup 自动穿透，直到各分支遇到首个已挂 Binding 的子树
- * （由它的 {@link #applyContent} 接管自身子树），或 {@link IViewBinding#isEnabled()} 为 false
- * 的 Binding（apply 早退，整枝停止不刷）。
+ * （由它的 {@link #applyDescendants} 接管自身子树），或 {@link IViewBinding#isEnabled()} 为 false
+ * 的 Binding（{@link #apply} 早退，整枝停止不刷）。
  * <p>
  * {@link #setTraverseDepth(int)} 控制下探层数：{@link #TRAVERSE_INFINITE} 无限穿透（默认），
  * {@code 0} 只刷自身，正整数为可穿透的中间 ViewGroup 层数上限。
@@ -57,41 +57,30 @@ public class ViewGroupBinding extends ViewBinding {
     }
 
     /**
-     * 先写自身属性，再按深度级联子 View；回调由 final 的 {@link #apply} 在级联完成后触发。
-     * 被 {@link #setEnabled(boolean)} 关闭时 {@link #apply} 直接早退，不会走到这里。
-     * 遍历深度为 0 时只刷自身，不级联子 View。
+     * {@link ViewGroup} 默认级联：深度 &gt; 0 时对自身做 {@link #applyChildTree}。
+     * 深度为 0 时只刷过自身（{@link #applySelf} 已完成），不再往下。
      */
     @Override
-    protected void applyContent(@NonNull ResourceResolver resolver) {
-        super.applyContent(resolver);
+    protected void applyDescendants(@NonNull ResourceResolver resolver) {
         int depth = getTraverseDepth();
         if (depth > 0) {
-            applyChildBindings(resolver, depth);
+            applyChildTree(getView(), resolver, depth);
         }
     }
 
     /**
-     * 对已挂 Binding 的子树按当前深度做 {@link IViewBinding#apply}。
+     * {@code getChildAt} 下探实现：已挂 Binding 的直接 {@link IViewBinding#apply}；
+     * 没有 Binding 的 ViewGroup 继续下探，每下一层减 1，到 0 停止。
+     * {@link #TRAVERSE_INFINITE} 自然不会触底。
+     * 遇到 Binding 后由它自己的 {@link #applyDescendants} 接管子树；
+     * 遇到 enabled=false 的 Binding 整枝停止。
      */
-    protected void applyChildBindings(@NonNull ResourceResolver resolver) {
-        applyChildBindings(resolver, getTraverseDepth());
-    }
-
-    protected void applyChildBindings(@NonNull ResourceResolver resolver, int depth) {
-        updateChildBindings(getView(), resolver, depth);
-    }
-
-    /**
-     * 级联子 View：已挂 Binding 的直接 apply；没有 Binding 的 ViewGroup 按深度下探，
-     * 每下一层减 1，到 0 不再处理该层子 View；{@link #TRAVERSE_INFINITE} 自然不会触底。
-     * 遇到 Binding 后由它自身级联接管子树；遇到 enabled=false 的 Binding 整枝停止。
-     */
-    protected void updateChildBindings(
+    protected void applyChildTree(
             @NonNull ViewGroup group,
             @NonNull ResourceResolver resolver,
             int depth
     ) {
-        if (depth <= 0) return; // 深度耗尽，该层子 View 不再处理
+        if (depth <= 0) return;
         ThemeManager manager = ThemeManager.get();
         int count = group.getChildCount();
         for (int i = 0; i < count; i++) {
@@ -100,24 +89,24 @@ public class ViewGroupBinding extends ViewBinding {
             if (binding != null) {
                 binding.apply(resolver);
             } else if (child instanceof ViewGroup) {
-                updateChildBindings((ViewGroup) child, resolver, depth - 1);
+                applyChildTree((ViewGroup) child, resolver, depth - 1);
             }
         }
     }
 
-    protected void refreshTargetBindings(@Nullable View target) {
-        refreshTargetBindings(target, getTraverseDepth());
+    /**
+     * 补刷指定节点：自己有 Binding 则 {@link IViewBinding#refresh()}，否则按深度下探子树。
+     * 挂载 / 复用回调用这条路，不要走 {@link #apply}（避免 modCount 未变时也全量重写）。
+     */
+    protected void refreshTarget(@Nullable View target) {
+        refreshTarget(target, getTraverseDepth());
     }
 
     /**
-     * 自身有 Binding 则刷自身；没有时对子树里已挂 Binding 的做 {@link IViewBinding#refresh}。
      * 深度 {@link #TRAVERSE_INFINITE} 无限穿透；{@code 0} 只刷自身；正整数限制中间 ViewGroup 穿透层数。
      * 用当前安装的 Resolver；还没 {@link ThemeManager#apply(Context, ResourceResolver)} 时什么都不做。
-     * <p>
-     * 走 {@link IViewBinding#refresh()} 而非 {@link IViewBinding#apply(ResourceResolver)}：
-     * modCount 未变时跳过，避免 RecyclerView 复用等场景每次挂载都全量重写。
      */
-    protected void refreshTargetBindings(@Nullable View target, int depth) {
+    protected void refreshTarget(@Nullable View target, int depth) {
         if (target == null) return;
 
         ThemeManager manager = ThemeManager.get();
@@ -139,7 +128,7 @@ public class ViewGroupBinding extends ViewBinding {
             if (binding != null) {
                 binding.refresh();
             } else {
-                refreshTargetBindings(child, depth - 1);
+                refreshTarget(child, depth - 1);
             }
         }
     }

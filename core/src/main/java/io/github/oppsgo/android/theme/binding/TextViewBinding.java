@@ -25,7 +25,7 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  * {@link TextView} 绑定：textColor / textColorHint / drawableTint 与 compound drawable。
  * 文字颜色按资源类型分成 {@link ColorRef} 和 {@link ColorStateListRef}。
  * <p>
- * compound drawable：与平台 API 一样整组写入四个方向，统一由 {@link #applySpecialAttrs} 刷；
+ * compound drawable：与平台 API 一样整组写入四个方向，在 {@link #applySelf} 里刷；
  * {@link DrawableRef#none()} 表示该方向为空。尺寸沿用 {@code Drawable.setBounds}，没设过才用 intrinsic。
  */
 public class TextViewBinding extends ViewBinding {
@@ -151,8 +151,9 @@ public class TextViewBinding extends ViewBinding {
     }
 
     @Override
-    protected void applySpecialAttrs(ResourceResolver resolver) {
+    protected void applySelf(@NonNull ResourceResolver resolver) {
         applyCompoundDrawables(resolver);
+        super.applySelf(resolver);
     }
 
     private void applyCompoundDrawablesNow() {

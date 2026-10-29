@@ -101,7 +101,8 @@ public interface IViewBinding {
 
     /**
      * 用给定的 {@link ResourceResolver} 把已绑定的资源刷到 View。
-     * ViewGroup 会把同一套 resolver 传给已绑定的直接子 View。
+     * {@link io.github.oppsgo.android.theme.binding.ViewBinding} 实现里：先刷自身属性，
+     * 再由 {@code applyDescendants} 级联（ViewGroup / RecyclerView 等各自决定怎么找子 Binding）。
      */
     void apply(ResourceResolver resolver);
 

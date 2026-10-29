@@ -58,7 +58,7 @@ public class ViewPager2Binding extends ViewGroupBinding {
     private void applyCurrent() {
         ResourceResolver resolver = currentResolver();
         if (resolver != null) {
-            applyChildBindings(resolver);
+            applyDescendants(resolver);
         }
     }
 }

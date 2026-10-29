@@ -119,12 +119,9 @@ public class ThemeDelegate implements LayoutInflater.Factory2 {
         if (view == null) return;
         ThemeManager manager = ThemeManager.get();
         IViewBinding binding = manager.of(view);
+        binding.bind(attrs);
         // inflate 才正式登记：挂 tag + 容器钩子；bind 只读 AttributeSet
         manager.attach(view, binding);
-        if (binding instanceof ViewBinding) {
-            ((ViewBinding) binding).onAttached();
-        }
-        binding.bind(attrs);
         if (!refreshOnInflate) return;
         // 自己就是这一页的委托：直接取当前 resolver，不再按 View Context 回查。
         ResourceResolver current = resolver;

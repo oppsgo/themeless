@@ -244,8 +244,8 @@ package io.github.oppsgo.android.theme.binding {
     ctor public ViewBinding(android.view.View);
     method public final void alias(@AttrRes int, @AttrRes int);
     method public final void apply(io.github.oppsgo.android.theme.ResourceResolver!);
-    method protected void applyContent(io.github.oppsgo.android.theme.ResourceResolver);
-    method protected void applySpecialAttrs(io.github.oppsgo.android.theme.ResourceResolver!);
+    method protected void applyDescendants(io.github.oppsgo.android.theme.ResourceResolver);
+    method protected void applySelf(io.github.oppsgo.android.theme.ResourceResolver);
     method public void bind(android.util.AttributeSet?);
     method public final <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.IViewBinding.ResourceFactory<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
     method public final <T> void bind(@AttrRes int, io.github.oppsgo.android.theme.resource.ResourceRef<T>, io.github.oppsgo.android.theme.IViewBinding.AttrSetter<T>);
@@ -291,14 +291,12 @@ package io.github.oppsgo.android.theme.binding {
 
   public class ViewGroupBinding extends io.github.oppsgo.android.theme.binding.ViewBinding {
     ctor public ViewGroupBinding(android.view.ViewGroup);
-    method protected void applyChildBindings(io.github.oppsgo.android.theme.ResourceResolver);
-    method protected void applyChildBindings(io.github.oppsgo.android.theme.ResourceResolver, int);
+    method protected void applyChildTree(android.view.ViewGroup, io.github.oppsgo.android.theme.ResourceResolver, int);
     method public int getTraverseDepth();
     method public android.view.ViewGroup getView();
-    method protected void refreshTargetBindings(android.view.View?);
-    method protected void refreshTargetBindings(android.view.View?, int);
+    method protected void refreshTarget(android.view.View?);
+    method protected void refreshTarget(android.view.View?, int);
     method public void setTraverseDepth(int);
-    method protected void updateChildBindings(android.view.ViewGroup, io.github.oppsgo.android.theme.ResourceResolver, int);
     field public static final int TRAVERSE_INFINITE = 4096; // 0x1000
   }
 

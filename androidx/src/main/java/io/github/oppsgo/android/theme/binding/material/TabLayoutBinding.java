@@ -46,11 +46,8 @@ public class TabLayoutBinding extends ViewBinding {
     }
 
     @Override
-    protected void applySpecialAttrs(ResourceResolver resolver) {
-        if (resolver == null) {
-            return;
-        }
-
+    protected void applySelf(@NonNull ResourceResolver resolver) {
+        super.applySelf(resolver);
         ResourceRef<?> normalRef = getAttrValue(ATTR_TAB_TEXT_COLOR);
         ResourceRef<?> selectedRef = getAttrValue(ATTR_TAB_SELECTED_TEXT_COLOR);
         if (normalRef != null || selectedRef != null) {
@@ -79,7 +76,7 @@ public class TabLayoutBinding extends ViewBinding {
     public void setTabTextColors(@ColorRes int normalColor, @ColorRes int selectedColor) {
         setAttrResource(ATTR_TAB_TEXT_COLOR, normalColor, colorFactory());
         setAttrResource(ATTR_TAB_SELECTED_TEXT_COLOR, selectedColor, colorFactory());
-        applySpecialAttrs(currentResolver());
+        applySelfNow();
     }
 
     public void setTabIndicatorColor(@ColorRes int colorRes) {
@@ -88,12 +85,19 @@ public class TabLayoutBinding extends ViewBinding {
 
     public void setTabRippleColor(@ColorRes int colorRes) {
         setAttrResource(ATTR_TAB_RIPPLE_COLOR, colorRes, colorFactory());
-        applySpecialAttrs(currentResolver());
+        applySelfNow();
     }
 
     public void setTabIconTint(@ColorRes int colorRes) {
         setAttrResource(ATTR_TAB_ICON_TINT, colorRes, colorFactory());
-        applySpecialAttrs(currentResolver());
+        applySelfNow();
+    }
+
+    private void applySelfNow() {
+        ResourceResolver resolver = currentResolver();
+        if (resolver != null) {
+            applySelf(resolver);
+        }
     }
 
     private void applyIndicatorColor(@NonNull ResourceResolver resolver, @NonNull ResourceRef<?> ref) {

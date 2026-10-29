@@ -103,7 +103,9 @@ public final class ThemeBindingFactory {
         return creator;
     }
 
-    /** 按注册表创建 Binding（不挂 tag）。 */
+    /**
+     * 按注册表创建 Binding（不挂 tag）。
+     */
     @NonNull
     IViewBinding create(@NonNull View view) {
         @SuppressWarnings("unchecked")
@@ -111,7 +113,9 @@ public final class ThemeBindingFactory {
         return creator.create(view);
     }
 
-    /** 只查已挂载的 Binding；没有则 {@code null}。 */
+    /**
+     * 只查已挂载的 Binding；没有则 {@code null}。
+     */
     @Nullable
     IViewBinding find(@Nullable View view) {
         Object tag = view == null ? null : view.getTag(TAG_BINDING);
@@ -124,6 +128,9 @@ public final class ThemeBindingFactory {
      */
     void putTag(@NonNull View view, @NonNull IViewBinding binding) {
         view.setTag(TAG_BINDING, binding);
+        if (binding instanceof ViewBinding) {
+            ((ViewBinding) binding).onAttached();
+        }
     }
 
     /**

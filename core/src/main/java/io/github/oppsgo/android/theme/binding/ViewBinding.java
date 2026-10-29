@@ -11,6 +11,7 @@ import android.view.View;
 
 import androidx.annotation.AnyRes;
 import androidx.annotation.AttrRes;
+import androidx.annotation.CallSuper;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +24,7 @@ import io.github.oppsgo.android.theme.IViewBinding;
 import io.github.oppsgo.android.theme.OnViewThemeUpdateListener;
 import io.github.oppsgo.android.theme.R2;
 import io.github.oppsgo.android.theme.ResourceResolver;
-import io.github.oppsgo.android.theme.ThemeBindingFactory;
+import io.github.oppsgo.android.theme.ThemeDelegate;
 import io.github.oppsgo.android.theme.ThemeKey;
 import io.github.oppsgo.android.theme.ThemeManager;
 import io.github.oppsgo.android.theme.resolver.ContextResourceResolver;
@@ -38,7 +39,7 @@ import io.github.oppsgo.android.theme.resource.ResourceValue;
  * 更具体的能力由各子类声明。
  * <p>
  * 属性在构造器里一行一个地登记：{@link #bindRaw}（带 setter 的常规属性）、
- * {@link #bindSpecial}（需整组写入等特殊处理、由 {@link #applySpecialAttrs} 统一刷的属性）。
+ * {@link #bindSpecial}（需整组写入等特殊处理、在子类 {@link #applySelf} 里刷的属性）。
  * 布局 XML 要读哪些属性也从登记结果推导，不再单独声明 styleable。
  * <p>
  * 不带 View 泛型；子类用协变 {@link #getView()} 暴露真实类型。
@@ -139,8 +140,8 @@ public class ViewBinding implements IViewBinding {
     }
 
     /**
-     * 登记特殊属性：只记 factory 供布局 XML 读取，刷新统一走 {@link #applySpecialAttrs}
-     * （如 compound drawable 整组写入）。
+     * 登记特殊属性：只记 factory 供布局 XML 读取，刷新时由子类在 {@link #applySelf}
+     * 里整组写入（如 compound drawable）。
      */
     protected final void bindSpecial(@AttrRes int attr, @NonNull IViewBinding.ResourceFactory<?> factory) {
         define(ThemeKey.of(attr), factory, null).ref = null;
@@ -352,6 +353,11 @@ public class ViewBinding implements IViewBinding {
         this.updateListener = listener;
     }
 
+    /**
+     * 换肤入口：门禁 → 记代数 → {@link #applySelf} → {@link #applyDescendants} → 回调。
+     * final：自身与级联的先后、以及 {@link OnViewThemeUpdateListener} 的时机固定；
+     * 特殊属性重写 {@link #applySelf}，容器级联重写 {@link #applyDescendants}。
+     */
     @Override
     public final void apply(ResourceResolver resolver) {
         if (!isEnabled() || resolver == null) return;
@@ -359,23 +365,38 @@ public class ViewBinding implements IViewBinding {
         if (current != ThemeManager.MOD_COUNT_NONE) {
             this.modCount = current;
         }
-        applyContent(resolver);
+        applySelf(resolver);
+        applyDescendants(resolver);
+        // 处理自定义View自己实现了 OnViewThemeUpdateListener
+        View view = getView();
+        if (view instanceof OnViewThemeUpdateListener && !(view instanceof IViewBinding)) {
+            ((OnViewThemeUpdateListener) view).onThemeUpdate(view, resolver);
+        }
         OnViewThemeUpdateListener listener = updateListener;
         if (listener != null) {
-            listener.onThemeUpdate(view, resolver);
+            listener.onThemeUpdate(this.view, resolver);
         }
     }
 
     /**
-     * 本次刷新的全部写入内容：默认写自身已绑定属性，子类可追加（如 ViewGroup 级联子 View）。
-     * {@link #apply} 是 final，扩展只能重写本方法，
-     * {@link OnViewThemeUpdateListener} 因此固定在全部写入完成后触发，子类无法改变时机。
+     * 只写本 View 已绑定的属性。默认刷带 applier 的常规 attr。
+     * {@link #bindSpecial} 登记的属性在子类里先处理完再 {@code super.applySelf}。
+     * 不管子树；级联走 {@link #applyDescendants}。
      */
-    protected void applyContent(@NonNull ResourceResolver resolver) {
-        applySpecialAttrs(resolver);
+    @CallSuper
+    protected void applySelf(@NonNull ResourceResolver resolver) {
         for (ViewAttr attr : attrs.values()) {
             applyAttr(resolver, attr);
         }
+    }
+
+    /**
+     * 本 View 刷完后的级联。默认空。
+     * <p>
+     * {@link ViewGroupBinding} 在这里按深度下探子 View；
+     * 要换查询方式的容器（如 RecyclerView）整段重写，不必调用 super。
+     */
+    protected void applyDescendants(@NonNull ResourceResolver resolver) {
     }
 
     @Override
@@ -388,11 +409,6 @@ public class ViewBinding implements IViewBinding {
         apply(resolver);
     }
 
-    /**
-     * 特殊属性（{@link #bindSpecial}）的统一刷入口；默认没有。
-     */
-    protected void applySpecialAttrs(ResourceResolver resolver) {
-    }
     // ---- 手动 setXxx 的内部通路 ----
 
     /**

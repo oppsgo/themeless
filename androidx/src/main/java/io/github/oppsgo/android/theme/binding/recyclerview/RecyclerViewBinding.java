@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import io.github.oppsgo.android.theme.binding.ViewGroupBinding;
 
 /**
- * {@link RecyclerView}：item 复用后重新挂上时补刷，避免换肤后滑回来仍是旧色。
+ * {@link RecyclerView}：级联仍走 {@link ViewGroupBinding} 的 {@code getChildAt} 下探
+ * （稳定布局下与按 ViewHolder 查询次数相同）。
  * <p>
+ * 额外做 item 复用后重新挂上时的补刷，避免换肤后滑回来仍是旧色。
  * item 根没有 Binding 时（如 ViewPager2 内部是 FragmentViewHolder 容器）
- * 会自动穿透到 Fragment 根的 Binding，无需按容器层数垫深。
+ * 会按深度穿透到内部 Binding，无需按容器层数垫深。
  */
 public class RecyclerViewBinding extends ViewGroupBinding
         implements RecyclerView.OnChildAttachStateChangeListener {
@@ -42,7 +44,7 @@ public class RecyclerViewBinding extends ViewGroupBinding
 
     @Override
     public void onChildViewAttachedToWindow(@NonNull View child) {
-        refreshTargetBindings(child, getTraverseDepth());
+        refreshTarget(child, getTraverseDepth());
     }
 
     @Override

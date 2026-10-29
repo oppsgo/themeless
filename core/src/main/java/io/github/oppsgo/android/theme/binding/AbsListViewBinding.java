@@ -123,7 +123,7 @@ public class AbsListViewBinding extends ViewGroupBinding
         if (listener != null) {
             listener.onChildViewAdded(parent, child);
         }
-        refreshTargetBindings(child);
+        refreshTarget(child);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class AbsListViewBinding extends ViewGroupBinding
         AbsListView list = getView();
         int count = list.getChildCount();
         for (int i = 0; i < count; i++) {
-            refreshTargetBindings(list.getChildAt(i));
+            refreshTarget(list.getChildAt(i));
         }
     }
 }

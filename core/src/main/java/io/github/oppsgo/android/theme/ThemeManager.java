@@ -277,6 +277,7 @@ public class ThemeManager {
      * 同 {@link #of(View)}，并断言结果为 {@code type} 或其子类；不是则抛 {@link IllegalStateException}。
      */
     @NonNull
+    @SuppressWarnings("ConstantConditions")
     public <T extends IViewBinding> T of(@NonNull View view, @NonNull Class<T> type) {
         IViewBinding binding = of(view);
         if (!type.isInstance(binding)) {
