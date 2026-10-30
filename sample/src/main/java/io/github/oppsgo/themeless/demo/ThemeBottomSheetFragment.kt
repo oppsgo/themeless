@@ -54,9 +54,10 @@ class ThemeBottomSheetFragment : BottomSheetDialogFragment() {
 
         val accentBar = view.findViewById<View>(R.id.themeBottomSheetAccentBar)
         val binding = ThemeManager.get().of(accentBar)
-        binding.bind(KEY_SHEET_ACCENT, ColorRef.of(R.color.skin_accent)) { value ->
+        binding.bind(KEY_SHEET_ACCENT) { value ->
             accentBar.setBackgroundColor(value.require())
         }
+        binding.set(KEY_SHEET_ACCENT, ColorRef.of(R.color.skin_accent))
 
         var usePanel = false
         view.findViewById<Button>(R.id.btnBottomSheetToggleBar).setOnClickListener {

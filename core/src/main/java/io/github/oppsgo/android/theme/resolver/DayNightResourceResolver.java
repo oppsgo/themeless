@@ -24,6 +24,12 @@ import io.github.oppsgo.android.theme.ThemeViewCompat;
  */
 public class DayNightResourceResolver extends ContextResourceResolver {
 
+    /** {@link #getThemeId()}：亮色。 */
+    public static final String THEME_ID_LIGHT = "light";
+
+    /** {@link #getThemeId()}：夜间。 */
+    public static final String THEME_ID_NIGHT = "night";
+
     @NonNull
     public static DayNightResourceResolver light(@NonNull Context context) {
         return of(context, false);
@@ -121,5 +127,11 @@ public class DayNightResourceResolver extends ContextResourceResolver {
 
     public DayNightResourceResolver(@NonNull Context context, @NonNull ThemeViewCompat viewCompat) {
         super(context, viewCompat);
+    }
+
+    @NonNull
+    @Override
+    public String getThemeId() {
+        return isSystemNight(getContext()) ? THEME_ID_NIGHT : THEME_ID_LIGHT;
     }
 }

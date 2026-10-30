@@ -99,4 +99,9 @@ public class ContextResourceResolver implements ResourceResolver {
     public ThemeViewCompat getViewCompat() {
         return viewCompat;
     }
+
+    @Override
+    public String getThemeId() {
+        return "";
+    }
 }

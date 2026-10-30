@@ -39,6 +39,8 @@ public class SkinPackageResolver implements ResourceResolver {
     private final Resources skinResources;
     private final String skinPackage;
 
+    private final String themeId;
+
     /**
      * 宿主 id → 皮肤 id 的缓存；{@link ResourceRef#ID_NULL} 表示皮肤包没有该资源，回退 delegate。
      */
@@ -49,16 +51,35 @@ public class SkinPackageResolver implements ResourceResolver {
             @NonNull Resources skinResources,
             @NonNull String skinPackage
     ) {
+        this("", delegate, skinResources, skinPackage);
+    }
+
+    public SkinPackageResolver(String themeId, ResourceResolver delegate, Resources skinResources, String skinPackage) {
         this.delegate = delegate;
         this.skinResources = skinResources;
         this.skinPackage = skinPackage;
+        this.themeId = themeId;
     }
 
     /**
      * 读皮肤 APK 建 Resolver；apk 不存在或解析失败返回 {@code null}（由调用方降级/提示）。
+     * {@link #getThemeId()} 为空字符串。
      */
     @Nullable
     public static SkinPackageResolver load(
+            @NonNull ResourceResolver delegate,
+            @NonNull Context context,
+            @NonNull String apkPath
+    ) {
+        return load("", delegate, context, apkPath);
+    }
+
+    /**
+     * 同 {@link #load(ResourceResolver, Context, String)}，{@code themeId} 写入 {@link #getThemeId()}。
+     */
+    @Nullable
+    public static SkinPackageResolver load(
+            @NonNull String themeId,
             @NonNull ResourceResolver delegate,
             @NonNull Context context,
             @NonNull String apkPath
@@ -69,6 +90,8 @@ public class SkinPackageResolver implements ResourceResolver {
         }
         try {
             AssetManager assets = AssetManager.class.getDeclaredConstructor().newInstance();
+            // 公开 SDK 里没有 addAssetPath，IDE 解析不了这个反射方法名。
+            @SuppressWarnings("JavaReflectionMemberAccess")
             Method addAssetPath = AssetManager.class.getMethod("addAssetPath", String.class);
             Object cookie = addAssetPath.invoke(assets, apkPath);
             // 返回 0 表示路径没进 AssetManager（如 apk 损坏）。此时 skin Resources 照样能建，
@@ -77,7 +100,7 @@ public class SkinPackageResolver implements ResourceResolver {
                 return null;
             }
             Resources skin = createSkinResources(assets, context.getResources());
-            return new SkinPackageResolver(delegate, skin, info.packageName);
+            return new SkinPackageResolver(themeId, delegate, skin, info.packageName);
         } catch (Exception e) {
             // minSdk 16 没有 ReflectiveOperationException（API 19），只能宽接：反射建 Resources 失败即降级。
             return null;
@@ -218,5 +241,10 @@ public class SkinPackageResolver implements ResourceResolver {
     @SuppressWarnings("deprecation")
     private static Drawable getDrawableCompat(@NonNull Resources res, @AnyRes int id) {
         return res.getDrawable(id);
+    }
+
+    @Override
+    public String getThemeId() {
+        return themeId;
     }
 }

@@ -40,4 +40,12 @@ public class AppCompatDayNightResourceResolver extends AppCompatContextResourceR
     public AppCompatDayNightResourceResolver(@NonNull Context context, @NonNull ThemeViewCompat viewCompat) {
         super(context, viewCompat);
     }
+
+    @NonNull
+    @Override
+    public String getThemeId() {
+        return DayNightResourceResolver.isSystemNight(getContext())
+                ? DayNightResourceResolver.THEME_ID_NIGHT
+                : DayNightResourceResolver.THEME_ID_LIGHT;
+    }
 }

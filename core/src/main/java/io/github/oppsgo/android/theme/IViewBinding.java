@@ -37,9 +37,8 @@ public interface IViewBinding {
     /**
      * 从布局 AttributeSet 记下资源引用，不立刻刷到 View。
      * 只读已登记（带 {@link ResourceFactory}）且为 attr 形态的 {@link ThemeKey}；
-     * 布局里有值的以 XML 为准，包括覆盖此前手动
-     * {@link #bind(ThemeKey, ResourceRef, AttrSetter)} 绑过的值
-     * （手动绑定不清掉 {@code factory} 登记，见下）。
+     * 布局里有值的以 XML 为准，包括覆盖此前 {@link #set(ThemeKey, ResourceRef)} 写过的值
+     * （{@link #bind(ThemeKey, AttrSetter)} 不清掉 {@code factory} 登记，见下）。
      */
     void bind(@Nullable AttributeSet attrs);
 
@@ -58,16 +57,16 @@ public interface IViewBinding {
     <T> void bind(@AttrRes int attr, @NonNull ResourceFactory<T> factory, @NonNull AttrSetter<T> setter);
 
     /**
-     * 登记 setter + 当前 ref，并立刻写回 View。再次同 key 则替换 setter 与当前值；
-     * 登记里的 {@code factory} 保留（若曾声明式登记过）；之后再次
-     * {@link #bind(AttributeSet)} 读布局时以 XML 值为准（仅 attr 形态）。
+     * 只登记 setter，不写入当前值。再次同 key 则替换 setter 并清掉当前 ref；
+     * 已有 {@code factory} 保留（若曾声明式登记过）。
+     * 值用 {@link #set(ThemeKey, ResourceRef)} 写入。
      */
-    <T> void bind(@NonNull ThemeKey key, @NonNull ResourceRef<T> ref, @NonNull AttrSetter<T> setter);
+    <T> void bind(@NonNull ThemeKey key, @NonNull AttrSetter<T> setter);
 
     /**
-     * {@link #bind(ThemeKey, ResourceRef, AttrSetter)} 的 {@code R.attr} 糖。
+     * {@link #bind(ThemeKey, AttrSetter)} 的 {@code R.attr} 糖。
      */
-    <T> void bind(@AttrRes int attr, @NonNull ResourceRef<T> ref, @NonNull AttrSetter<T> setter);
+    <T> void bind(@AttrRes int attr, @NonNull AttrSetter<T> setter);
 
     /**
      * 只更新已登记属性的 {@link ResourceRef} 并立刻写回。
@@ -109,8 +108,17 @@ public interface IViewBinding {
     /**
      * 设置该 View 每次主题刷新完成的回调；{@code null} 清除。
      * 单回调：后设覆盖先设，需要多方接收时在回调里自行转发。
+     * 只登记，不立刻回调；首屏若也要走同一段逻辑，再调 {@link #notifyViewThemeUpdate}。
      */
     void setOnViewThemeUpdateListener(@Nullable OnViewThemeUpdateListener listener);
+
+    /**
+     * 用当前 {@link ResourceResolver} 调一次已登记的回调。
+     * 已 {@link ThemeManager#apply} 用安装好的；否则用 View Context 兜底，保证有 listener
+     * 且 Binding 开启时一定会进回调。没有回调或已关掉时什么都不做。
+     * 不刷绑定属性，不级联子 View，也不动刷新代数。
+     */
+    void notifyViewThemeUpdate();
 
     /**
      * 按需刷新：若当前 {@link ThemeManager#getModCount(Context)}与本 Binding 上次 apply 时记录的一致，

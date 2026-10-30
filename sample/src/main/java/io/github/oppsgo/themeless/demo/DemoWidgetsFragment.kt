@@ -98,9 +98,10 @@ class DemoWidgetsFragment : Fragment() {
     private fun bindThemeKeyDemo(view: View) {
         val bar = view.findViewById<View>(R.id.themeKeyAccentBar)
         val binding = ThemeManager.get().of(bar)
-        binding.bind(KEY_ACCENT_BAR, ColorRef.of(R.color.skin_accent)) { value ->
+        binding.bind(KEY_ACCENT_BAR) { value ->
             bar.setBackgroundColor(value.require())
         }
+        binding.set(KEY_ACCENT_BAR, ColorRef.of(R.color.skin_accent))
 
         var usePanel = false
         view.findViewById<Button>(R.id.btnThemeKeyToggle).setOnClickListener {
@@ -139,8 +140,8 @@ class DemoWidgetsFragment : Fragment() {
     /**
      * 一段文字里混了多种皮肤色，单个 textColor 表达不了：
      * 普通段走 [TextViewBinding.setTextColor] 跟肤，强调段 / 次要段的 span
-     * 靠 [io.github.oppsgo.android.theme.OnViewThemeUpdateListener] 在每次主题刷新后整段重建。
-     * 回调语义是「一次刷新发生了」，set 时不立即触发，所以首屏要自己建一次。
+     * 靠 [io.github.oppsgo.android.theme.OnViewThemeUpdateListener] 整段重建。
+     * 登记后 [io.github.oppsgo.android.theme.IViewBinding.notifyViewThemeUpdate] 补一次首屏。
      */
     private fun bindSpannableDemo(view: View) {
         val spannable = view.findViewById<TextView>(R.id.themeSpannable)
@@ -149,10 +150,7 @@ class DemoWidgetsFragment : Fragment() {
         spannableBinding.setOnViewThemeUpdateListener { _, resolver ->
             spannable.text = buildThemedSpannable(resolver)
         }
-        // 首屏内容归调用方建：已安装 resolver 就直接建，否则等首次刷新触发的回调
-        ThemeManager.get().getResolver(requireContext())?.let { resolver ->
-            spannable.text = buildThemedSpannable(resolver)
-        }
+        spannableBinding.notifyViewThemeUpdate()
     }
 
     companion object {

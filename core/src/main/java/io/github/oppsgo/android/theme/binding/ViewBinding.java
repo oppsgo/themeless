@@ -295,20 +295,17 @@ public class ViewBinding implements IViewBinding {
     @Override
     public final <T> void bind(
             @NonNull ThemeKey key,
-            @NonNull ResourceRef<T> ref,
             @NonNull IViewBinding.AttrSetter<T> setter
     ) {
-        ViewAttr target = define(key, null, providerSetter(setter));
-        putAndApply(target, ref);
+        define(key, null, providerSetter(setter)).ref = null;
     }
 
     @Override
     public final <T> void bind(
             @AttrRes int attr,
-            @NonNull ResourceRef<T> ref,
             @NonNull IViewBinding.AttrSetter<T> setter
     ) {
-        bind(ThemeKey.of(attr), ref, setter);
+        bind(ThemeKey.of(attr), setter);
     }
 
     @Override
@@ -351,6 +348,18 @@ public class ViewBinding implements IViewBinding {
     @Override
     public void setOnViewThemeUpdateListener(@Nullable OnViewThemeUpdateListener listener) {
         this.updateListener = listener;
+    }
+
+    @Override
+    public void notifyViewThemeUpdate() {
+        OnViewThemeUpdateListener listener = updateListener;
+        if (listener == null || !isEnabled()) {
+            return;
+        }
+        ResourceResolver resolver = currentResolver();
+        if (resolver != null) {
+            listener.onThemeUpdate(view, resolver);
+        }
     }
 
     /**

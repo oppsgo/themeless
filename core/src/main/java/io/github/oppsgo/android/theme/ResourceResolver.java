@@ -41,4 +41,10 @@ public interface ResourceResolver {
 
     @NonNull
     ThemeViewCompat getViewCompat();
+
+    /**
+     * 区分主题的标记。同一套主题返回相等的字符串。
+     * 没有稳定标记时返回 null。
+     */
+    String getThemeId();
 }

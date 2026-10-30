@@ -45,6 +45,8 @@ class MappedResourceResolver(
 
     override fun getViewCompat(): ThemeViewCompat = delegate.viewCompat
 
+    override fun getThemeId(): String = delegate.themeId
+
     companion object {
         /** 晴空蓝：把常规 skin 色 / 嵌套色资源映射到 _blue 变体。 */
         fun skyBlue(delegate: ResourceResolver): MappedResourceResolver {
